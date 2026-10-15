@@ -1,0 +1,3 @@
+# Draft 2020-12 validation; only the URI format helper is needed beyond core.
+jsonschema==4.25.1
+rfc3986-validator==0.1.1

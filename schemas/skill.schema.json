@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fitalex/LexRouter/blob/main/schemas/skill.schema.json",
+  "title": "LexRouter Skill metadata v1",
+  "description": "P0 structural metadata contract; passing validation is not legal or licensing review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "name", "description", "source_url", "jurisdiction",
+    "business_categories", "regulatory_as_of", "runtime"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"
+    },
+    "description": {
+      "type": "string", "minLength": 1, "maxLength": 500, "pattern": "\\S"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^\\s/?#]+(?:[/?#][^\\s]*)?$"
+    },
+    "jurisdiction": {
+      "type": "string", "enum": ["CN-Mainland"], "default": "CN-Mainland"
+    },
+    "business_categories": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "contract-review", "civil-commercial-litigation", "corporate-ma",
+          "corporate-compliance", "criminal-administrative", "legal-research"
+        ]
+      }
+    },
+    "regulatory_as_of": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "runtime": {
+      "type": "string",
+      "enum": [
+        "claude-skill", "codex-skill", "cursor-rule", "dify-workflow",
+        "prompt", "other"
+      ]
+    }
+  }
+}
