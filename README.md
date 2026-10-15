@@ -37,6 +37,8 @@ python -m unittest discover -s tests -v
 
 ## 社区与许可
 
-欢迎通过 Issue 讨论及 Pull Request 贡献，实质变更由 Human Maintainer 审核合并。项目以开源协作为目标；**具体开源许可证尚待人工批准，是正式发布前的待决事项**。公开可见不代表已授予明确的开源再分发许可；第三方内容仍受原作者授权约束。
+欢迎通过 Issue 讨论及 Pull Request 贡献，实质变更由 Human Maintainer 审核合并。**Human Maintainer 已批准 LexRouter 自主原创代码采用 [MIT License](LICENSE)**（LR-P0-01A）。
+
+第三方 Skills、代码、数据集、法律文本及其他材料遵循各自授权，不因进入本仓库而改为 MIT 或成为 LexRouter 原创作品。必须保留必要的版权和许可证声明；未确认授权的第三方内容不得直接复制入库。直接依赖的版本与许可证检查见 [依赖许可记录](docs/DEPENDENCIES.md)。
 
 **测评与路由结果仅供技术选型参考，不构成执业法律意见。** 实际法律事务应由具备相应资质的专业人士结合具体事实、适用法域及现行法律独立判断。

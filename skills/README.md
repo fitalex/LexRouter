@@ -11,4 +11,4 @@ python scripts/validate_skills.py skills
 python -m unittest discover -s tests -v
 ```
 
-机器校验只确认结构及批次内标识唯一，不代表法律专业审核、来源授权或性能测评通过。完整审核要求见 [CONTRIBUTING.md](../CONTRIBUTING.md)。当前许可证尚待人工批准，公开目录不代表取得明确的开源再分发授权。
+机器校验只确认结构及批次内标识唯一，不代表法律专业审核、来源授权或性能测评通过。完整审核要求见 [CONTRIBUTING.md](../CONTRIBUTING.md)。Human Maintainer 已批准 LexRouter 自主原创代码采用 [MIT License](../LICENSE)（LR-P0-01A）；第三方 Skills、代码、数据集、法律文本及其他材料仍遵循各自授权，必须保留必要的版权和许可证声明，未确认授权不得直接复制入库。收录不代表材料成为 LexRouter 原创作品或改为 MIT 授权。
