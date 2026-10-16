@@ -95,3 +95,7 @@ git diff --check
 正样本和所有反向变异均为合成工程数据。测试覆盖未知/遗漏/重复 ID、原字段与快照漂移、非法状态、无因阻塞、授权升级、日期冒充时效、同时篡改两份清单仍不能标时效 verified、证据未固定版本、伪造入口读取结果、责任遗漏和 JSON 异常；禁用 socket 的测试验证检查无需网络。
 
 GitHub Actions 执行真实清单、合成正样本及全部正反测试，验证步骤不读取实时第三方来源或调用第三方服务。沿用现有 checkout、Python 与固定依赖安装基础设施，没有新增依赖。CI 成功仅证明工程检查通过，实际运行链接及结果以对应 PR 为准。
+
+## LR-P0-05 具体交接
+
+三个 A 类候选的[逐文件材料预审](reviews/README.md)、[法律专业复核交接包](reviews/P1_LEGAL_REVIEW_HANDOFF.md)和[独立结构化记录](../data/reviews/README.md)已建立。原十候选审计及提案状态不变；ready/eligible 仅用于提交复核，未批准托管或入库。[P0 验收准备](P0_ACCEPTANCE_REPORT.md)单独区分冻结工程口径与 P1 人工门槛。

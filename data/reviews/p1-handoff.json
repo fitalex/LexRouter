@@ -1,0 +1,148 @@
+{
+  "format_version": 1,
+  "task": "LR-P0-05",
+  "records": [
+    {
+      "candidate_id": "discovery-contract-review",
+      "readiness_snapshot_sha256": "263070f7d31b53450c35232ee712f8b557861b93c144ee49e0c7f3b4e1b16bea",
+      "intake_snapshot_sha256": "0e85a39591321c4ea5af648320304a5e948be0e1475deb2138f3abd57d4a20d0",
+      "revision": "f73f92b6341ef4e9f1765434bf348b1acb4fb1d3",
+      "manifest": "data/reviews/manifests/discovery-contract-review.json",
+      "manifest_sha256": "c5521b0cec2eba3adaa8023e6956a0cf1673b68fc47e091c87e4e8958150cde0",
+      "tree_file_count": 31,
+      "hosting_status": "not-approved",
+      "professional_status": "not-performed",
+      "catalog_status": "not-admitted",
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null
+      },
+      "unresolved_issues": [
+        {
+          "kind": "rights",
+          "owner": "Human Maintainer",
+          "action": "确认 NOMOREKKK 及贡献者对拟用文档、规则、脚本的授权链；MIT 不覆盖外部服务；跨境贸易术语、法条汇编及二进制模板另行核实。"
+        },
+        {
+          "kind": "dependency",
+          "owner": "engineering-maintainer",
+          "action": "根入口与安装示例不一致；Python 3.10+、Windows officecli 版本/API/许可证、OCR 与检索连接器需单独确认；不执行上游。"
+        }
+      ],
+      "professional_todos": [
+        {
+          "owner": "legal-professional",
+          "action": "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "核对违约金、利息及保证金阈值的适用条件，避免把经验阈值写成普遍强制规则。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "逐条核验合同分类规则、民法典及司法解释的生效、废止与过渡规定。"
+        }
+      ],
+      "handoff_section": "discovery-contract-review",
+      "tree_sha": "15bdc91c1ad2b4a49d991e305d881847ad192446"
+    },
+    {
+      "candidate_id": "discovery-contract-review-zh",
+      "readiness_snapshot_sha256": "98b1617caf26ff007bfb94a9f562077bfa0830a04555c9da78c09a8a01a7d8d5",
+      "intake_snapshot_sha256": "7dcc5f3ce8cc82d17a7b41571c766d13cb88a7c317a6bd58ebe018e53a078219",
+      "revision": "b8382b59d2ba3157125a779a0abf251ec0c29717",
+      "manifest": "data/reviews/manifests/discovery-contract-review-zh.json",
+      "manifest_sha256": "1696933247feb725e4d8aeac90f5e6a491bb8e7ac15ce6257f7055e8d275f264",
+      "tree_file_count": 13,
+      "hosting_status": "not-approved",
+      "professional_status": "not-performed",
+      "catalog_status": "not-admitted",
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null
+      },
+      "unresolved_issues": [
+        {
+          "kind": "rights",
+          "owner": "Human Maintainer",
+          "action": "Apache 附录版权占位符不能冒充作者声明；确认版权主体/贡献者链、笔记作者及案例/模板授权和必要 NOTICE；4 个 references 与示例暂不纳入可审核核心。"
+        },
+        {
+          "kind": "dependency",
+          "owner": "engineering-maintainer",
+          "action": "Claude Code/Claude.ai 的 Read、Word/PDF/图像及 references 打包能力待验证；仅上传 SKILL.md 不证明子目录已上传。"
+        },
+        {
+          "kind": "scope",
+          "owner": "Human Maintainer",
+          "action": "与通用合同审查流程有重叠，委托律师合同收费/退费专项可区分；按一个独立候选复核，不按模式/资料拆分凑数。"
+        }
+      ],
+      "professional_todos": [
+        {
+          "owner": "legal-professional",
+          "action": "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "重点核对律师收费、风险代理比例与禁止范围、委托解除和退费规则的现行依据与适用前提。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "审查来源所称 70 篇笔记的证据可靠性及任何拟复制资料的第三方权利；自述调研与平台热度不作法律认证。"
+        }
+      ],
+      "handoff_section": "discovery-contract-review-zh",
+      "tree_sha": "7554f16fc5e5e7b5abe1720e559193b283d7cf57"
+    },
+    {
+      "candidate_id": "discovery-china-legal-counsel",
+      "readiness_snapshot_sha256": "ad6b0a9d74ae30b3bd38abd0474987011e27d31656e931b93c18f9f699c45592",
+      "intake_snapshot_sha256": "80ac5c0ae5c98fdf304677dd548bbf473150ea8c5cbc0212fbfbd8778e1bbd67",
+      "revision": "73ff53a857ffbdd91296bf41ed5bcc1294bc2042",
+      "manifest": "data/reviews/manifests/discovery-china-legal-counsel.json",
+      "manifest_sha256": "c53fbee83f633604dbfd8bcb62f694c81e476a5abc5fcd1c960a2c04ab2fcb4b",
+      "tree_file_count": 2339,
+      "hosting_status": "not-approved",
+      "professional_status": "not-performed",
+      "catalog_status": "not-admitted",
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null
+      },
+      "unresolved_issues": [
+        {
+          "kind": "rights",
+          "owner": "Human Maintainer",
+          "action": "确认 Suze 与仓库发布者及贡献者关系；知识库原始/清洗/切片、商业数据库、律所文章、品牌图像和用户背景均不随 MIT 自动授权，本范围全部排除。"
+        },
+        {
+          "kind": "dependency",
+          "owner": "engineering-maintainer",
+          "action": "绝对路径须后续单独适配；Python 脚本默认相对 knowledge-base 并支持 --kb；不含知识库的组件不能声称完整可用。curl/pdftotext 与官方站点访问条件另审。"
+        },
+        {
+          "kind": "dependency",
+          "owner": "engineering-maintainer",
+          "action": "fetch_official_sources.py 存在特定主机 curl TLS 放宽回退；上线前另审和修正，当前不运行。引用字符串存在检查不等于法律效力或结论校验。"
+        }
+      ],
+      "professional_todos": [
+        {
+          "owner": "legal-professional",
+          "action": "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "逐项核验合同、广告、数据、劳动及公司治理规则的法域、现行文本与场景适用。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "抽查知识库来源与引用是否真正支持结论，确认重大事项人工升级边界。"
+        }
+      ],
+      "handoff_section": "discovery-china-legal-counsel",
+      "tree_sha": "af1ea322f77f38cdd071272c673dcfe5f4c08106"
+    }
+  ]
+}

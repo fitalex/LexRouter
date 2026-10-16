@@ -29,6 +29,7 @@ P0-01 不批量收录 Skills，正式目录整合在 P1 开展。后续收录时
    python scripts/validate_candidates.py data/discovery/candidates.json
    python scripts/validate_p1_readiness.py data/discovery/p1-readiness.json
    python scripts/validate_intake_plan.py data/intake/p1-proposals.json
+   python scripts/validate_p1_handoff.py
    python -m unittest discover -s tests -v
    git diff --check
    ```
