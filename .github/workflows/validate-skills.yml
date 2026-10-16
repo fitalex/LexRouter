@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'skills/**'
+      - 'data/discovery/**'
       - 'schemas/**'
       - 'scripts/**'
       - 'tests/**'
@@ -13,6 +14,7 @@ on:
     branches: [main]
     paths:
       - 'skills/**'
+      - 'data/discovery/**'
       - 'schemas/**'
       - 'scripts/**'
       - 'tests/**'
@@ -25,7 +27,7 @@ permissions:
 
 jobs:
   validate:
-    name: Metadata and positive/negative fixtures
+    name: Metadata, discovery candidates and positive/negative fixtures
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -42,5 +44,9 @@ jobs:
         run: python scripts/validate_skills.py skills
       - name: Validate fixed positive fixture
         run: python scripts/validate_skills.py tests/fixtures/valid
+      - name: Validate discovery candidates (offline structure only)
+        run: python scripts/validate_candidates.py data/discovery/candidates.json
+      - name: Validate fixed candidate positive fixture
+        run: python scripts/validate_candidates.py tests/fixtures/candidates/valid.json
       - name: Test positive and negative fixtures
         run: python -m unittest discover -s tests -v

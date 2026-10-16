@@ -4,6 +4,8 @@
 
 ## Skills 收录
 
+发现阶段请先按 [DISCOVERY_PROTOCOL.md](docs/DISCOVERY_PROTOCOL.md) 向 `data/discovery/candidates.json` 提交来源、版本、核查状态与证据说明，并执行 `python scripts/validate_candidates.py data/discovery/candidates.json`。候选与正式目录使用独立契约；许可缺失或冲突、法域及法规时效未核实均须如实标记，不得把候选直接搬入 `skills/`。候选结构通过不构成正式入库或推荐。
+
 P0-01 不批量收录 Skills，正式目录整合在 P1 开展。后续收录时，每个 Skill 在 `skills/<id>/metadata.json` 提交一个 JSON 对象，按 [SCHEMA.md](docs/SCHEMA.md) 填写唯一标识、名称、描述、原始来源、法域、业务分类、法规时效锚点及运行载体。
 
 应可定位原始作者与版本，描述真实能力与限制；明确核实法域和时效基准，不得编造日期、功能或测评成绩。未知日期的条目应留作待补资料，不进入正式目录。机器校验通过后，仍需人工审核来源、授权、法律专业适用性与信息质量。
@@ -18,6 +20,7 @@ P0-01 不批量收录 Skills，正式目录整合在 P1 开展。后续收录时
 
    ```sh
    python scripts/validate_skills.py skills
+   python scripts/validate_candidates.py data/discovery/candidates.json
    python -m unittest discover -s tests -v
    git diff --check
    ```
