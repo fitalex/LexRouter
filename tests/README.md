@@ -14,3 +14,7 @@ LR-P0-03 新增 `fixtures/p1-readiness/candidates.json` 与 `valid.json` 配对�
 python scripts/validate_candidates.py tests/fixtures/candidates/valid.json
 python -m unittest discover -s tests -v
 ```
+
+## LR-P0-04 选品检查
+
+`test_validate_intake_plan.py` 使用 `fixtures/intake/valid.json` 与既有合成 readiness/candidates 配对，验证 A/C/B 提案、原阻塞及审计关联、未知/重复/遗漏 ID、合法模式、独立原创 ID 与权限、审批轴升级、复制/再分发拒绝、门槛及角色、坏 JSON/UTF-8/文件和离线运行。反例在临时目录变异合成数据，不执行第三方内容；生产默认 CLI 也须通过。原有候选和 readiness 审计约束继续由原校验器及原测试负责。

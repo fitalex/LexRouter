@@ -5,6 +5,9 @@ on:
     paths:
       - 'skills/**'
       - 'data/discovery/**'
+      - 'data/intake/**'
+      - 'docs/SKILL_INTAKE_POLICY.md'
+      - 'docs/P1_SELECTION_PLAN.md'
       - 'docs/P1_READINESS.md'
       - 'schemas/**'
       - 'scripts/**'
@@ -16,6 +19,9 @@ on:
     paths:
       - 'skills/**'
       - 'data/discovery/**'
+      - 'data/intake/**'
+      - 'docs/SKILL_INTAKE_POLICY.md'
+      - 'docs/P1_SELECTION_PLAN.md'
       - 'docs/P1_READINESS.md'
       - 'schemas/**'
       - 'scripts/**'
@@ -29,7 +35,7 @@ permissions:
 
 jobs:
   validate:
-    name: Metadata, candidates, P1 readiness and positive/negative fixtures
+    name: Metadata, candidates, readiness, intake and positive/negative fixtures
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -54,5 +60,9 @@ jobs:
         run: python scripts/validate_p1_readiness.py data/discovery/p1-readiness.json
       - name: Validate synthetic P1 positive fixture (offline)
         run: python scripts/validate_p1_readiness.py tests/fixtures/p1-readiness/valid.json --candidates tests/fixtures/p1-readiness/candidates.json
+      - name: Validate P0 intake proposals and audit linkage (offline)
+        run: python scripts/validate_intake_plan.py data/intake/p1-proposals.json
+      - name: Validate synthetic intake positive fixture (offline)
+        run: python scripts/validate_intake_plan.py tests/fixtures/intake/valid.json --candidates tests/fixtures/p1-readiness/candidates.json --readiness tests/fixtures/p1-readiness/valid.json
       - name: Test positive and negative fixtures
         run: python -m unittest discover -s tests -v
