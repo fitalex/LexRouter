@@ -24,6 +24,8 @@
 7. 不得将密钥、真实敏感卷宗、未授权材料或 Holdout 内容提交到公开仓库、PR、Issue 或 CI 日志。遵守 [脱敏规范](docs/ANONYMIZATION.md) 和 [安全报告流程](SECURITY.md)。
 8. 元数据、Schema、样本及文档应同步更新。结构校验不代表法律有效性、来源授权或测评结论已经过复核。
 9. Human Maintainer 已在 LR-P0-01A 中批准 LexRouter 自主原创代码采用 [MIT License](LICENSE)。第三方 Skills、代码、数据集、法律文本及其他材料遵循各自授权，必须保留必要的版权和许可证声明；未确认授权的第三方内容不得直接复制入库，不得将其声明为 LexRouter 原创作品或擅自改为 MIT。新增或升级依赖须复核授权并更新 [依赖许可记录](docs/DEPENDENCIES.md)；许可证变更须由 Human Maintainer 批准。
+10. LR-P0-04 三轨按 [收录政策](docs/SKILL_INTAKE_POLICY.md) 执行：A 精选托管、B 独立原创、C 外部索引是收录方式，不是质量等级。发现、模式提案、授权审查、法律专业复核、正式收录、测评、路由须分别举证；ready 不等于托管批准。7 条原审计阻塞不得绕过，原创机会另立 ID，不复制或通过模型重写未授权第三方内容，不代维护者联系权利人。
+11. 选品记录放在 `data/intake/`，通过 Candidate ID 和原审计摘要关联，不扩展正式八字段或将辅助 JSON 放进 `skills/`。相关变更须额外执行 `python scripts/validate_intake_plan.py`；本次契约仅接受未批准提案。P1 的 30–50 目标不允许伪造法域、法规时效或专业记录，来源更新/许可变化按政策暂停并重新审查。
 
 ## 交付与复核
 

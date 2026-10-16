@@ -1,0 +1,105 @@
+{
+  "format_version": 1,
+  "task": "LR-P0-04",
+  "records": [
+    {
+      "candidate_id": "synthetic-p1-review",
+      "readiness_snapshot_sha256": "185f5c25b058053ce05abce845905d3ef647e235407996724b77407de977dbee",
+      "proposed_track": "curated-hosting",
+      "business_value_and_rationale": "Synthetic workflow value; not a real intake finding.",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "pending",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr",
+        "full-hosting-scope-approval"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "Synthetic pending responsibility; no review performed."
+        },
+        {
+          "owner": "legal-professional",
+          "action": "Synthetic pending responsibility; no review performed."
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "Synthetic pending responsibility; no review performed."
+        }
+      ]
+    }
+  ],
+  "original_opportunities": [
+    {
+      "opportunity_id": "original-synthetic-opportunity",
+      "proposed_track": "original-development",
+      "related_candidate_ids": [
+        "synthetic-p1-review"
+      ],
+      "business_problem": "Synthetic independent business problem.",
+      "expected_deliverables": [
+        "Independent requirements, design and synthetic test evidence."
+      ],
+      "independent_design_sources": [
+        "Independent interview and official public source; synthetic only."
+      ],
+      "independence_boundary": "Do not copy or rewrite third-party protected content.",
+      "authorization_basis": "not-inherited",
+      "development_status": "not-started",
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "pending",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr",
+        "independent-requirements-design-tests"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "Synthetic pending responsibility; no review performed."
+        },
+        {
+          "owner": "legal-professional",
+          "action": "Synthetic pending responsibility; no review performed."
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "Synthetic pending responsibility; no review performed."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,675 @@
+{
+  "format_version": 1,
+  "task": "LR-P0-04",
+  "records": [
+    {
+      "candidate_id": "discovery-contract-review",
+      "readiness_snapshot_sha256": "263070f7d31b53450c35232ee712f8b557861b93c144ee49e0c7f3b4e1b16bea",
+      "proposed_track": "curated-hosting",
+      "business_value_and_rationale": "立场澄清、条款/金额/冲突审查与批注输出具有高频合同实务价值，优先考察可维护的完整托管边界。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "pending",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr",
+        "full-hosting-scope-approval"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "列固定版本材料与依赖清单，核对安装示例目录差异、Windows officecli 依赖；未获范围批准不复制。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "复核整包复制/再分发许可范围、第三方材料与合同阈值等原审计专业事项。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "选择托管材料与拟用范围、指派专业复核；取得范围和专业证据后另开 P1 收录 PR。"
+        }
+      ]
+    },
+    {
+      "candidate_id": "discovery-contract-review-zh",
+      "readiness_snapshot_sha256": "98b1617caf26ff007bfb94a9f562077bfa0830a04555c9da78c09a8a01a7d8d5",
+      "proposed_track": "curated-hosting",
+      "business_value_and_rationale": "委托律师合同专项七维审查与修改建议有明确实务场景，优先核对与一般合同入口的独立用途。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "pending",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr",
+        "full-hosting-scope-approval"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "界定入口、外部笔记、可选工具和 NOTICE 边界，准备固定版本清单与去重依据。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "复核 Apache-2.0 义务及外部材料权利，核对律师收费、解除和引用法规；未开展本次专业审查。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "确定可托管边界与维护资源、安排专家；不得将 ready 视为已批准。"
+        }
+      ]
+    },
+    {
+      "candidate_id": "discovery-china-legal-counsel",
+      "readiness_snapshot_sha256": "ad6b0a9d74ae30b3bd38abd0474987011e27d31656e931b93c18f9f699c45592",
+      "proposed_track": "curated-hosting",
+      "business_value_and_rationale": "事实澄清、来源检索、风险分级与人工升级可补企业合规、合同和检索入口，先考察可交付范围。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "pending",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr",
+        "full-hosting-scope-approval"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "列知识库、外部材料和依赖范围，提出作者本机绝对路径的交付解决设计；实际修改另开获授权任务。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "复核 MIT 覆盖边界及知识材料权利，按原审计核对公司、数据、合同与引用适用。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "选择托管范围与专业人员，审阅外部材料权限和维护成本；批准前保持提案。"
+        }
+      ]
+    },
+    {
+      "candidate_id": "discovery-cn-law-hub",
+      "readiness_snapshot_sha256": "95891491889307dd5510f4a6139a4287f2f285a6f7796a8b4abbad026ba4c74e",
+      "proposed_track": "external-reference",
+      "business_value_and_rationale": "法规检索与有效性核对具有高价值，但贡献者组件权利未清，保留外部索引提案。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "blocked",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "仅保留固定链接及原创简述；按原审计 blocker 补组件/文件许可对应关系或可分离边界，再重新审计。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "复核 NOTICE 排除的贡献者权利范围及原专业检查；根 Apache 标签不构成整包许可。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定可分离入口或贡献者补证路径，必要联系由维护者另行决定；保持 blocked。"
+        }
+      ]
+    },
+    {
+      "candidate_id": "discovery-litigation-hub",
+      "readiness_snapshot_sha256": "4b262a994fd769062673cfb0e12ceb361b3165f1278f7863bd36913155a75283",
+      "proposed_track": "external-reference",
+      "business_value_and_rationale": "诉讼套件导航与编排有发现价值；未确认独立实体能力，先保留套件单入口索引提案。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "blocked",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "补独立编排对象或下游逐项入口证据；不按宣传的 23 子技能计数，不复制或执行。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "解释 NC/ND、AI 测评及机构附加条款和优先关系，并保留民诉专业复核待办。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定目录对象与目标用法及是否协调授权，补证前保留原两个阻塞。"
+        }
+      ]
+    },
+    {
+      "candidate_id": "discovery-litigation-prep-cn",
+      "readiness_snapshot_sha256": "f66de847bef7c94ab275cbb1c0281a70250d222a4ba6064d5de504bf3968a62b",
+      "proposed_track": "external-reference",
+      "business_value_and_rationale": "案由、请求权和证据准备需求价值高，许可缺失时保留链接；原创证据规划另立机会。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "blocked",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "保留缺许可阻塞及固定入口，补证后重新审计；不可将该候选改为原创完成。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "取得许可后审查文件/规则库范围；专业核对民事请求权与证据适用，当前未做。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定是否协调权利人许可或批准独立业务访谈，不代维护者联系。"
+        }
+      ]
+    },
+    {
+      "candidate_id": "discovery-law-ye",
+      "readiness_snapshot_sha256": "8e93574f1bc21167562348b9d3430a912593eaed0c075f1d95ac06ce1aad666d",
+      "proposed_track": "external-reference",
+      "business_value_and_rationale": "刑事/行政问题定性与实务交付有发现价值；无明确许可不能进入托管。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "blocked",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "保持固定链接，待许可与知识材料补证后核对宿主声明和版本。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "核对许可范围及刑事/行政期限和程序适用，不采信来源自述为专业批准。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定许可补证与专业人员安排，保持 blocked，不将行政机会当刑事覆盖。"
+        }
+      ]
+    },
+    {
+      "candidate_id": "discovery-shuanglv",
+      "readiness_snapshot_sha256": "eb04474c62e22f36fc53a3aa3d0cc77355edfd40c69d1189b168577bbc51b793",
+      "proposed_track": "external-reference",
+      "business_value_and_rationale": "多业务任务与交付控制有索引价值，当前自定义许可不支持推定完整公开托管范围。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "blocked",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "维持套件单入口和原创简述，固定根与运行包版本及品牌使用边界，补证后重新审计。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "审查 Professional Use License 对公开修改/分发/产品集成限制；正常收费法律服务不等于全面禁商用。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定目标形态与是否需要权利人补充许可，保持 blocked 并安排原专业事项复核。"
+        }
+      ]
+    },
+    {
+      "candidate_id": "discovery-antitrust-filing",
+      "readiness_snapshot_sha256": "b0994c124c1981719927c5b95d4f6ef0670d0742f4d535bf5d1c96c7d55b568e",
+      "proposed_track": "external-reference",
+      "business_value_and_rationale": "经营者集中资料和控制权场景价值高；许可冲突下仅保留索引提案，独立资料采集机会另记。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "blocked",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "保持同提交许可冲突记录，不择宽、不移植阈值表或决策树；新许可证据后重新审计。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "核对澄清后的许可及控制权、申报门槛、金融业和复杂结构现行规则，当前未做。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定权利人澄清路径和独立需求是否立项，不擅自接受许可或代表联系。"
+        }
+      ]
+    },
+    {
+      "candidate_id": "discovery-gutachten-admin",
+      "readiness_snapshot_sha256": "9372daea38bce5093e4b816090347246baadc299fea17aea349a448ef116690f",
+      "proposed_track": "external-reference",
+      "business_value_and_rationale": "行政法分析入口具有实务发现价值；授权及宿主未清时保留外部索引提案。",
+      "authorization_basis": {
+        "reference": "p1-readiness.authorization_review",
+        "proposed_use_review": "not-performed"
+      },
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "blocked",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "保留 other 宿主和 README 404 事实，补宿主证据，不复刻 W0–W4 或执行入口。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "解释 NC/ND 与附加限制及优先条款，专业核对行政救济、前置和期限规则。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定目标形态及必要授权路径，保持 blocked；行政原创需求另行批准。"
+        }
+      ]
+    }
+  ],
+  "original_opportunities": [
+    {
+      "opportunity_id": "original-litigation-evidence-plan",
+      "proposed_track": "original-development",
+      "related_candidate_ids": [
+        "discovery-litigation-prep-cn",
+        "discovery-litigation-hub",
+        "discovery-shuanglv"
+      ],
+      "business_problem": "实务人员需要把案件事实、待证事项和证据缺口关联，减少遗漏并明确人工核对边界。",
+      "expected_deliverables": [
+        "独立事实/证据输入输出契约及需求说明",
+        "原创事实与证据对应设计、人工升级节点",
+        "独立合成案件测试计划及缺证/矛盾验收条件；后续获批才实现"
+      ],
+      "independent_design_sources": [
+        "独立民事诉讼实务访谈及经批准的脱敏问题",
+        "民事诉讼法、证据规则的官方现行文本；实际来源与核对日期待研发记录"
+      ],
+      "independence_boundary": "不使用套件、CorpClaim 或爽律的提示词、模板、流程和测试；候选只作业务缺口背景。",
+      "authorization_basis": "not-inherited",
+      "development_status": "not-started",
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "pending",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr",
+        "independent-requirements-design-tests"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "记录独立访谈、需求、设计、材料接触与合成测试来源；当前不实现完整 Skill。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "确定专业边界、官方法规和来源使用权限；未来实际核查后再记录时效和结论。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定是否立项、人员与资源；有受限材料接触风险时先审阅隔离方案，另开授权任务。"
+        }
+      ]
+    },
+    {
+      "opportunity_id": "original-merger-intake",
+      "proposed_track": "original-development",
+      "related_candidate_ids": [
+        "discovery-antitrust-filing"
+      ],
+      "business_problem": "经营者集中人工初筛前资料缺失，需要独立采集事实并提示待专家确认事项。",
+      "expected_deliverables": [
+        "独立资料采集需求与事实缺口提示设计",
+        "原创专家交接清单和非自动法律结论边界",
+        "复杂控制结构与资料缺失的合成测试计划；后续获批才实现"
+      ],
+      "independent_design_sources": [
+        "独立并购业务访谈",
+        "反垄断法、经营者集中申报标准的官方文本；使用条款和现行性另核"
+      ],
+      "independence_boundary": "不复制或重写冲突许可候选的阈值表、决策树、提示词及样例；独立设计问题与测试。",
+      "authorization_basis": "not-inherited",
+      "development_status": "not-started",
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "pending",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr",
+        "independent-requirements-design-tests"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "记录独立访谈、需求、设计、材料接触与合成测试来源；当前不实现完整 Skill。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "确定专业边界、官方法规和来源使用权限；未来实际核查后再记录时效和结论。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定是否立项、人员与资源；有受限材料接触风险时先审阅隔离方案，另开授权任务。"
+        }
+      ]
+    },
+    {
+      "opportunity_id": "original-admin-remedy-intake",
+      "proposed_track": "original-development",
+      "related_candidate_ids": [
+        "discovery-gutachten-admin",
+        "discovery-law-ye"
+      ],
+      "business_problem": "行政救济需要记录行为、送达和程序事实，并显式交接期限与前置程序的不确定性。",
+      "expected_deliverables": [
+        "独立事实采集需求和待核期限清单设计",
+        "原创人工确认节点与适用范围说明",
+        "送达不明、前置程序和期限边界的独立合成测试计划；后续获批才实现"
+      ],
+      "independent_design_sources": [
+        "独立行政救济实务访谈",
+        "行政复议法、行政诉讼法及官方解释；实际版本和现行性由专家另核"
+      ],
+      "independence_boundary": "不沿用 W0–W4、law-ye 模块或任何受限文本；行政需求不冒充刑事能力。",
+      "authorization_basis": "not-inherited",
+      "development_status": "not-started",
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "pending",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr",
+        "independent-requirements-design-tests"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "记录独立访谈、需求、设计、材料接触与合成测试来源；当前不实现完整 Skill。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "确定专业边界、官方法规和来源使用权限；未来实际核查后再记录时效和结论。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定是否立项、人员与资源；有受限材料接触风险时先审阅隔离方案，另开授权任务。"
+        }
+      ]
+    },
+    {
+      "opportunity_id": "original-legal-source-trace",
+      "proposed_track": "original-development",
+      "related_candidate_ids": [
+        "discovery-cn-law-hub",
+        "discovery-shuanglv"
+      ],
+      "business_problem": "法律引用缺少出处、版本和适用时间证据，需要独立可追溯的人工核对工作流。",
+      "expected_deliverables": [
+        "独立引用记录契约与来源核对需求",
+        "原创缺源/版本冲突提示及人工确认设计",
+        "独立合成引用的缺源/过时/冲突测试计划；不建设数据平台"
+      ],
+      "independent_design_sources": [
+        "独立法律检索需求访谈",
+        "国家法律法规数据库等官方发布文本与记录；逐项核对使用条款，不预填法规时效"
+      ],
+      "independence_boundary": "不复制 CN Law Hub 贡献者组件、爽律提示词或知识库；不建设 API/MCP、爬虫。",
+      "authorization_basis": "not-inherited",
+      "development_status": "not-started",
+      "approvals": {
+        "proposal": "proposed",
+        "authorization": "pending",
+        "legal_professional": "not-performed",
+        "hosting": "not-approved",
+        "catalog": "not-admitted",
+        "evaluation": "not-performed",
+        "routing": "not-assessed"
+      },
+      "permissions": {
+        "copy": false,
+        "redistribute": false
+      },
+      "required_gates": [
+        "mode-scope-decision",
+        "rights-or-originality-review",
+        "professional-jurisdiction-currency-review",
+        "deduplication-and-schema",
+        "maintainer-catalog-pr",
+        "independent-requirements-design-tests"
+      ],
+      "next_actions": [
+        {
+          "owner": "engineering-maintainer",
+          "action": "记录独立访谈、需求、设计、材料接触与合成测试来源；当前不实现完整 Skill。"
+        },
+        {
+          "owner": "legal-professional",
+          "action": "确定专业边界、官方法规和来源使用权限；未来实际核查后再记录时效和结论。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定是否立项、人员与资源；有受限材料接触风险时先审阅隔离方案，另开授权任务。"
+        }
+      ]
+    }
+  ]
+}
