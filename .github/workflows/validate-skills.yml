@@ -6,6 +6,9 @@ on:
       - 'skills/**'
       - 'data/discovery/**'
       - 'data/intake/**'
+      - 'data/reviews/**'
+      - 'docs/reviews/**'
+      - 'docs/P0_ACCEPTANCE_REPORT.md'
       - 'docs/SKILL_INTAKE_POLICY.md'
       - 'docs/P1_SELECTION_PLAN.md'
       - 'docs/P1_READINESS.md'
@@ -20,6 +23,9 @@ on:
       - 'skills/**'
       - 'data/discovery/**'
       - 'data/intake/**'
+      - 'data/reviews/**'
+      - 'docs/reviews/**'
+      - 'docs/P0_ACCEPTANCE_REPORT.md'
       - 'docs/SKILL_INTAKE_POLICY.md'
       - 'docs/P1_SELECTION_PLAN.md'
       - 'docs/P1_READINESS.md'
@@ -35,7 +41,7 @@ permissions:
 
 jobs:
   validate:
-    name: Metadata, candidates, readiness, intake and positive/negative fixtures
+    name: Metadata, candidates, readiness, intake, handoff and positive/negative fixtures
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -64,5 +70,7 @@ jobs:
         run: python scripts/validate_intake_plan.py data/intake/p1-proposals.json
       - name: Validate synthetic intake positive fixture (offline)
         run: python scripts/validate_intake_plan.py tests/fixtures/intake/valid.json --candidates tests/fixtures/p1-readiness/candidates.json --readiness tests/fixtures/p1-readiness/valid.json
+      - name: Validate proposal-only P1 file scope and legal handoff (offline)
+        run: python scripts/validate_p1_handoff.py
       - name: Test positive and negative fixtures
         run: python -m unittest discover -s tests -v

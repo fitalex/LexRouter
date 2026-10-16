@@ -18,3 +18,7 @@ python -m unittest discover -s tests -v
 ## LR-P0-04 选品检查
 
 `test_validate_intake_plan.py` 使用 `fixtures/intake/valid.json` 与既有合成 readiness/candidates 配对，验证 A/C/B 提案、原阻塞及审计关联、未知/重复/遗漏 ID、合法模式、独立原创 ID 与权限、审批轴升级、复制/再分发拒绝、门槛及角色、坏 JSON/UTF-8/文件和离线运行。反例在临时目录变异合成数据，不执行第三方内容；生产默认 CLI 也须通过。原有候选和 readiness 审计约束继续由原校验器及原测试负责。
+
+## LR-P0-05 交接检查
+
+`test_validate_p1_handoff.py` 的 14 项测试用既有合成审计/提案和临时合成文件清单验证正例、CLI、审批/时效越权、ID 与原版本绑定、逐文件四类决定、未读文件误判、清单摘要/数量/核心材料、Git tree 重建、原 blob 证据、路径/符号链接逃逸、待办/责任遗漏、坏 JSON/重复键/UTF-8/缺文件及断网运行。反例只在临时目录变异；生产 CLI 另验证 3 条真实交接、2383 文件清单。未运行上游代码或法律用例。

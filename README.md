@@ -21,6 +21,7 @@ LexRouter 面向法律行业建设 AI 能力发现（Discovery）、测评（Eva
 - [法律 Skills 发现协议](docs/DISCOVERY_PROTOCOL.md) · [候选来源、统计与待核实事项](data/discovery/README.md)
 - [P1 入库准备审计与专业复核交接](docs/P1_READINESS.md)（3 条具备提交条件、7 条阻塞，均未正式入库）
 - [三轨收录政策](docs/SKILL_INTAKE_POLICY.md) · [P1 选品计划](docs/P1_SELECTION_PLAN.md)（3 条精选托管提案、7 条外部索引提案、4 项独立原创机会，均未批准执行后续内容工作）
+- [托管材料预审与专业交接](docs/reviews/README.md) · [P0 验收准备报告](docs/P0_ACCEPTANCE_REPORT.md)（工程交接，非托管/法律批准）
 - [控制变量测评协议](docs/EVAL_PROTOCOL.md) · [数据脱敏与合规](docs/ANONYMIZATION.md)
 - [每日任务索引](docs/daily-specs/README.md) · [Skills 收录规范](skills/README.md)
 
@@ -36,6 +37,7 @@ python scripts/validate_skills.py skills
 python scripts/validate_candidates.py data/discovery/candidates.json
 python scripts/validate_p1_readiness.py data/discovery/p1-readiness.json
 python scripts/validate_intake_plan.py data/intake/p1-proposals.json
+python scripts/validate_p1_handoff.py
 python -m unittest discover -s tests -v
 ```
 

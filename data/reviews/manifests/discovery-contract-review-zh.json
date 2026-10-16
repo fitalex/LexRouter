@@ -1,0 +1,151 @@
+{
+  "format_version": 1,
+  "candidate_id": "discovery-contract-review-zh",
+  "revision": "b8382b59d2ba3157125a779a0abf251ec0c29717",
+  "tree_sha": "7554f16fc5e5e7b5abe1720e559193b283d7cf57",
+  "files": [
+    {
+      "path": ".gitignore",
+      "blob_sha": "ddcc195aa4ffe52774244040b62ace74078eae97",
+      "mode": "100644",
+      "file_type": "text",
+      "role": "documentation-or-repository-config",
+      "content_review": "static-scan",
+      "decision": "exclude-from-hosting",
+      "basis": "outside-proposed-package",
+      "purpose": "开发排除规则"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "blob_sha": "59c408d71f1ede8e139bd3aadd81ff8bd35470b3",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "documentation-or-repository-config",
+      "content_review": "static-scan",
+      "decision": "exclude-from-hosting",
+      "basis": "outside-proposed-package",
+      "purpose": "上游版本变更说明"
+    },
+    {
+      "path": "LICENSE",
+      "blob_sha": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "mode": "100644",
+      "file_type": "text",
+      "role": "license-and-copyright",
+      "content_review": "read",
+      "decision": "eligible-for-scope-review",
+      "basis": "root-license-pending-chain",
+      "purpose": "项目根许可及版权条件证据"
+    },
+    {
+      "path": "README.md",
+      "blob_sha": "57b2f9f6d3fc9207433db6d588977c6486382066",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "documentation-or-repository-config",
+      "content_review": "read",
+      "decision": "eligible-for-scope-review",
+      "basis": "root-license-pending-chain",
+      "purpose": "安装、能力、限制和来源声明"
+    },
+    {
+      "path": "SKILL.md",
+      "blob_sha": "bd7a4395c3104eb3f5fc2c5cbf8ae7568b56784d",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "workflow-entry",
+      "content_review": "read",
+      "decision": "eligible-for-scope-review",
+      "basis": "root-license-pending-chain",
+      "purpose": "宿主触发条件、法律任务与工作流入口"
+    },
+    {
+      "path": "docs/contributing.md",
+      "blob_sha": "b357920b4faaf323b8a8cd4a4c500de3d581a5b7",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "documentation-or-repository-config",
+      "content_review": "static-scan",
+      "decision": "exclude-from-hosting",
+      "basis": "outside-proposed-package",
+      "purpose": "上游贡献流程"
+    },
+    {
+      "path": "docs/examples.md",
+      "blob_sha": "550eab43adbab82b89a8b173a34cd41b886207c5",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "documentation-or-repository-config",
+      "content_review": "static-scan",
+      "decision": "requires-authorization",
+      "basis": "notes-and-reference-rights",
+      "purpose": "上游合同审查报告示例"
+    },
+    {
+      "path": "docs/how-it-works.md",
+      "blob_sha": "e9fd74c7f39b062b821298c5f8d454d9f7cd1507",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "documentation-or-repository-config",
+      "content_review": "static-scan",
+      "decision": "eligible-for-scope-review",
+      "basis": "root-license-pending-chain",
+      "purpose": "上游审查机制说明"
+    },
+    {
+      "path": "evals/evals.json",
+      "blob_sha": "c6e981634e1a375b096b94e4c3bef8ca50b32013",
+      "mode": "100644",
+      "file_type": "json",
+      "role": "upstream-evaluation-data",
+      "content_review": "static-scan",
+      "decision": "exclude-from-hosting",
+      "basis": "outside-proposed-package",
+      "purpose": "来源自称的三个真实场景用例，未核实脱敏和权属"
+    },
+    {
+      "path": "references/checklist.md",
+      "blob_sha": "ec94d05288ad42f1cee850a8756eef664509313a",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "reference-and-rules",
+      "content_review": "static-scan",
+      "decision": "requires-authorization",
+      "basis": "notes-and-reference-rights",
+      "purpose": "委托律师合同七维检查规则"
+    },
+    {
+      "path": "references/law-references.md",
+      "blob_sha": "38d98bf0fe688531d7b4f1e833f1f655e8f122da",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "reference-and-rules",
+      "content_review": "static-scan",
+      "decision": "requires-authorization",
+      "basis": "notes-and-reference-rights",
+      "purpose": "委托合同相关法条摘编和评论"
+    },
+    {
+      "path": "references/risk-clauses.md",
+      "blob_sha": "bd5ec3ef133c40a47d575135d58e2ecf5cb64815",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "reference-and-rules",
+      "content_review": "static-scan",
+      "decision": "requires-authorization",
+      "basis": "notes-and-reference-rights",
+      "purpose": "风险条款示例及修改建议"
+    },
+    {
+      "path": "references/source-notes-summary.md",
+      "blob_sha": "3578234f140ea7a444f0ab7a6e79658bd6f1a451",
+      "mode": "100644",
+      "file_type": "md",
+      "role": "reference-and-rules",
+      "content_review": "static-scan",
+      "decision": "requires-authorization",
+      "basis": "notes-and-reference-rights",
+      "purpose": "第三方平台笔记汇编及来源链接"
+    }
+  ]
+}

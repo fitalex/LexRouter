@@ -81,3 +81,7 @@ git diff --check
 ```
 
 新 CLI 复用候选准备检查，覆盖唯一 ID、完整 Candidate ID 关联、审计摘要漂移、合法模式、阻塞保留、审批轴独立、原创标识隔离和权限禁止。它只验证结构与关联，不验证法律、许可事实或赋予审批。P0 契约明确拒绝任何已批准/可复制/可再分发状态（包括 3 条 ready）；未来批准流程须另有证据和契约审核，不能直接改本提案字段。
+
+## LR-P0-05 具体交接
+
+三个 A 类候选的[逐文件材料预审](reviews/README.md)、[法律专业复核交接包](reviews/P1_LEGAL_REVIEW_HANDOFF.md)和[独立结构化记录](../data/reviews/README.md)已建立。原十候选审计及提案状态不变；ready/eligible 仅用于提交复核，未批准托管或入库。[P0 验收准备](P0_ACCEPTANCE_REPORT.md)单独区分冻结工程口径与 P1 人工门槛。
