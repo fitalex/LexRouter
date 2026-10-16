@@ -1,0 +1,91 @@
+{
+  "format_version": 1,
+  "candidates": [
+    {
+      "candidate_id": "synthetic-discovery",
+      "name": "Synthetic candidate",
+      "description": "Synthetic offline fixture; no real legal capability or verification.",
+      "source_url": "https://example.com/skill",
+      "maintainer": "Synthetic publisher",
+      "business_categories": [
+        "contract-review"
+      ],
+      "jurisdiction": {
+        "value": "unknown",
+        "status": "pending-verification",
+        "evidence_url": "https://example.com/readme",
+        "notes": "No jurisdiction evidence in this synthetic fixture."
+      },
+      "runtime": "prompt",
+      "runtime_evidence": "Synthetic prompt fixture.",
+      "source_verification": {
+        "status": "unverified",
+        "checked_at": "2026-10-16",
+        "revision": "not-verified",
+        "evidence_urls": [
+          "https://example.com/skill"
+        ],
+        "notes": "No network verification."
+      },
+      "authorization": {
+        "status": "pending-verification",
+        "license": "not-identified",
+        "evidence_urls": [
+          "https://example.com/license"
+        ],
+        "notes": "No permission verified."
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "No legal currency review."
+      },
+      "candidate_status": "needs-evidence",
+      "evidence_notes": "Entirely synthetic; not a legal review or real candidate."
+    },
+    {
+      "candidate_id": "synthetic-discovery",
+      "name": "Synthetic candidate",
+      "description": "Synthetic offline fixture; no real legal capability or verification.",
+      "source_url": "https://example.com/skill",
+      "maintainer": "Synthetic publisher",
+      "business_categories": [
+        "contract-review"
+      ],
+      "jurisdiction": {
+        "value": "unknown",
+        "status": "pending-verification",
+        "evidence_url": "https://example.com/readme",
+        "notes": "No jurisdiction evidence in this synthetic fixture."
+      },
+      "runtime": "prompt",
+      "runtime_evidence": "Synthetic prompt fixture.",
+      "source_verification": {
+        "status": "unverified",
+        "checked_at": "2026-10-16",
+        "revision": "not-verified",
+        "evidence_urls": [
+          "https://example.com/skill"
+        ],
+        "notes": "No network verification."
+      },
+      "authorization": {
+        "status": "pending-verification",
+        "license": "not-identified",
+        "evidence_urls": [
+          "https://example.com/license"
+        ],
+        "notes": "No permission verified."
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "No legal currency review."
+      },
+      "candidate_status": "needs-evidence",
+      "evidence_notes": "Entirely synthetic; not a legal review or real candidate."
+    }
+  ]
+}

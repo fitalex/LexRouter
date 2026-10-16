@@ -11,13 +11,14 @@ LexRouter 面向法律行业建设 AI 能力发现（Discovery）、测评（Eva
 | Phase 2 | Lex-Data-Router | 法律数据与工具（法规/案例 API、MCP）；Phase 1 验收后启动 |
 | Phase 3 | Lex-Model-Router | 通用与垂直大模型（LLMs）；前两阶段成熟后启动 |
 
-当前处于 Phase 1 的 P0 仓库与规范建设。本次仅提供工程骨架、元数据规范及校验、测评与合规基础协议；尚无正式 Skills 条目、测评结果、榜单、站点或路由功能。不面向 C 端当事人提供法律咨询，不建设重度律所 SaaS 或实时流量代理网关。
+当前处于 Phase 1 的 P0 仓库与规范建设。已提供工程骨架、元数据规范及校验、测评与合规基础协议，以及独立的发现候选清单和离线检查；尚无正式 Skills 条目、测评结果、榜单、站点或路由功能。不面向 C 端当事人提供法律咨询，不建设重度律所 SaaS 或实时流量代理网关。
 
 ## 文档入口
 
 - [冻结路线图 Gemini V3.3](ROADMAP.md)
 - [AI Agent 协作规范](AGENTS.md) · [社区贡献指南](CONTRIBUTING.md) · [安全报告](SECURITY.md)
 - [能力元数据规范](docs/SCHEMA.md) · [JSON Schema](schemas/skill.schema.json)
+- [法律 Skills 发现协议](docs/DISCOVERY_PROTOCOL.md) · [候选来源、统计与待核实事项](data/discovery/README.md)
 - [控制变量测评协议](docs/EVAL_PROTOCOL.md) · [数据脱敏与合规](docs/ANONYMIZATION.md)
 - [每日任务索引](docs/daily-specs/README.md) · [Skills 收录规范](skills/README.md)
 
@@ -30,10 +31,13 @@ python -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements.txt
 python scripts/validate_skills.py skills
+python scripts/validate_candidates.py data/discovery/candidates.json
 python -m unittest discover -s tests -v
 ```
 
 正式目录为空时，校验器明确报告 0 个文件；CI 仍须执行固定合法与非法样本测试，证明约束有效。
+
+`data/discovery/` 记录真实来源线索及授权、法域和法规时效的核查状态，与正式 `skills/` 分离。候选检查通过只证明结构合法，未核实的时效使用显式状态与 null；不得据此生成正式时效日期、推荐或宣称测评通过。
 
 ## 社区与许可
 

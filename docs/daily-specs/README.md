@@ -5,5 +5,6 @@
 | 任务 | 日期 | 范围 | 任务书来源 |
 | --- | --- | --- | --- |
 | LR-P0-01 | 2026-10-15 | GitHub 主仓库初始化：基础文档、Schema、校验器、测试及 CI | Human Maintainer 在本次执行会话提供的任务书；冻结基准见 ROADMAP.md |
+| [LR-P0-02](LR-P0-02.md) | 2026-10-16 | 法律 Skills 发现规范、候选清单、独立检查与离线测试/CI | Human Maintainer 会话授权 AUTHORIZED_TO_EXECUTE；执行范围与 DoD 见任务记录 |
 
 本索引不代表任务已完成验收；交付与 CI 证据以对应 PR 为准。后续获授权的任务书在此追加链接，公开版本不得包含密钥、敏感卷宗或 Holdout 内容。
