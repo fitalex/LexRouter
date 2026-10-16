@@ -1,0 +1,9 @@
+{
+  "id": "synthetic-missing-regulatory-as-of",
+  "name": "缺少时效锚点（合成测试）",
+  "description": "故意缺少 regulatory_as_of 的非法结构样本。",
+  "source_url": "https://example.com/synthetic-skill",
+  "jurisdiction": "CN-Mainland",
+  "business_categories": ["contract-review"],
+  "runtime": "codex-skill"
+}

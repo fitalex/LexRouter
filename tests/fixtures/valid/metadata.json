@@ -1,0 +1,10 @@
+{
+  "id": "synthetic-contract-review",
+  "name": "合成合同审查样本（仅测试）",
+  "description": "完全合成的元数据结构测试样本，不是已收录 Skill，不表示法律能力或时效已获核实。",
+  "source_url": "https://example.com/synthetic-skill",
+  "jurisdiction": "CN-Mainland",
+  "business_categories": ["contract-review"],
+  "regulatory_as_of": "2026-10-15",
+  "runtime": "codex-skill"
+}

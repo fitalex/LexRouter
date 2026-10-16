@@ -1,0 +1,10 @@
+{
+  "id": "synthetic-wrong-type",
+  "name": "错误类型（合成测试）",
+  "description": "business_categories 故意使用字符串而非数组。",
+  "source_url": "https://example.com/synthetic-skill",
+  "jurisdiction": "CN-Mainland",
+  "business_categories": "contract-review",
+  "regulatory_as_of": "2026-10-15",
+  "runtime": "codex-skill"
+}

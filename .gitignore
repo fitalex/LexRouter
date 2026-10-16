@@ -1,0 +1,34 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets/
+
+# Private materials must never be published (ignore rules are not a security boundary)
+private/
+holdout/
+data/raw/
+artifacts/private/
+
+# Temporary and editor files
+*.log
+*.tmp
+*.swp
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,9 @@
+{
+  "id": "synthetic-missing-jurisdiction",
+  "name": "缺少法域（合成测试）",
+  "description": "故意缺少 jurisdiction 的非法结构样本。",
+  "source_url": "https://example.com/synthetic-skill",
+  "business_categories": ["contract-review"],
+  "regulatory_as_of": "2026-10-15",
+  "runtime": "codex-skill"
+}
