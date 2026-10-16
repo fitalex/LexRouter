@@ -4,6 +4,8 @@
 
 ## Skills 收录
 
+LR-P0-03 的候选质量审计和 P1 准备另见 [P1_READINESS.md](docs/P1_READINESS.md)。新增或变更候选时，应同步准备记录、完整候选快照和证据；执行 `python scripts/validate_p1_readiness.py` 检查完整对应关系。原有 needs-evidence 不得静默升级授权，blocked/rejected 须列明证据、影响、下一步和责任方。ready-for-professional-review 仅允许提交专业复核，正式入库仍需法律专业证据与 Human Maintainer 的独立 PR 批准。
+
 发现阶段请先按 [DISCOVERY_PROTOCOL.md](docs/DISCOVERY_PROTOCOL.md) 向 `data/discovery/candidates.json` 提交来源、版本、核查状态与证据说明，并执行 `python scripts/validate_candidates.py data/discovery/candidates.json`。候选与正式目录使用独立契约；许可缺失或冲突、法域及法规时效未核实均须如实标记，不得把候选直接搬入 `skills/`。候选结构通过不构成正式入库或推荐。
 
 P0-01 不批量收录 Skills，正式目录整合在 P1 开展。后续收录时，每个 Skill 在 `skills/<id>/metadata.json` 提交一个 JSON 对象，按 [SCHEMA.md](docs/SCHEMA.md) 填写唯一标识、名称、描述、原始来源、法域、业务分类、法规时效锚点及运行载体。
@@ -21,6 +23,7 @@ P0-01 不批量收录 Skills，正式目录整合在 P1 开展。后续收录时
    ```sh
    python scripts/validate_skills.py skills
    python scripts/validate_candidates.py data/discovery/candidates.json
+   python scripts/validate_p1_readiness.py data/discovery/p1-readiness.json
    python -m unittest discover -s tests -v
    git diff --check
    ```

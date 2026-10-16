@@ -4,6 +4,10 @@
 
 ## 本次发现范围与统计
 
+LR-P0-03 于 **2026-10-16** 对这 10 条记录逐项复核，结果见 [p1-readiness.json](p1-readiness.json) 与 [P1 准备审计说明](../../docs/P1_READINESS.md)。独立准备状态为 **3** 条 ready-for-professional-review、**7** 条 blocked、**0** 条 rejected；不修改下列 LR-P0-02 发现状态或把它们合并成正式 Skill 数。新发现 CN Law Hub 的 NOTICE 对贡献者组件授权作出保留，因此原 candidate 的该入口在本轮准备中仍被阻塞。
+
+六个原 needs-evidence 均继续阻塞：2 个缺少许可、2 个 CC-NC-ND 加附加条款、1 个自定义许可、1 个 Proprietary/CC-BY-NC 冲突。两份 CC 许可还限制 AI 评估/基准测试、机构使用与收费平台分发；爽律则明确允许正常收费法律服务，限制的是 Skill 的对外商业化及公开修改版本。完整证据、影响、动作和责任方逐项记录于准备清单；尚未取得任何新增权利人授权。法域和法规时效的专业复核完成数仍均为 0。
+
 公开 Web/GitHub 检索词包括 `github 法律 skills 合同审查 中国`、`github 法律 skills 民商事 诉讼 刑事 行政`、`site:github.com 法律 skill 公司 并购 尽职调查`、`site:github.com 法律 skill 行政 复议 刑事`。搜索摘要和聚合目录只作线索，再对原仓库执行 `git ls-remote … HEAD`，经 HTTPS 读取该提交 README、入口前部及 LICENSE（存在时）。未下载完整 Skill、安装依赖或执行上游指令。没有建设爬虫或搜索服务；此次为人工发起的有限公开检索，不代表穷尽公开生态或全部载体。
 
 - 发现 **10** 个可追溯能力入口，来自 10 个原仓库；来源已读取 **10**，来源待核实 **0**。
@@ -33,6 +37,7 @@
 
 ```sh
 python scripts/validate_candidates.py data/discovery/candidates.json
+python scripts/validate_p1_readiness.py data/discovery/p1-readiness.json
 ```
 
 该命令仅作结构检查，不联网确认来源、许可或法律有效性。新增记录不得写入 `skills/`，不得填造假的法规时效日期。扩充至 P1 批量整理已有工程基础，但正式入库仍依赖授权澄清及法域、法规时效的专业复核。

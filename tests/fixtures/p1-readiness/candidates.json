@@ -1,0 +1,48 @@
+{
+  "format_version": 1,
+  "candidates": [
+    {
+      "candidate_id": "synthetic-p1-review",
+      "name": "Synthetic candidate",
+      "description": "Synthetic offline fixture; no real legal capability or verification.",
+      "source_url": "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/SKILL.md",
+      "maintainer": "Synthetic publisher",
+      "business_categories": [
+        "contract-review"
+      ],
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/README.md",
+        "notes": "No jurisdiction evidence in this synthetic fixture."
+      },
+      "runtime": "prompt",
+      "runtime_evidence": "Synthetic prompt fixture.",
+      "source_verification": {
+        "status": "verified-public",
+        "checked_at": "2026-10-16",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence_urls": [
+          "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/SKILL.md"
+        ],
+        "notes": "No network verification."
+      },
+      "authorization": {
+        "status": "verified",
+        "license": "MIT",
+        "evidence_urls": [
+          "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/LICENSE"
+        ],
+        "notes": "No permission verified."
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "No legal currency review."
+      },
+      "candidate_status": "candidate",
+      "evidence_notes": "Entirely synthetic; not a legal review or real candidate."
+    }
+  ]
+}

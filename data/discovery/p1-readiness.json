@@ -1,0 +1,1225 @@
+{
+  "format_version": 1,
+  "task": "LR-P0-03",
+  "audited_at": "2026-10-16",
+  "records": [
+    {
+      "candidate_id": "discovery-contract-review",
+      "candidate_snapshot_sha256": "e8dcdcff1ec8f121a6fdb3bcf7b62a31f617e89d65839d0f401c1c4a740199ab",
+      "source_url": "https://github.com/NOMOREKKK/contract-review-skill/blob/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3/SKILL.md",
+      "revision": "f73f92b6341ef4e9f1765434bf348b1acb4fb1d3",
+      "business_categories": [
+        "contract-review"
+      ],
+      "category_evidence": "SKILL.md L30-L80 的条款、金额与冲突审查步骤支持合同审查分类；未据股权等关键词扩展公司并购分类。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/NOMOREKKK/contract-review-skill/blob/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "b1e3ff93439c32bcc142a241ddf400b22e13ede1",
+          "locator": "L1-L80（入口有限分段，非运行核验）",
+          "finding": "入口包含澄清立场、解析合同、逐条审查与批注输出的明确步骤，可辨识为独立工作流；入口结构存在不代表正确性或可运行。"
+        },
+        {
+          "url": "https://github.com/NOMOREKKK/contract-review-skill/blob/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "ff190f543bc43ec46a066f421f844f90b505b58b",
+          "locator": "L1-L160、L161-L230、L200-L280",
+          "finding": "README 安装段声明 ~/.claude/skills/，依赖 Python 3.10+ 和 Windows officecli；示例复制的子目录与根入口位置不一致。P1 使用前由工程维护者更正配置并确认宿主工具能力，未运行验证。"
+        },
+        {
+          "url": "https://github.com/NOMOREKKK/contract-review-skill/blob/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "1c3ef4997530ff41a93fb627c8f6d31d85d7a2cd",
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "MIT 文本明确覆盖软件和关联文档，保留版权及许可声明；本次未发现相反声明。外部 officecli、检索/OCR 服务与材料另受各自条款约束。"
+        },
+        {
+          "url": "https://api.github.com/repos/NOMOREKKK/contract-review-skill/git/trees/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；35 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "入口包含澄清立场、解析合同、逐条审查与批注输出的明确步骤，可辨识为独立工作流；入口结构存在不代表正确性或可运行。"
+      },
+      "authorization_review": {
+        "status": "clear",
+        "license": "MIT",
+        "evidence_urls": [
+          "https://github.com/NOMOREKKK/contract-review-skill/blob/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3/LICENSE"
+        ],
+        "restrictions": [
+          "后续复制须保留原版权、许可证及适用声明；外部材料和服务不自动取得授权。"
+        ],
+        "conclusion": "MIT 文本明确覆盖软件和关联文档，保留版权及许可声明；本次未发现相反声明。外部 officecli、检索/OCR 服务与材料另受各自条款约束。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/NOMOREKKK/contract-review-skill/blob/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3/README.md",
+        "notes": "README「适用」明确写明中国大陆法域。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "claude-skill",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/NOMOREKKK/contract-review-skill/blob/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3/SKILL.md",
+          "https://github.com/NOMOREKKK/contract-review-skill/blob/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3/README.md"
+        ],
+        "conclusion": "README 安装段声明 ~/.claude/skills/，依赖 Python 3.10+ 和 Windows officecli；示例复制的子目录与根入口位置不一致。P1 使用前由工程维护者更正配置并确认宿主工具能力，未运行验证。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "核对违约金、利息及保证金阈值的适用条件，避免把经验阈值写成普遍强制规则。",
+          "逐条核验合同分类规则、民法典及司法解释的生效、废止与过渡规定。"
+        ]
+      },
+      "blockers": [],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定是否安排专业复核；专业依据齐备后另开 P1 入库 PR，最终批准和合并仍由 Human Maintainer 决定。"
+        },
+        {
+          "owner": "engineering-maintainer",
+          "action": "在 P1 任何安装前校正 README 路径与实际根入口的对应关系，逐项确认 officecli/OCR 依赖；本次不安装或执行。"
+        }
+      ],
+      "p1_status": "ready-for-professional-review"
+    },
+    {
+      "candidate_id": "discovery-contract-review-zh",
+      "candidate_snapshot_sha256": "a159d3a3490f66047e8d596986c3d0cdf849bd4474bf90d9adab76bfdf445f87",
+      "source_url": "https://github.com/ThomasLiu/contract-review-zh/blob/b8382b59d2ba3157125a779a0abf251ec0c29717/SKILL.md",
+      "revision": "b8382b59d2ba3157125a779a0abf251ec0c29717",
+      "business_categories": [
+        "contract-review"
+      ],
+      "category_evidence": "SKILL.md L24-L55 定义委托律师合同输入、七维审查及风险清单/修改建议，支持 contract-review；来源自身评分不纳入审计结论。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/ThomasLiu/contract-review-zh/blob/b8382b59d2ba3157125a779a0abf251ec0c29717/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "bd7a4395c3104eb3f5fc2c5cbf8ae7568b56784d",
+          "locator": "L1-L80（入口有限分段，非运行核验）",
+          "finding": "具备合同类型识别、加载检查规则、逐项审查、输出修改建议的独立流程；未验证其效果或评分。"
+        },
+        {
+          "url": "https://github.com/ThomasLiu/contract-review-zh/blob/b8382b59d2ba3157125a779a0abf251ec0c29717/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "57b2f9f6d3fc9207433db6d588977c6486382066",
+          "locator": "L1-L160（不存在时为固定路径 404）",
+          "finding": "README L19-L33 明示 Claude Code/Claude.ai 安装；入口使用 Read 及可选图像工具，具体工具在宿主中的可用性未经运行确认。"
+        },
+        {
+          "url": "https://github.com/ThomasLiu/contract-review-zh/blob/b8382b59d2ba3157125a779a0abf251ec0c29717/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "LICENSE 与 README 为 Apache-2.0，后续使用须保留许可、版权及适用 NOTICE，修改须注明；不据此推定小红书笔记作者的内容也被授权。"
+        },
+        {
+          "url": "https://api.github.com/repos/ThomasLiu/contract-review-zh/git/trees/b8382b59d2ba3157125a779a0abf251ec0c29717?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；16 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "具备合同类型识别、加载检查规则、逐项审查、输出修改建议的独立流程；未验证其效果或评分。"
+      },
+      "authorization_review": {
+        "status": "clear",
+        "license": "Apache-2.0",
+        "evidence_urls": [
+          "https://github.com/ThomasLiu/contract-review-zh/blob/b8382b59d2ba3157125a779a0abf251ec0c29717/LICENSE"
+        ],
+        "restrictions": [
+          "后续复制须保留原版权、许可证及适用声明；外部材料和服务不自动取得授权。"
+        ],
+        "conclusion": "LICENSE 与 README 为 Apache-2.0，后续使用须保留许可、版权及适用 NOTICE，修改须注明；不据此推定小红书笔记作者的内容也被授权。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/ThomasLiu/contract-review-zh/blob/b8382b59d2ba3157125a779a0abf251ec0c29717/README.md",
+        "notes": "README「局限性」明确限定中国大陆法律，排除港澳台及海外实务。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "claude-skill",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/ThomasLiu/contract-review-zh/blob/b8382b59d2ba3157125a779a0abf251ec0c29717/SKILL.md",
+          "https://github.com/ThomasLiu/contract-review-zh/blob/b8382b59d2ba3157125a779a0abf251ec0c29717/README.md"
+        ],
+        "conclusion": "README L19-L33 明示 Claude Code/Claude.ai 安装；入口使用 Read 及可选图像工具，具体工具在宿主中的可用性未经运行确认。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "重点核对律师收费、风险代理比例与禁止范围、委托解除和退费规则的现行依据与适用前提。",
+          "审查来源所称 70 篇笔记的证据可靠性及任何拟复制资料的第三方权利；自述调研与平台热度不作法律认证。"
+        ]
+      },
+      "blockers": [],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定是否安排专业复核；专业依据齐备后另开 P1 入库 PR，最终批准和合并仍由 Human Maintainer 决定。"
+        },
+        {
+          "owner": "engineering-maintainer",
+          "action": "若后续拟复制 references 中的笔记简述或例子，单独核实第三方权利；当前仅保留入口链接与原创审计元数据。"
+        }
+      ],
+      "p1_status": "ready-for-professional-review"
+    },
+    {
+      "candidate_id": "discovery-china-legal-counsel",
+      "candidate_snapshot_sha256": "3723a2c135768e69a37c457cfa9938640864a5881c7c490551037f9e68700104",
+      "source_url": "https://github.com/Daknniel-0881/qulv-china-legal-counsel-skill/blob/73ff53a857ffbdd91296bf41ed5bcc1294bc2042/SKILL.md",
+      "revision": "73ff53a857ffbdd91296bf41ed5bcc1294bc2042",
+      "business_categories": [
+        "corporate-compliance",
+        "contract-review",
+        "legal-research"
+      ],
+      "category_evidence": "SKILL.md L21-L40 的任务分类及 Required Workflow 支持合同审查、企业合规、法律检索三类；不推定其知识库完整。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/Daknniel-0881/qulv-china-legal-counsel-skill/blob/73ff53a857ffbdd91296bf41ed5bcc1294bc2042/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "7cc17878ab5bca101ec178dd97e682134b0fd0eb",
+          "locator": "L1-L80（入口有限分段，非运行核验）",
+          "finding": "具有事实澄清、检索依据、风险分级、引用复核与人工升级的独立法律辅助工作流；知识库准确性未验证。"
+        },
+        {
+          "url": "https://github.com/Daknniel-0881/qulv-china-legal-counsel-skill/blob/73ff53a857ffbdd91296bf41ed5bcc1294bc2042/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "a7cfca9e87278ee5ab789a53d55b462d89b862a0",
+          "locator": "L1-L160（不存在时为固定路径 404）",
+          "finding": "README 声明 Codex Skill 与 ~/.codex/skills/；入口 L19 含作者本机绝对知识库路径。后续需验证相对路径和 --kb 参数适配，未验证跨机器运行。"
+        },
+        {
+          "url": "https://github.com/Daknniel-0881/qulv-china-legal-counsel-skill/blob/73ff53a857ffbdd91296bf41ed5bcc1294bc2042/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "135c200182eb6e3d75ca3ef618ab7af43e6d7e7e",
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "固定提交根 LICENSE 为 MIT、署名 Suze；未发现入口和 README 的相反许可声明。法律数据库与知识库材料的权利不由根 MIT 自动确认。"
+        },
+        {
+          "url": "https://api.github.com/repos/Daknniel-0881/qulv-china-legal-counsel-skill/git/trees/73ff53a857ffbdd91296bf41ed5bcc1294bc2042?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；2356 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "具有事实澄清、检索依据、风险分级、引用复核与人工升级的独立法律辅助工作流；知识库准确性未验证。"
+      },
+      "authorization_review": {
+        "status": "clear",
+        "license": "MIT",
+        "evidence_urls": [
+          "https://github.com/Daknniel-0881/qulv-china-legal-counsel-skill/blob/73ff53a857ffbdd91296bf41ed5bcc1294bc2042/LICENSE"
+        ],
+        "restrictions": [
+          "后续复制须保留原版权、许可证及适用声明；外部材料和服务不自动取得授权。"
+        ],
+        "conclusion": "固定提交根 LICENSE 为 MIT、署名 Suze；未发现入口和 README 的相反许可声明。法律数据库与知识库材料的权利不由根 MIT 自动确认。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/Daknniel-0881/qulv-china-legal-counsel-skill/blob/73ff53a857ffbdd91296bf41ed5bcc1294bc2042/README.md",
+        "notes": "README 开头和入口 Core Rules 明确默认中国大陆法律。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "codex-skill",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/Daknniel-0881/qulv-china-legal-counsel-skill/blob/73ff53a857ffbdd91296bf41ed5bcc1294bc2042/SKILL.md",
+          "https://github.com/Daknniel-0881/qulv-china-legal-counsel-skill/blob/73ff53a857ffbdd91296bf41ed5bcc1294bc2042/README.md"
+        ],
+        "conclusion": "README 声明 Codex Skill 与 ~/.codex/skills/；入口 L19 含作者本机绝对知识库路径。后续需验证相对路径和 --kb 参数适配，未验证跨机器运行。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "逐项核验合同、广告、数据、劳动及公司治理规则的法域、现行文本与场景适用。",
+          "抽查知识库来源与引用是否真正支持结论，确认重大事项人工升级边界。"
+        ]
+      },
+      "blockers": [],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "决定是否安排专业复核；专业依据齐备后另开 P1 入库 PR，最终批准和合并仍由 Human Maintainer 决定。"
+        },
+        {
+          "owner": "engineering-maintainer",
+          "action": "P1 使用前处理入口中的作者本机知识库路径，确认脚本默认相对路径与配置；不将来源自述视为已测试兼容性。"
+        }
+      ],
+      "p1_status": "ready-for-professional-review"
+    },
+    {
+      "candidate_id": "discovery-cn-law-hub",
+      "candidate_snapshot_sha256": "16b8b9125207018b9b4e0e974ed177155228a16d3b6f1f0e504cf4cda3b6a762",
+      "source_url": "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/SKILL.md",
+      "revision": "8a62d5cbec94489dcb7a661dd0df411742a2a1e2",
+      "business_categories": [
+        "legal-research"
+      ],
+      "category_evidence": "SKILL.md L1-L80 中的来源选择、检索与有效性过滤步骤支持 legal-research。仅审计 Phase 1 指令工作流，不开展数据源测评或建设抓取平台。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "bb9fccf5a999adceee3dc90846e8415802035f5f",
+          "locator": "L1-L80（入口有限分段，非运行核验）",
+          "finding": "入口具有检索策略、法条级查询及有效性规则，可辨识为工作流；官方来源的存在不证明时效核查已完成。"
+        },
+        {
+          "url": "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "2ac261626fc5500477de715822e5e58325fda464",
+          "locator": "L1-L160、L160-L360、L370-L520",
+          "finding": "README 声明 Claude Code/Codex/Kimi 多宿主，原候选按主要载体记 claude-skill。当前固定提交与 README 所推荐旧 release 的许可包不同，禁止把两者互换；未安装、调用 MCP 或访问官方数据接口。"
+        },
+        {
+          "url": "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "LICENSE 为 Apache-2.0，但 NOTICE L20-L39 将其效力限定于作者有权许可的部分，并明确未授权贡献者组件不得据该声明取得权限；README 对整体 Apache 的表述不足以补齐此范围缺口。保留原 candidate 发现状态，本次准备结论单独阻塞。"
+        },
+        {
+          "url": "https://api.github.com/repos/ZongziForu/cn-law-hub/git/trees/8a62d5cbec94489dcb7a661dd0df411742a2a1e2?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；87 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        },
+        {
+          "url": "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/NOTICE",
+          "kind": "notice",
+          "access": "read",
+          "blob_sha": "0cfc3a8273412fdf2fdc0b54d7b4be17388af670",
+          "locator": "L1-L40（全文）",
+          "finding": "NOTICE L20-L39 对作者有权许可部分与未明确授权的贡献者组件作出区分；需要组件级授权核查。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "入口具有检索策略、法条级查询及有效性规则，可辨识为工作流；官方来源的存在不证明时效核查已完成。"
+      },
+      "authorization_review": {
+        "status": "scope-unclear",
+        "license": "Apache-2.0",
+        "evidence_urls": [
+          "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/LICENSE",
+          "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/NOTICE",
+          "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/README.md"
+        ],
+        "restrictions": [
+          "Apache-2.0 不自动覆盖 NOTICE 排除的贡献者组件或官方数据库内容。",
+          "旧 v2.0.2 release 附历史临时竞赛许可，当前提交的判断不能直接套用压缩包。"
+        ],
+        "conclusion": "LICENSE 为 Apache-2.0，但 NOTICE L20-L39 将其效力限定于作者有权许可的部分，并明确未授权贡献者组件不得据该声明取得权限；README 对整体 Apache 的表述不足以补齐此范围缺口。保留原 candidate 发现状态，本次准备结论单独阻塞。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/README.md",
+        "notes": "README 开头明确为中国大陆法规检索 Skill，并列出官方法规来源。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "claude-skill",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/SKILL.md",
+          "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/README.md"
+        ],
+        "conclusion": "README 声明 Claude Code/Codex/Kimi 多宿主，原候选按主要载体记 claude-skill。当前固定提交与 README 所推荐旧 release 的许可包不同，禁止把两者互换；未安装、调用 MCP 或访问官方数据接口。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "专业复核检索策略能否支持法规状态与过渡规则核对；来源自称现行有效不构成已验证。",
+          "审查官方数据库使用与资料再利用范围，避免混同工作流许可和外部数据许可。"
+        ]
+      },
+      "blockers": [
+        {
+          "code": "contributor-license-scope",
+          "evidence": "NOTICE L20-L39 明确保留第三方贡献权利；未提供明确许可的贡献不能由该 NOTICE 代为授权。完整树中仅识别到根 LICENSE，未找到这些组件的独立许可文件。",
+          "evidence_urls": [
+            "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/NOTICE",
+            "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/README.md",
+            "https://github.com/ZongziForu/cn-law-hub/blob/8a62d5cbec94489dcb7a661dd0df411742a2a1e2/LICENSE",
+            "https://api.github.com/repos/ZongziForu/cn-law-hub/git/trees/8a62d5cbec94489dcb7a661dd0df411742a2a1e2?recursive=1"
+          ],
+          "impact": "不能把当前整包视为已完成授权核对，完整工作流所调用的贡献者脚本需要逐文件确认。",
+          "next_action": "Human Maintainer 决定只审查可分离且权利明确的入口，或要求贡献者提供对应文件和固定提交的书面授权/许可；补齐组件与许可对应关系后重新审计。",
+          "owner": "Human Maintainer"
+        }
+      ],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "确定阻塞问题的处理路径、指派责任人并审阅补证；解除阻塞后重新审计，不自动入库。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "Human Maintainer 决定只审查可分离且权利明确的入口，或要求贡献者提供对应文件和固定提交的书面授权/许可；补齐组件与许可对应关系后重新审计。"
+        }
+      ],
+      "p1_status": "blocked"
+    },
+    {
+      "candidate_id": "discovery-litigation-hub",
+      "candidate_snapshot_sha256": "6cf30bfad7d65c8d2a1902c47c4afb0a077cd442c8f6d2c76d04d84b7a33f426",
+      "source_url": "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/skills/litigation-hub/SKILL.md",
+      "revision": "b15b762105a9331c3cd32e5c72ef32a8a8e3f58f",
+      "business_categories": [
+        "civil-commercial-litigation"
+      ],
+      "category_evidence": "SKILL.md 的民商事诉讼导览、答辩/起诉等编排序列支持 civil-commercial-litigation；仍只计一个入口，不展开套件子技能数。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/skills/litigation-hub/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "9e75f765f5782025d0cf3db3e3ef6ceab771b4b0",
+          "locator": "L1-L80（入口有限分段，非运行核验）",
+          "finding": "入口真实存在，但主要识别意图并转向下游技能，仅提供编排序列；尚不足以把该入口认证为可独立完成实体法律分析的 Skill。"
+        },
+        {
+          "url": "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "8487a9d621d52ce0c5c68a8a668f7141efd1e54a",
+          "locator": "L1-L160（不存在时为固定路径 404）",
+          "finding": "README 声明支持 MCP 的 Agent，入口要求后端健康检查并可降级；记录 other，不推定任何具体 Claude/Codex 宿主已兼容。"
+        },
+        {
+          "url": "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "e330d3e96e04d8c47adbc6f8b33f8a546ceec33c",
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "LICENSE 不只有 CC-BY-NC-ND-4.0：附加条款还涉及 AI 测评/基准测试、收费平台、企业和行政机关使用及品牌背书，且包含条款优先顺序表述；这些解释与目标使用须由专业人员判断。"
+        },
+        {
+          "url": "https://api.github.com/repos/Youchu-lawhub/cn-litigation-toolkit/git/trees/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；108 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "orchestration-only",
+        "conclusion": "入口真实存在，但主要识别意图并转向下游技能，仅提供编排序列；尚不足以把该入口认证为可独立完成实体法律分析的 Skill。"
+      },
+      "authorization_review": {
+        "status": "restricted",
+        "license": "CC-BY-NC-ND-4.0",
+        "evidence_urls": [
+          "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/LICENSE"
+        ],
+        "restrictions": [
+          "非商业、禁止公开分发修改/翻译/节选版本；收费法律服务等场景受限。",
+          "附加条款列入 AI evaluating/benchmarking、RAG/训练用途，未经书面同意受限。",
+          "禁止分发至收费平台，并将企业内部、行政机关与专业服务使用纳入需另行授权范围。",
+          "禁止暗示作者背书；基础 CC 与附加条款优先表述需法律解释。"
+        ],
+        "conclusion": "LICENSE 不只有 CC-BY-NC-ND-4.0：附加条款还涉及 AI 测评/基准测试、收费平台、企业和行政机关使用及品牌背书，且包含条款优先顺序表述；这些解释与目标使用须由专业人员判断。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/README.md",
+        "notes": "README 和入口描述均明示中国民商事诉讼，具体适用仍需法律专家核实。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "other",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/skills/litigation-hub/SKILL.md",
+          "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/README.md"
+        ],
+        "conclusion": "README 声明支持 MCP 的 Agent，入口要求后端健康检查并可降级；记录 other，不推定任何具体 Claude/Codex 宿主已兼容。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "专业复核诉讼编排的程序顺序、期限与文书核验条件。",
+          "解释 CC 基础文本与附加 AI 测评及机构使用条款的适用关系，不由 Codex 判定效力。"
+        ]
+      },
+      "blockers": [
+        {
+          "code": "restricted-license-and-evaluation",
+          "evidence": "LICENSE 的 NonCommercial、NoDerivatives 与 ADDITIONAL TERMS 1–3 明列商用、演绎、AI 测评和平台/机构使用限制。",
+          "evidence_urls": [
+            "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/LICENSE"
+          ],
+          "impact": "不能默认用于后续公开改写、目录包分发或控制变量测评；不选用较宽松的 CC 标签绕过附加条款。",
+          "next_action": "Human Maintainer 确定目标使用范围，由法律专业人员解释完整条款；需要时向权利人取得明确涵盖改编、分发、评测的书面许可。",
+          "owner": "Human Maintainer"
+        },
+        {
+          "code": "independent-entry-evidence",
+          "evidence": "入口路由逻辑和典型工作流依赖下游技能完成起诉、答辩与核验；本次未逐项审查下游入口和依赖。",
+          "evidence_urls": [
+            "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/skills/litigation-hub/SKILL.md",
+            "https://github.com/Youchu-lawhub/cn-litigation-toolkit/blob/b15b762105a9331c3cd32e5c72ef32a8a8e3f58f/README.md"
+          ],
+          "impact": "来源存在已确认，独立法律能力边界仍未满足准备门槛。",
+          "next_action": "工程维护者提出可审查的编排边界或单个下游入口及固定版本证据；是否作为独立目录对象由 Human Maintainer 决定，禁止按子技能数量自动扩充。",
+          "owner": "engineering-maintainer"
+        }
+      ],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "确定阻塞问题的处理路径、指派责任人并审阅补证；解除阻塞后重新审计，不自动入库。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "Human Maintainer 确定目标使用范围，由法律专业人员解释完整条款；需要时向权利人取得明确涵盖改编、分发、评测的书面许可。"
+        },
+        {
+          "owner": "engineering-maintainer",
+          "action": "工程维护者提出可审查的编排边界或单个下游入口及固定版本证据；是否作为独立目录对象由 Human Maintainer 决定，禁止按子技能数量自动扩充。"
+        }
+      ],
+      "p1_status": "blocked"
+    },
+    {
+      "candidate_id": "discovery-litigation-prep-cn",
+      "candidate_snapshot_sha256": "2e3577c18c82bc9fc0fb897db52cfed93c876069e326b9fa19981fa59eadfdf4",
+      "source_url": "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/skill/SKILL.md",
+      "revision": "a8ce2f2490cd3ee688bbee8e41add39068468b67",
+      "business_categories": [
+        "civil-commercial-litigation"
+      ],
+      "category_evidence": "skill/SKILL.md 的案由、请求权基础、要件事实与证据清单步骤直接支持 civil-commercial-litigation。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/skill/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "e1cf535b79b92c395a15517b565192a1f7acb472",
+          "locator": "L1-L80（入口有限分段，非运行核验）",
+          "finding": "入口包含事实整理、案由定位、请求权基础与要件证据输出，属于可辨识独立工作流；未确认作者执业身份或规则准确性。"
+        },
+        {
+          "url": "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "6a3bb3d7c82f160cf3f0d5443fffff0312af53ba",
+          "locator": "L1-L273（全文）",
+          "finding": "README 建议导入 Agent 系统指令/自定义助手；保留 prompt，不推定 Claude 或 Codex 原生 Skill 兼容。"
+        },
+        {
+          "url": "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/LICENSE",
+          "kind": "license",
+          "access": "not-found",
+          "blob_sha": null,
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "固定提交 LICENSE 请求 404，递归树完整且未找到名称含 license/licence/notice 的文件；README 未给出明确再分发授权。仅限本版本未找到许可，不推定作者无权或整个生态无许可。"
+        },
+        {
+          "url": "https://api.github.com/repos/yxk-lawyer/litigation-prep-skill-cn/git/trees/a8ce2f2490cd3ee688bbee8e41add39068468b67?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；8 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "入口包含事实整理、案由定位、请求权基础与要件证据输出，属于可辨识独立工作流；未确认作者执业身份或规则准确性。"
+      },
+      "authorization_review": {
+        "status": "missing-license",
+        "license": "not-identified",
+        "evidence_urls": [
+          "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/LICENSE"
+        ],
+        "restrictions": [
+          "公开仓库可读取不等于允许复制、改编或分发。"
+        ],
+        "conclusion": "固定提交 LICENSE 请求 404，递归树完整且未找到名称含 license/licence/notice 的文件；README 未给出明确再分发授权。仅限本版本未找到许可，不推定作者无权或整个生态无许可。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/README.md",
+        "notes": "README 使用中国民事案由体系，入口明确面向中国民事诉讼；非基于中文语言推断。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "prompt",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/skill/SKILL.md",
+          "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/README.md"
+        ],
+        "conclusion": "README 建议导入 Agent 系统指令/自定义助手；保留 prompt，不推定 Claude 或 Codex 原生 Skill 兼容。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "核验案由体系版本、请求权基础与构成要件规则，确认其与证据清单的对应。",
+          "复核来源所称律师整理规则与参考书资料的权利边界，作者资质仍待独立核实。"
+        ]
+      },
+      "blockers": [
+        {
+          "code": "missing-license",
+          "evidence": "固定提交根 LICENSE 为 404；完整树 8 项中无许可/NOTICE 文件，README 无明确授权。",
+          "evidence_urls": [
+            "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/LICENSE",
+            "https://github.com/yxk-lawyer/litigation-prep-skill-cn/blob/a8ce2f2490cd3ee688bbee8e41add39068468b67/README.md",
+            "https://api.github.com/repos/yxk-lawyer/litigation-prep-skill-cn/git/trees/a8ce2f2490cd3ee688bbee8e41add39068468b67?recursive=1"
+          ],
+          "impact": "缺少复制、改写、分发和后续测试的明确授权依据，仅保留链接与原创审计简述。",
+          "next_action": "由 Human Maintainer 协调权利人明确适用于该提交及相关规则库的许可或书面授权；取得前保持 needs-evidence 和 blocked。",
+          "owner": "upstream-rightsholder"
+        }
+      ],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "确定阻塞问题的处理路径、指派责任人并审阅补证；解除阻塞后重新审计，不自动入库。"
+        },
+        {
+          "owner": "upstream-rightsholder",
+          "action": "由 Human Maintainer 协调权利人明确适用于该提交及相关规则库的许可或书面授权；取得前保持 needs-evidence 和 blocked。"
+        }
+      ],
+      "p1_status": "blocked"
+    },
+    {
+      "candidate_id": "discovery-law-ye",
+      "candidate_snapshot_sha256": "aa658f38a31c6c2ba3265e60120cf9badb8fff953cb3b92d1b72a619b68f205b",
+      "source_url": "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/SKILL.md",
+      "revision": "790b83f1464d58557d23da0392a90fcfc524dd34",
+      "business_categories": [
+        "criminal-administrative"
+      ],
+      "category_evidence": "README 刑诉流程和行政复议/诉讼段及 SKILL.md L400-L480 的模块调度支持 criminal-administrative；不按宣称模块数扩增条目。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "6707fe3e3fada9b72120a24ef61532fa4a6f7b32",
+          "locator": "L1-L80、L81-L115、L150-L210、L260-L340、L400-L480（有限分段阅读，非全文）",
+          "finding": "入口及文档提供问题定性、知识模块加载、法律依据分析与实务输出线索，存在可辨识工作流；法条数量、律师级等自述不构成专业认证。"
+        },
+        {
+          "url": "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "95e07c9446c8e0528ca508b544a6f5ad004d9bc5",
+          "locator": "L1-L498（全文）",
+          "finding": "README 开头标 WorkBuddy/OpenClaw，后段还出现 Hermes，安装路径为 ~/.workbuddy/skills/law-ye；记录 other。版本和宿主声明不完全统一，不能据此确认兼容。"
+        },
+        {
+          "url": "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/LICENSE",
+          "kind": "license",
+          "access": "not-found",
+          "blob_sha": null,
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "LICENSE 请求 404，固定提交完整递归树 72 项中未找到许可/NOTICE 文件；README 未识别明确复制和分发许可。许可范围待权利人确认。"
+        },
+        {
+          "url": "https://api.github.com/repos/Jarvis-starcloud/law-ye-skill/git/trees/790b83f1464d58557d23da0392a90fcfc524dd34?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；72 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "入口及文档提供问题定性、知识模块加载、法律依据分析与实务输出线索，存在可辨识工作流；法条数量、律师级等自述不构成专业认证。"
+      },
+      "authorization_review": {
+        "status": "missing-license",
+        "license": "not-identified",
+        "evidence_urls": [
+          "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/LICENSE"
+        ],
+        "restrictions": [
+          "未明确授予复制、改编、再分发或商业使用权利。"
+        ],
+        "conclusion": "LICENSE 请求 404，固定提交完整递归树 72 项中未找到许可/NOTICE 文件；README 未识别明确复制和分发许可。许可范围待权利人确认。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/README.md",
+        "notes": "README 明列中国刑法、刑诉、行政诉讼法与行政复议法版本，入口描述中国法律体系；适用范围未经专家复核。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "other",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/SKILL.md",
+          "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/README.md"
+        ],
+        "conclusion": "README 开头标 WorkBuddy/OpenClaw，后段还出现 Hermes，安装路径为 ~/.workbuddy/skills/law-ye；记录 other。版本和宿主声明不完全统一，不能据此确认兼容。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "逐条核验刑法、刑诉、行政复议、行政诉讼及程序期限，不能用文档版本标签代替法规时效。",
+          "专业人员确认内置法律文本完整性与引文准确性，单独处理知识材料授权。"
+        ]
+      },
+      "blockers": [
+        {
+          "code": "missing-license",
+          "evidence": "固定提交根 LICENSE 为 404，完整树未识别许可/NOTICE 文件，README 仍未给出明确授权。",
+          "evidence_urls": [
+            "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/LICENSE",
+            "https://github.com/Jarvis-starcloud/law-ye-skill/blob/790b83f1464d58557d23da0392a90fcfc524dd34/README.md",
+            "https://api.github.com/repos/Jarvis-starcloud/law-ye-skill/git/trees/790b83f1464d58557d23da0392a90fcfc524dd34?recursive=1"
+          ],
+          "impact": "无法确认工作流及随附知识材料的使用授权；不能转为完整分发包或执行测评。",
+          "next_action": "由 Human Maintainer 向权利人取得该提交与知识材料的许可范围；工程维护者随后复核宿主和版本声明，未获证据前不升级状态。",
+          "owner": "upstream-rightsholder"
+        }
+      ],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "确定阻塞问题的处理路径、指派责任人并审阅补证；解除阻塞后重新审计，不自动入库。"
+        },
+        {
+          "owner": "upstream-rightsholder",
+          "action": "由 Human Maintainer 向权利人取得该提交与知识材料的许可范围；工程维护者随后复核宿主和版本声明，未获证据前不升级状态。"
+        }
+      ],
+      "p1_status": "blocked"
+    },
+    {
+      "candidate_id": "discovery-shuanglv",
+      "candidate_snapshot_sha256": "eaa19c9b9f068be559a3db219c08b493cd8a6632dba9861e589a172d1570c37e",
+      "source_url": "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/runtime/shuanglv-legal-skills/SKILL.md",
+      "revision": "4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f",
+      "business_categories": [
+        "criminal-administrative",
+        "civil-commercial-litigation",
+        "contract-review",
+        "legal-research"
+      ],
+      "category_evidence": "入口 Scope/Activation 及 Task Frame 对刑事、民商事争议、合同和法律研究的任务描述支持原四类分类；不推定独立企业合规或行政诉讼模块。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/runtime/shuanglv-legal-skills/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "c9f5138753aa1a5954d50e1808b9d323a8e496ec",
+          "locator": "L1-L80（入口有限分段，非运行核验）",
+          "finding": "具备事实/证据/研究/推理/策略/文书和交付控制的工作流组织；作者身份、终审人及专业头衔自述均未经独立认证。"
+        },
+        {
+          "url": "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "6240191b2ae9a5192c29b5db3cf734514e2a3aa1",
+          "locator": "L1-L160、L160-L360",
+          "finding": "入口 compatibility 声明 Agent Skills-compatible hosts，OCR、检索、Office 和多模态按宿主能力适配；保留 other，未承诺任何具体宿主已经测试。"
+        },
+        {
+          "url": "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "e30bcd6cca7a9d5b657774d3a5dcf429159d9cfe",
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "根 LICENSE、运行包 LICENSE 和 NOTICE 均为 ShuangLaw Professional Use License 1.0；正常收费法律服务被明确允许，但对外商业化、公开修改版本及品牌使用另有限制，不能笼统记为完全禁止商用。"
+        },
+        {
+          "url": "https://api.github.com/repos/zj-ai-lab/shuanglv-legal-skills/git/trees/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；104 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        },
+        {
+          "url": "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/NOTICE",
+          "kind": "notice",
+          "access": "read",
+          "blob_sha": "7a0cb2f9d6c719f7609fb6054b5a9b70ffa1949b",
+          "locator": "L1-L9（全文）",
+          "finding": "声明当前版本的自定义许可、普通收费法律服务例外及外部产品化限制。"
+        },
+        {
+          "url": "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/runtime/shuanglv-legal-skills/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "b248543a84d74c7eda5a3a1db7f30019fd7ee051",
+          "locator": "L1-L45（全文）",
+          "finding": "运行包随附同名自定义许可；内外部使用、改编、商业集成与品牌均有边界。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "具备事实/证据/研究/推理/策略/文书和交付控制的工作流组织；作者身份、终审人及专业头衔自述均未经独立认证。"
+      },
+      "authorization_review": {
+        "status": "restricted",
+        "license": "ShuangLaw Professional Use License 1.0",
+        "evidence_urls": [
+          "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/LICENSE",
+          "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/runtime/shuanglv-legal-skills/LICENSE",
+          "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/NOTICE"
+        ],
+        "restrictions": [
+          "允许律师正常收费法律服务与非商业测试；不等于允许出售 Skill 或集成收费 Agent/SaaS。",
+          "内部修改允许，公开发布或运营修改版需书面同意；品牌与作者背书另受限制。",
+          "v0.46 及后续适用新许可，不推定撤销历史版本已合法授予的权利，也不沿用旧版许可。"
+        ],
+        "conclusion": "根 LICENSE、运行包 LICENSE 和 NOTICE 均为 ShuangLaw Professional Use License 1.0；正常收费法律服务被明确允许，但对外商业化、公开修改版本及品牌使用另有限制，不能笼统记为完全禁止商用。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/README.md",
+        "notes": "README「默认面向中国大陆法律实务」和「当前版本与能力边界」明确法域。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "other",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/runtime/shuanglv-legal-skills/SKILL.md",
+          "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/README.md"
+        ],
+        "conclusion": "入口 compatibility 声明 Agent Skills-compatible hosts，OCR、检索、Office 和多模态按宿主能力适配；保留 other，未承诺任何具体宿主已经测试。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "逐项审查原四类工作流中的法律适用、时效与引用证据。",
+          "专业人员审阅当前自定义许可和品牌限制，不把来源自报终审当作 LexRouter 独立复核。"
+        ]
+      },
+      "blockers": [
+        {
+          "code": "custom-license-scope",
+          "evidence": "根与运行包 LICENSE 第 II、III、VI、VIII 节及 NOTICE 限制产品化商业集成和公开修改版本，区分普通收费法律服务。",
+          "evidence_urls": [
+            "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/LICENSE",
+            "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/runtime/shuanglv-legal-skills/LICENSE",
+            "https://github.com/zj-ai-lab/shuanglv-legal-skills/blob/4a67c181e27ad1dfa59cb953396acc5e8ee1eb2f/NOTICE"
+          ],
+          "impact": "不能默认授权后续公开改编、再分发或产品集成；历史许可不能替代当前固定版本。",
+          "next_action": "Human Maintainer 明确拟收录形态，法律专业人员审阅限制；若涉及公开修改、分发或收费产品集成，先取得权利人覆盖该用途的书面许可。",
+          "owner": "Human Maintainer"
+        }
+      ],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "确定阻塞问题的处理路径、指派责任人并审阅补证；解除阻塞后重新审计，不自动入库。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "Human Maintainer 明确拟收录形态，法律专业人员审阅限制；若涉及公开修改、分发或收费产品集成，先取得权利人覆盖该用途的书面许可。"
+        }
+      ],
+      "p1_status": "blocked"
+    },
+    {
+      "candidate_id": "discovery-antitrust-filing",
+      "candidate_snapshot_sha256": "ae0544873db786906f814c17d405385626d2807c80e7612dc63ced0ea25efa2f",
+      "source_url": "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/SKILL.md",
+      "revision": "bde8d130074696e776d70906c3f46e0b47ece5ee",
+      "business_categories": [
+        "corporate-ma",
+        "corporate-compliance"
+      ],
+      "category_evidence": "入口说明及 Workflow 的控制权、交易结构和营业额筛查支持 corporate-ma 与 corporate-compliance；自报 L3 不作为认证。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "75f60696ea9076820b6db7883778b73d88c8d0c6",
+          "locator": "L1-L80（入口有限分段，非运行核验）",
+          "finding": "具备交易信息收集、控制权判断、申报门槛与特殊结构风险提示的独立流程，未验证结论或阈值。"
+        },
+        {
+          "url": "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "19d54db9913874530b082ad8b79f8b6a8443578f",
+          "locator": "L1-L160（不存在时为固定路径 404）",
+          "finding": "README 声明 Claude Code 的 /antitrust-filing-assessment；入口依赖 CLAUDE.md 与 currency-watch.md，均未执行或当作本审计的法律时效证据。"
+        },
+        {
+          "url": "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "35f4933932b5edda16f7497e2148431d21584228",
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "SKILL.md L11 的 metadata.license=Proprietary；同一提交 LICENSE/README 声明 CC-BY-NC-4.0。冲突未获权利人澄清，并且 CC 声明本身仍有非商业限制。"
+        },
+        {
+          "url": "https://api.github.com/repos/ettajingruyang/PRC-merger-control-assessment/git/trees/bde8d130074696e776d70906c3f46e0b47ece5ee?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；10 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "具备交易信息收集、控制权判断、申报门槛与特殊结构风险提示的独立流程，未验证结论或阈值。"
+      },
+      "authorization_review": {
+        "status": "conflicting",
+        "license": "conflicting: Proprietary / CC-BY-NC-4.0",
+        "evidence_urls": [
+          "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/LICENSE",
+          "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/SKILL.md",
+          "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/README.md"
+        ],
+        "restrictions": [
+          "同一提交 Proprietary 与 CC-BY-NC-4.0 冲突，不择宽解释。",
+          "CC 声明禁止出售、收费平台/商业产品集成；说明中的内部使用例外需结合冲突一并澄清。"
+        ],
+        "conclusion": "SKILL.md L11 的 metadata.license=Proprietary；同一提交 LICENSE/README 声明 CC-BY-NC-4.0。冲突未获权利人澄清，并且 CC 声明本身仍有非商业限制。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/README.md",
+        "notes": "入口 metadata.jurisdiction 标注 PRC，README 明确中国反垄断申报场景。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "claude-skill",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/SKILL.md",
+          "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/README.md"
+        ],
+        "conclusion": "README 声明 Claude Code 的 /antitrust-filing-assessment；入口依赖 CLAUDE.md 与 currency-watch.md，均未执行或当作本审计的法律时效证据。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "复核经营者集中控制权、营业额门槛、金融业特殊计算、分步交易及 VIE 规则的现行依据。",
+          "来源 currency-watch 日期及自报 L3 都不能替代官方现行文本与独立专业复核。"
+        ]
+      },
+      "blockers": [
+        {
+          "code": "license-conflict",
+          "evidence": "SKILL.md metadata.license 为 Proprietary；LICENSE 与 README 为 CC-BY-NC-4.0。",
+          "evidence_urls": [
+            "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/SKILL.md",
+            "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/LICENSE",
+            "https://github.com/ettajingruyang/PRC-merger-control-assessment/blob/bde8d130074696e776d70906c3f46e0b47ece5ee/README.md"
+          ],
+          "impact": "未明确实际授予的权利；不能以较宽的 CC 表述作为复制、改编或测评依据。",
+          "next_action": "权利人书面澄清该固定提交适用何种许可及内部使用、商用、改编和分发范围，Human Maintainer 审阅后重新审计。",
+          "owner": "upstream-rightsholder"
+        }
+      ],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "确定阻塞问题的处理路径、指派责任人并审阅补证；解除阻塞后重新审计，不自动入库。"
+        },
+        {
+          "owner": "upstream-rightsholder",
+          "action": "权利人书面澄清该固定提交适用何种许可及内部使用、商用、改编和分发范围，Human Maintainer 审阅后重新审计。"
+        }
+      ],
+      "p1_status": "blocked"
+    },
+    {
+      "candidate_id": "discovery-gutachten-admin",
+      "candidate_snapshot_sha256": "80f49a57beddbc37e30645daf05415403b28ba1a5f4bf8658f7b4c2fee428600",
+      "source_url": "https://github.com/Youchu-lawhub/gutachten-admin-case/blob/49423c6e767ecd6d4e5c0b07fd3a0a8965f85178/SKILL.md",
+      "revision": "49423c6e767ecd6d4e5c0b07fd3a0a8965f85178",
+      "business_categories": [
+        "criminal-administrative"
+      ],
+      "category_evidence": "入口 L1-L80 的行政法可受理性闸门、诉讼类型与合法性审查支持 criminal-administrative 中的行政方向；不声称刑事能力。",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/Youchu-lawhub/gutachten-admin-case/blob/49423c6e767ecd6d4e5c0b07fd3a0a8965f85178/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "46df40a9f90709d966ec9671df37172dfafb76e0",
+          "locator": "L1-L80（入口有限分段，非运行核验）",
+          "finding": "入口具有受理、选题大纲、涵摄写作及核验输出的 W0–W4 独立流程；根 README 404 不抹除已读取入口，具体宿主仍未确认。"
+        },
+        {
+          "url": "https://github.com/Youchu-lawhub/gutachten-admin-case/blob/49423c6e767ecd6d4e5c0b07fd3a0a8965f85178/README.md",
+          "kind": "documentation",
+          "access": "not-found",
+          "blob_sha": null,
+          "locator": "L1-L160（不存在时为固定路径 404）",
+          "finding": "公开 Agent Skills 入口存在，根 README 404；本次不确认 Claude/Codex 等专属宿主，保留 other。缺 README 不等于缺入口，但兼容性证据仍有局限。"
+        },
+        {
+          "url": "https://github.com/Youchu-lawhub/gutachten-admin-case/blob/49423c6e767ecd6d4e5c0b07fd3a0a8965f85178/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "8a7906ab02a262f0f1269caa035257b7d8df5100",
+          "locator": "完整许可文本；不存在时为固定路径 404",
+          "finding": "LICENSE 标称 CC-BY-NC-ND-4.0，同时增加 AI 测评、机构使用、收费平台等限制；基础文本与附加条款优先表述需专业解释，不能仅记录标准 CC 名称。"
+        },
+        {
+          "url": "https://api.github.com/repos/Youchu-lawhub/gutachten-admin-case/git/trees/49423c6e767ecd6d4e5c0b07fd3a0a8965f85178?recursive=1",
+          "kind": "tree",
+          "access": "read",
+          "blob_sha": null,
+          "locator": "完整递归树；truncated=false；34 项",
+          "finding": "仅检查固定提交的文件位置、许可/NOTICE 文件名与入口 blob 标识；树清单不证明文件内容或权属。"
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "入口具有受理、选题大纲、涵摄写作及核验输出的 W0–W4 独立流程；根 README 404 不抹除已读取入口，具体宿主仍未确认。"
+      },
+      "authorization_review": {
+        "status": "restricted",
+        "license": "CC-BY-NC-ND-4.0",
+        "evidence_urls": [
+          "https://github.com/Youchu-lawhub/gutachten-admin-case/blob/49423c6e767ecd6d4e5c0b07fd3a0a8965f85178/LICENSE"
+        ],
+        "restrictions": [
+          "非商业、禁止公开改编/翻译/节选分发；收费法律服务等目标用法受限。",
+          "附加条款涵盖 AI 评估/benchmark、训练/RAG 和收费平台分发。",
+          "企业、行政机关、司法及专业服务场景需另行书面授权；禁止暗示背书。",
+          "LICENSE 关于基础 CC 优先和附加条款优先的不同表述待解释。"
+        ],
+        "conclusion": "LICENSE 标称 CC-BY-NC-ND-4.0，同时增加 AI 测评、机构使用、收费平台等限制；基础文本与附加条款优先表述需专业解释，不能仅记录标准 CC 名称。"
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/Youchu-lawhub/gutachten-admin-case/blob/49423c6e767ecd6d4e5c0b07fd3a0a8965f85178/SKILL.md",
+        "notes": "入口说明援引中华人民共和国行政诉讼法、行政复议法及最高法解释，表明中国大陆行政法场景。 这是来源声明证据，不是 LexRouter 法律适用确认。"
+      },
+      "runtime_review": {
+        "value": "other",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/Youchu-lawhub/gutachten-admin-case/blob/49423c6e767ecd6d4e5c0b07fd3a0a8965f85178/SKILL.md"
+        ],
+        "conclusion": "公开 Agent Skills 入口存在，根 README 404；本次不确认 Claude/Codex 等专属宿主，保留 other。缺 README 不等于缺入口，但兼容性证据仍有局限。"
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "未逐条核对适用法规的现行文本、生效/废止和过渡规则，未获法律专家复核；来源核查日期及仓库更新时间均不是法规时效基准日。"
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+          "逐条核对行政诉讼、复议、国家赔偿、起诉与复议前置、期限和司法解释的现行适用。",
+          "专业人员解释 CC 基础文本与附加限制；不得自行判定条款效力。"
+        ]
+      },
+      "blockers": [
+        {
+          "code": "restricted-license-and-evaluation",
+          "evidence": "LICENSE NonCommercial、NoDerivatives 与 ADDITIONAL TERMS 1–3 限制商用、改编、AI 测评和机构用途，并存在条款优先表述待解释。",
+          "evidence_urls": [
+            "https://github.com/Youchu-lawhub/gutachten-admin-case/blob/49423c6e767ecd6d4e5c0b07fd3a0a8965f85178/LICENSE"
+          ],
+          "impact": "不能推定覆盖未来 P1 整理发布、改编和测评；非商业测评也未自动取得许可。",
+          "next_action": "Human Maintainer 确定使用形态，由法律专业人员解释完整条款并向权利人确认必要的改编、分发、测评及机构授权；工程维护者另外补宿主声明证据。",
+          "owner": "Human Maintainer"
+        }
+      ],
+      "follow_up": [
+        {
+          "owner": "legal-professional",
+          "action": "尚未指派具体人员；Human Maintainer 应安排具备相关专业能力的人员完成 required_checks，本记录不表示已经复核。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "确定阻塞问题的处理路径、指派责任人并审阅补证；解除阻塞后重新审计，不自动入库。"
+        },
+        {
+          "owner": "Human Maintainer",
+          "action": "Human Maintainer 确定使用形态，由法律专业人员解释完整条款并向权利人确认必要的改编、分发、测评及机构授权；工程维护者另外补宿主声明证据。"
+        }
+      ],
+      "p1_status": "blocked"
+    }
+  ]
+}
