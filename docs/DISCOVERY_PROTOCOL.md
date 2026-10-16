@@ -52,9 +52,12 @@
 
 ## 检查、维护与正式入库
 
+LR-P0-03 引入与发现状态独立的 [P1 准备审计](P1_READINESS.md) 和 [准备清单](../data/discovery/p1-readiness.json)。每个候选恰好对应一条记录，固定原始版本及全部字段的 SHA-256 快照；任何原字段变化须重新审计并更新证据。来源确认、工作流边界、授权、法域、兼容性与专业核查分别记录，不用原 candidate 状态替代新审计结论。未解决问题继续 blocked，明确 Human Maintainer、法律专业人员、权利人或工程维护者的动作。ready-for-professional-review 不能直接进入正式目录。
+
 ```sh
 python -m pip install -r requirements.txt
 python scripts/validate_candidates.py data/discovery/candidates.json
+python scripts/validate_p1_readiness.py data/discovery/p1-readiness.json
 python scripts/validate_skills.py skills
 python -m unittest discover -s tests -v
 git diff --check

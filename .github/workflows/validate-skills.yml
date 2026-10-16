@@ -5,6 +5,7 @@ on:
     paths:
       - 'skills/**'
       - 'data/discovery/**'
+      - 'docs/P1_READINESS.md'
       - 'schemas/**'
       - 'scripts/**'
       - 'tests/**'
@@ -15,6 +16,7 @@ on:
     paths:
       - 'skills/**'
       - 'data/discovery/**'
+      - 'docs/P1_READINESS.md'
       - 'schemas/**'
       - 'scripts/**'
       - 'tests/**'
@@ -27,7 +29,7 @@ permissions:
 
 jobs:
   validate:
-    name: Metadata, discovery candidates and positive/negative fixtures
+    name: Metadata, candidates, P1 readiness and positive/negative fixtures
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -48,5 +50,9 @@ jobs:
         run: python scripts/validate_candidates.py data/discovery/candidates.json
       - name: Validate fixed candidate positive fixture
         run: python scripts/validate_candidates.py tests/fixtures/candidates/valid.json
+      - name: Validate P1 readiness and complete candidate linkage (offline)
+        run: python scripts/validate_p1_readiness.py data/discovery/p1-readiness.json
+      - name: Validate synthetic P1 positive fixture (offline)
+        run: python scripts/validate_p1_readiness.py tests/fixtures/p1-readiness/valid.json --candidates tests/fixtures/p1-readiness/candidates.json
       - name: Test positive and negative fixtures
         run: python -m unittest discover -s tests -v

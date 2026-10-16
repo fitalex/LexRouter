@@ -1,0 +1,99 @@
+{
+  "format_version": 1,
+  "task": "LR-P0-03",
+  "audited_at": "2026-10-16",
+  "records": [
+    {
+      "candidate_id": "synthetic-p1-review",
+      "candidate_snapshot_sha256": "4cd4c48bf680ee236c1f52aa717f69bbed45b808d3953ea0265c3f42e65fdde2",
+      "source_url": "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/SKILL.md",
+      "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "business_categories": [
+        "contract-review"
+      ],
+      "category_evidence": "Synthetic category evidence, not a professional finding.",
+      "audit_evidence": [
+        {
+          "url": "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/SKILL.md",
+          "kind": "entry",
+          "access": "read",
+          "blob_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "locator": "Synthetic test fixture",
+          "finding": "Synthetic evidence; no actual source or license verification."
+        },
+        {
+          "url": "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/README.md",
+          "kind": "documentation",
+          "access": "read",
+          "blob_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "locator": "Synthetic test fixture",
+          "finding": "Synthetic evidence; no actual source or license verification."
+        },
+        {
+          "url": "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/LICENSE",
+          "kind": "license",
+          "access": "read",
+          "blob_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "locator": "Synthetic test fixture",
+          "finding": "Synthetic evidence; no actual source or license verification."
+        }
+      ],
+      "source_review": {
+        "status": "verified-public",
+        "entry_exists": true,
+        "workflow_status": "identifiable-workflow",
+        "conclusion": "Synthetic identifiable workflow."
+      },
+      "authorization_review": {
+        "status": "clear",
+        "license": "MIT",
+        "evidence_urls": [
+          "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/LICENSE"
+        ],
+        "restrictions": [
+          "Synthetic attribution obligation."
+        ],
+        "conclusion": "Synthetic license conclusion."
+      },
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/README.md",
+        "notes": "No jurisdiction evidence in this synthetic fixture."
+      },
+      "runtime_review": {
+        "value": "prompt",
+        "compatibility_status": "source-declared-unexecuted",
+        "evidence_urls": [
+          "https://github.com/example/synthetic-legal-workflow/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/README.md"
+        ],
+        "conclusion": "Synthetic host claim, unexecuted."
+      },
+      "regulatory_currency": {
+        "status": "not-checked",
+        "as_of": null,
+        "evidence_urls": [],
+        "notes": "No legal currency review."
+      },
+      "professional_review": {
+        "status": "not-performed",
+        "owner": "legal-professional",
+        "required_checks": [
+          "Synthetic professional review is still required."
+        ]
+      },
+      "blockers": [],
+      "follow_up": [
+        {
+          "owner": "Human Maintainer",
+          "action": "Decide whether to schedule a professional review."
+        },
+        {
+          "owner": "legal-professional",
+          "action": "Review jurisdiction and current law. No review performed."
+        }
+      ],
+      "p1_status": "ready-for-professional-review"
+    }
+  ]
+}

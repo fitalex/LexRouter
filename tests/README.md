@@ -1,5 +1,7 @@
 # 元数据工具测试
 
+LR-P0-03 新增 `fixtures/p1-readiness/candidates.json` 与 `valid.json` 配对合成样本、`test_validate_p1_readiness.py` 正反测试。覆盖全部记录及嵌套必填、ID 完整对应、重复和未知 ID、非法状态、无因阻塞、候选快照和字段漂移、来源固定版本、证据读取与 blob 声明、责任遗漏、授权冲突/限制不得伪装 clear、时效日期和专业完成状态禁止升级。反样本在内存中对合成正样本作定向变异，不污染真实候选；CLI 反向用例验证退出 1 与错误位置。禁用 socket 验证准备检查不依赖网络；不安装或执行第三方候选。
+
 `fixtures/valid/` 为固定合法样本，`fixtures/invalid/` 包含分别缺少法域、业务分类、时效锚点及错误字段类型的固定非法样本。全部内容为合成工程数据；占位来源和日期不构成实际核对证据，不是测评数据或正式 Skill。
 
 `python -m unittest discover -s tests -v` 通过真实 CLI 验证退出码、文件位置与字段错误，覆盖日期、枚举、空分类、额外字段、重复 ID、路径、目录递归及 JSON 解析。非法样本被拒绝才算测试通过，不能仅校验空的 `skills/`。
