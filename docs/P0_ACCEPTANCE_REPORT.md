@@ -2,7 +2,7 @@
 
 核查日期：2026-10-16（Asia/Shanghai）；基准为最新 main `8fcec1d2987233bc1ac5ac3f85c47297f07efb84`（PR #1–#4 已合并）。本报告是 LR-P0-05 的验收准备证据，最终验收/合并由 Human Maintainer 决定。P0 截止 2026-10-19，P1 自 2026-10-20 启动，未改变 [ROADMAP.md §04](../ROADMAP.md)。
 
-**工程状态：READY_FOR_REVIEW — HUMAN_APPROVAL_PENDING。** 冻结 P0 的交付范围是 Monorepo 骨架、能力元数据 Schema、控制变量测评协议，明确 DoD 是 GitHub Actions 自动验证 Skill 元数据必填字段。下表中规范和测试核查是这些交付的证据；三个候选托管预审属于提前交接附加项。法律专业审核、完整托管批准、P1 的 30–50 正式条目和测评/路由均不是本次 P0 必须完成项。没有发现需要修改冻结验收口径的实质工程阻塞；CI 在 PR 实际运行前不声称通过。
+**工程状态：READY_FOR_REVIEW — HUMAN_APPROVAL_PENDING。** 冻结 P0 的交付范围是 Monorepo 骨架、能力元数据 Schema、控制变量测评协议，明确 DoD 是 GitHub Actions 自动验证 Skill 元数据必填字段。下表中规范和测试核查是这些交付的证据；三个候选托管预审属于提前交接附加项。法律专业审核、完整托管批准、P1 的 30–50 正式条目和测评/路由均不是本次 P0 必须完成项。没有发现阻止冻结 P0 工程验收的实质问题；PR #5 的实际 Actions 已成功，仍待人类验收。
 
 状态含义：PASS=在注明的范围内有实查证据；FAIL=已检查但不满足要求；BLOCKED=所需证据/人类决定缺失，当前不能完成；NOT_APPLICABLE=不属于该阶段或当前不存在对应对象。结构 PASS 不代表法律、授权或产品功能已通过。
 
@@ -21,7 +21,7 @@
 | Public / Holdout 隔离 | PASS | EVAL_PROTOCOL 的隔离段、ANONYMIZATION、AGENTS | 核对受控存储、污染/重叠、禁止公开内容/日志、禁止反复调优、fixture 非测评集的规定 | Holdout 完整公开复现与保密协调仍待后续协议决定，不是 P0 引擎缺陷 | Human Maintainer / 测评负责人 |
 | 法律时效、引用真实性与专业复核规则 | PASS | EVAL_PROTOCOL 的法域/时效和专家复核段、[收录政策](SKILL_INTAKE_POLICY.md) | 核对废止/虚构引用 0 分、事实时间/过渡规则、证据追溯及专家复核；不将结构校验当法律判断 | 专家资质/人数、一致性统计及阈值未确定，按路线图在后续阶段执行 | 法律专业人员 / 测评负责人 |
 | Run Artifacts 与合规边界 | PASS | EVAL_PROTOCOL 的快照段、README 免责声明、ANONYMIZATION | 核对版本/参数/环境/输入输出/计费/评分/证据字段、Public 可发布快照与 Holdout 受控留存；免责声明明确 | 仍需后续解决公开复现与保密细则；本次无真实运行快照或法律分数 | Human Maintainer / 测评负责人 |
-| GitHub Actions 自动校验元数据必填（冻结 DoD） | BLOCKED | [validate-skills.yml](../.github/workflows/validate-skills.yml) | 配置含 pull_request、main push、workflow_dispatch；安装固定依赖、校验正式目录/合法样本并运行反例测试；本 PR 的实际 Actions 链接待创建后核实 | 本地成功不能冒充 GitHub Actions 成功；见后续 PR 验证记录 | Codex 核实运行；Human Maintainer 验收 |
+| GitHub Actions 自动校验元数据必填（冻结 DoD） | PASS | [validate-skills.yml](../.github/workflows/validate-skills.yml) | 配置含 pull_request、main push、workflow_dispatch；安装固定依赖、校验正式目录/合法样本并运行反例测试；PR #5 的 [run #10](https://github.com/fitalex/LexRouter/actions/runs/38868312560)，head `d17bc116c6078a433e48d1f63d025500a9ca9e3d`，completed/success，含新增交接及全部测试 | 该实际运行验证工程，不验证授权或法律质量；后续提交须继续查看 PR 最新 checks | Codex 核实运行；Human Maintainer 验收 |
 | 现有工程校验、CLI、正反样本接口 | PASS | [scripts](../scripts/)、[tests](../tests/)、[tests README](../tests/README.md) | 原 52 项测试通过；加入交接后全套 66 项通过；候选/readiness/intake/handoff CLI 全通过；调用参数与 CI 对应 | 固定依赖环境亦 66 项通过，见下方记录；外部来源可用性不属于离线校验结论 | 工程维护者 |
 | 依赖、文档链接及接口一致性 | PASS | [requirements](../requirements.txt)、DEPENDENCIES、README/CONTRIBUTING CLI、CI | 固定 jsonschema==4.25.1、rfc3986-validator==0.1.1，未新增依赖；171 个本地相对文件链接检查及 diff whitespace 检查；默认与合成 CLI 均测试 | 外部官方门户仅为线索未逐一检查；不是依赖树安全认证 | 工程维护者 |
 | 候选不被解释为正式批准 | PASS | candidates/readiness/intake 原记录、[交接契约](../data/reviews/README.md)、README 及 CI 输出 | 与 main 比较三份旧数据零 diff；实际统计 4 candidate/6 needs-evidence、3 ready/7 blocked、3 A/7 C；测试拒绝批准/日期升级 | 文档使用者仍需理解 ready 与批准分轴 | Human Maintainer |
@@ -83,4 +83,4 @@ git diff --check
 
 本地文档链接检查限 Markdown 的相对文件目标（包含目录），外部 URL 和法律官方文本未经逐一验证。冻结文件和旧数据的比较命令：`git diff origin/main -- ROADMAP.md schemas/skill.schema.json docs/SKILL_INTAKE_POLICY.md data/discovery data/intake skills requirements.txt`，结果为空。
 
-GitHub Actions：待本 PR 创建后查看实际运行，不以本地测试或配置审阅代替运行成功。最终运行 URL 和状态将记录于本报告及 PR；保持 PR 未合并，等待 ChatGPT 复审及 Human Maintainer 决定。
+GitHub Actions：[run #10](https://github.com/fitalex/LexRouter/actions/runs/38868312560) 于 2026-10-16 完成，`completed / success`，验证 head `d17bc116c6078a433e48d1f63d025500a9ca9e3d`。本次回填仅更新文档，最新 head 的后续运行以 [PR #5](https://github.com/fitalex/LexRouter/pull/5) checks 和 PR 交付记录为准。冻结 P0 必须项已有实际工程证据；第三节 P1 人类门槛仍 BLOCKED，不转写为 P0 失败。PR 保持未合并，等待 ChatGPT 复审及 Human Maintainer 决定。
