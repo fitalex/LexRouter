@@ -1,0 +1,77 @@
+{
+  "template_id": "common",
+  "version": "1.0.0",
+  "source_ref": "docs/reviews/P1_LEGAL_REVIEW_HANDOFF.md",
+  "checks": [
+    {
+      "check_id": "C01",
+      "issue_key": "C01",
+      "legal_issue": "固定版本与范围：复核下列候选、commit、入口及拟用清单；记录实际审阅文件及 blob",
+      "source_locator": "本 Review 固定文件清单；C01",
+      "authority_hints": "指向本交接记录和 manifest；排除项不得悄然进入复核批准范围；改版重审"
+    },
+    {
+      "check_id": "C02",
+      "issue_key": "C02",
+      "legal_issue": "法域与事实：确认 CN-Mainland 及案件/合同地点、主体、行业、行为时间、判断时点；识别港澳台/涉外分支",
+      "source_locator": "本 Review 固定文件清单；C02",
+      "authority_hints": "明确可用及排除场景、必要事实、缺失信息；来源声明不等于专家确认"
+    },
+    {
+      "check_id": "C03",
+      "issue_key": "C03",
+      "legal_issue": "官方法律文本：按候选表中的任务核实每一引用，查找官方发布机关、文号、条款、原文和来源 URL",
+      "source_locator": "本 Review 固定文件清单；C03",
+      "authority_hints": "保存可访问定位、文本版本/哈希和允许保存的摘录，区分法条、司法解释、政策、行业规范和案例"
+    },
+    {
+      "check_id": "C04",
+      "issue_key": "C04",
+      "legal_issue": "法律时效：对每项核对公布/施行/修订/废止、替代文件、地方规则和过渡/溯及适用",
+      "source_locator": "本 Review 固定文件清单；C04",
+      "authority_hints": "留下事实时间→适用版本→过渡规则→结论链；抓取日、commit 日和模型截止日不能填作法规时效"
+    },
+    {
+      "check_id": "C05",
+      "issue_key": "C05",
+      "legal_issue": "引用真实性与支持性：查条号/名称/原文是否真实，引用是否支持具体结论，是否遗漏例外或冲突",
+      "source_locator": "本 Review 固定文件清单；C05",
+      "authority_hints": "每条“条款/事实→法律问题→官方条文/案例定位→适用推理→结论/限制”可追溯；不能仅检查字符串命中"
+    },
+    {
+      "check_id": "C06",
+      "issue_key": "C06",
+      "legal_issue": "风险与升级：使用独立合成/获授权脱敏场景检查下面高风险项、缺失事实、工具失效和旧法陷阱",
+      "source_locator": "本 Review 固定文件清单；C06",
+      "authority_hints": "记录输入条件、实际输出证据、错误影响、纠正建议；不直接采用上游真实合同或其测评用例；实际运行须另获授权"
+    },
+    {
+      "check_id": "C07",
+      "issue_key": "C07",
+      "legal_issue": "人工裁决：对效力、收费、期限、重大交易、数据出境等问题明确人类决定点",
+      "source_locator": "本 Review 固定文件清单；C07",
+      "authority_hints": "记录有条件通过/补正/不通过及范围，存在分歧另行复核，不由评分或免责声明替代"
+    },
+    {
+      "check_id": "C08",
+      "issue_key": "C08",
+      "legal_issue": "权利与用途：与许可审核人员确认本轮审核的精确文件、引用材料、拟用场景和排除项",
+      "source_locator": "本 Review 固定文件清单；C08",
+      "authority_hints": "法律专业适用复核与著作权/许可审核分轴留证，任何一轴未通过均不能正式托管"
+    },
+    {
+      "check_id": "C09",
+      "issue_key": "C09",
+      "legal_issue": "签署：由具备相应能力的人员自行填写真实身份、资质/专业经验、独立性、复核日期、意见、限制、实际时效核查基准及证据位置并签署",
+      "source_locator": "本 Review 固定文件清单；C09",
+      "authority_hints": "受控记录可含完整身份；公开 PR 仅提供经允许的脱敏索引/摘要，由 Human Maintainer 核实证据可访问性；本包不预填"
+    },
+    {
+      "check_id": "C10",
+      "issue_key": "C10",
+      "legal_issue": "不通过/更新：缺证则补证，法律错误则单独修正/缩范围后重审；根本不适用则保留拒绝/暂停原因",
+      "source_locator": "本 Review 固定文件清单；C10",
+      "authority_hints": "保留原版本和意见；仍在候选区，不解除其他七条阻塞；来源、许可或法规实质变化触发新审计；Human Maintainer 另审入库 PR"
+    }
+  ]
+}

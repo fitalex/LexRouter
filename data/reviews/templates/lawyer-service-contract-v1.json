@@ -1,0 +1,42 @@
+{
+  "template_id": "lawyer-service-contract",
+  "version": "1.0.0",
+  "source_ref": "docs/reviews/P1_LEGAL_REVIEW_HANDOFF.md",
+  "checks": [
+    {
+      "check_id": "ZH01",
+      "issue_key": "ZH01",
+      "legal_issue": "SKILL 收费规则、law-references：风险代理“30% 上限”“超出无效”及禁止范围；待确认：比较不同文件时期、分段标准、收费类型及案件类型；禁止收费与民事合同效力不能自动等同",
+      "source_locator": "SKILL 收费规则、law-references",
+      "authority_hints": "律师服务收费管理办法、关于进一步规范律师服务收费的意见及替代/调整文件、当地收费规则；司法部、发改委及当地机关"
+    },
+    {
+      "check_id": "ZH02",
+      "issue_key": "ZH02",
+      "legal_issue": "任意解除权、转委托、签约不退费等绝对表述；待确认：随时解除、损失赔偿、已履行服务和退费约定的适用边界；不能直接把所有不退费或更换律师条款判无效",
+      "source_locator": "任意解除权、转委托、签约不退费等绝对表述",
+      "authority_hints": "民法典委托合同、格式条款、违约金规则，相关司法解释；人大、最高法"
+    },
+    {
+      "check_id": "ZH03",
+      "issue_key": "ZH03",
+      "legal_issue": "主体非律所、缺证号、禁止代理或特别授权不足；待确认：区分真实性核验、代理权限、行业纪律与合同效力；检查源条号随修订是否漂移",
+      "source_locator": "主体非律所、缺证号、禁止代理或特别授权不足",
+      "authority_hints": "律师法、律师执业管理办法、律师执业行为规范、民事诉讼法及适用解释；人大、司法部、最高法、律协"
+    },
+    {
+      "check_id": "ZH04",
+      "issue_key": "ZH04",
+      "legal_issue": "risk-clauses、source-notes-summary、examples 中经验和案例；待确认：事实、裁判结论、案例代表性与评论分离；第三方笔记/模板来源许可另审",
+      "source_locator": "risk-clauses、source-notes-summary、examples 中经验和案例",
+      "authority_hints": "优先核对官方裁判全文、司法解释和行业规范，不以笔记热度替代证据"
+    },
+    {
+      "check_id": "ZH05",
+      "issue_key": "ZH05",
+      "legal_issue": "输出评分及直接可复用条款、全权代理、管辖建议；待确认：案件性质、金额、阶段、律师服务范围、地方实践不足时禁止输出确定“可签/不要签”",
+      "source_locator": "输出评分及直接可复用条款、全权代理、管辖建议",
+      "authority_hints": "民诉规则、协议管辖/格式条款规则及具体案件事实"
+    }
+  ]
+}

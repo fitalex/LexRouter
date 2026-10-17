@@ -1,0 +1,52 @@
+{
+  "subject_id": "discovery-china-legal-counsel",
+  "subject_type": "candidate",
+  "source_url": "https://github.com/Daknniel-0881/qulv-china-legal-counsel-skill/blob/73ff53a857ffbdd91296bf41ed5bcc1294bc2042/SKILL.md",
+  "source_revision": "73ff53a857ffbdd91296bf41ed5bcc1294bc2042",
+  "scope_manifest_ref": "data/reviews/manifests/discovery-china-legal-counsel.json",
+  "templates": [
+    "data/reviews/templates/common-v1.json",
+    "data/reviews/templates/corporate-counsel-v1.json"
+  ],
+  "jurisdiction": "CN-Mainland",
+  "track": "curated-hosting",
+  "review_scope": [
+    "LICENSE",
+    "README.md",
+    "SKILL.md",
+    "agents/openai.yaml",
+    "references/citation-verification.md",
+    "references/compliance-check-playbook.md",
+    "references/contract-drafting-playbook.md",
+    "references/contract-review-playbook.md",
+    "references/eval-plan.md",
+    "references/legal-consultation-playbook.md",
+    "references/output-schemas.md",
+    "references/risk-and-escalation.md",
+    "references/source-registry.md",
+    "scripts/chunk_legal_doc.py",
+    "scripts/fetch_official_sources.py",
+    "scripts/ingest_source_registry.py",
+    "scripts/kb_search.py",
+    "scripts/normalize_legal_doc.py",
+    "scripts/verify_citations.py"
+  ],
+  "excluded_scope": [
+    "固定 manifest 中所有未列入 review_scope 的文件（2320 项）均排除；只读线索不构成复制许可"
+  ],
+  "public_summary_only": true,
+  "known_issues": [
+    "确认 Suze 与仓库发布者及贡献者关系；知识库原始/清洗/切片、商业数据库、律所文章、品牌图像和用户背景均不随 MIT 自动授权，本范围全部排除。",
+    "绝对路径须后续单独适配；Python 脚本默认相对 knowledge-base 并支持 --kb；不含知识库的组件不能声称完整可用。curl/pdftotext 与官方站点访问条件另审。",
+    "fetch_official_sources.py 存在特定主机 curl TLS 放宽回退；上线前另审和修正，当前不运行。引用字符串存在检查不等于法律效力或结论校验。",
+    "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+    "逐项核验合同、广告、数据、劳动及公司治理规则的法域、现行文本与场景适用。",
+    "抽查知识库来源与引用是否真正支持结论，确认重大事项人工升级边界。"
+  ],
+  "baseline_refs": [
+    "docs/SKILL_INTAKE_POLICY.md",
+    "docs/reviews/P1_LEGAL_REVIEW_HANDOFF.md",
+    "data/reviews/p1-handoff.json",
+    "data/discovery/p1-readiness.json"
+  ]
+}

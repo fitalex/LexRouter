@@ -1,0 +1,37 @@
+{
+  "subject_id": "discovery-contract-review-zh",
+  "subject_type": "candidate",
+  "source_url": "https://github.com/ThomasLiu/contract-review-zh/blob/b8382b59d2ba3157125a779a0abf251ec0c29717/SKILL.md",
+  "source_revision": "b8382b59d2ba3157125a779a0abf251ec0c29717",
+  "scope_manifest_ref": "data/reviews/manifests/discovery-contract-review-zh.json",
+  "templates": [
+    "data/reviews/templates/common-v1.json",
+    "data/reviews/templates/lawyer-service-contract-v1.json"
+  ],
+  "jurisdiction": "CN-Mainland",
+  "track": "curated-hosting",
+  "review_scope": [
+    "LICENSE",
+    "README.md",
+    "SKILL.md",
+    "docs/how-it-works.md"
+  ],
+  "excluded_scope": [
+    "固定 manifest 中所有未列入 review_scope 的文件（9 项）均排除；只读线索不构成复制许可"
+  ],
+  "public_summary_only": true,
+  "known_issues": [
+    "Apache 附录版权占位符不能冒充作者声明；确认版权主体/贡献者链、笔记作者及案例/模板授权和必要 NOTICE；4 个 references 与示例暂不纳入可审核核心。",
+    "Claude Code/Claude.ai 的 Read、Word/PDF/图像及 references 打包能力待验证；仅上传 SKILL.md 不证明子目录已上传。",
+    "与通用合同审查流程有重叠，委托律师合同收费/退费专项可区分；按一个独立候选复核，不按模式/资料拆分凑数。",
+    "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+    "重点核对律师收费、风险代理比例与禁止范围、委托解除和退费规则的现行依据与适用前提。",
+    "审查来源所称 70 篇笔记的证据可靠性及任何拟复制资料的第三方权利；自述调研与平台热度不作法律认证。"
+  ],
+  "baseline_refs": [
+    "docs/SKILL_INTAKE_POLICY.md",
+    "docs/reviews/P1_LEGAL_REVIEW_HANDOFF.md",
+    "data/reviews/p1-handoff.json",
+    "data/discovery/p1-readiness.json"
+  ]
+}
