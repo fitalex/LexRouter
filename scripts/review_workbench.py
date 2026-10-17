@@ -12,6 +12,7 @@ import re
 import subprocess
 import sys
 from uuid import uuid4
+from urllib.parse import quote
 
 from jsonschema import Draft202012Validator, FormatChecker
 
@@ -83,7 +84,14 @@ def safe(root, rel):
 
 
 def read(path):
-    return json.loads(Path(path).read_text(encoding='utf-8'))
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ReviewError('Duplicate JSON keys are forbidden; input was not logged.')
+            result[key] = value
+        return result
+    return json.loads(Path(path).read_text(encoding='utf-8'), object_pairs_hook=unique)
 
 
 def write(path, value):
@@ -151,6 +159,23 @@ def structural_errors(root, record):
             Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(record)]
 
 
+def source_file_url(subject, path):
+    pattern = subject.get('source_file_url_template')
+    if pattern is None:
+        match = re.match(r'https://github.com/([^/]+/[^/]+)/(?:blob|tree)/', subject['source_url'])
+        if not match:
+            raise ReviewError('Non-GitHub sources require source_file_url_template with {revision} and {path}.')
+        pattern = 'https://github.com/'+match.group(1)+'/blob/{revision}/{path}'
+    if '{revision}' not in pattern or '{path}' not in pattern:
+        raise ReviewError('Fixed source links must include revision and explicit file path.')
+    try:
+        result = pattern.format(revision=subject['source_revision'], path=quote(path, safe='/'))
+    except (KeyError, ValueError):
+        raise ReviewError('Invalid source file URL template.') from None
+    reference(result)
+    return result
+
+
 def init_review(root, subject_ref, trigger='initial-intake', parent=None, rid=None):
     subject = read(safe(root, subject_ref))
     required = ('subject_id', 'subject_type', 'source_url', 'source_revision', 'scope_manifest_ref',
@@ -205,6 +230,8 @@ def init_review(root, subject_ref, trigger='initial-intake', parent=None, rid=No
     history(r, 'none', 'cli:init', 'Create unsigned review with no inherited findings.')
     if structural_errors(root, r):
         raise ReviewError('Subject does not satisfy the review contract.')
+    for path in selected:
+        source_file_url(subject, path)
     for value in (subject, manifest, checks, r):
         public_guard(value)
     for name, value in [('subject.json', subject), ('inventory.json', manifest), ('templates.json', checks), ('record.json', r)]:
@@ -237,7 +264,6 @@ def prepare(root, rid):
     r, subject, inventory, rules = [read(d / name) for name in ('record.json', 'subject.json', 'inventory.json', 'templates.json')]
     if r['archived']:
         raise ReviewError('Archived reviews are read-only; create a child review.')
-    prefix = subject['source_url'].split('/blob/')[0]+'/blob/'+r['source_revision']+'/'
     files = [f for f in inventory['files'] if f['path'] in r['review_scope']]
     matrix = ['# 问题矩阵（自动材料，不是法律意见）', '', '| 检查项 | 必须核实的问题 | 来源位置 | 官方法规/证据线索（未核实） |', '| --- | --- | --- | --- |']
     matrix += ['| '+' | '.join(str(c[k]).replace('|', '／').replace('\n', ' ') for k in ('check_id', 'legal_issue', 'source_locator', 'authority_hints'))+' |' for c in rules]
@@ -245,7 +271,7 @@ def prepare(root, rid):
                 f'- 固定 commit：`{r["source_revision"]}`',
                 f'- 完整材料清单：[{r["scope_manifest_ref"]}](../../../../{r["scope_manifest_ref"]})',
                 f'- 清单规范化 SHA-256：`{r["scope_manifest_sha256"]}`', '', '| 拟审核文件 | Git blob SHA-1 |', '| --- | --- |']
-    evidence += [f'| [{f["path"]}]({prefix}{f["path"]}) | `{f["blob_sha"]}` |' for f in files]
+    evidence += [f'| [{f["path"]}]({source_file_url(subject, f["path"])}) | `{f["blob_sha"]}` |' for f in files]
     evidence += ['', f'未纳入/排除：{len(inventory["files"])-len(files)} 项。不得自动扩大范围。']
     packet = ['# '+rid+'｜法律 Skill 专业复核工作包', '', f'- 对象：{r["subject_id"]}（{r["subject_type"]}）',
               f'- 轨道提案：{r["track"]}', f'- 固定版本：`{r["source_revision"]}`',
@@ -420,6 +446,8 @@ def apply_event(root, before, content, event):
         raise ReviewError('Unknown signed role or decision.')
     if before['status'] in ('approved-scope', 'rejected') and axis == 'professional_review':
         raise ReviewError('Final professional opinions require a new child review.')
+    if before['admission_decision']['status'] == 'admitted' and axis != 'admission_decision':
+        raise ReviewError('Admitted scope requires a new update review; maintainer may independently suspend it.')
     r, sections = deepcopy(before), parse_workbook(content)
     if axis == 'professional_review':
         if before['status'] != 'in-review' or before['assigned_reviewer'] != event['login']:
@@ -534,6 +562,10 @@ def validate_record(root, r, online=False, api=github_api):
             if online:
                 verify_archived_event(ev, r['review_id'], api)
             snapshots.append(snap)
+        listed = [h['snapshot_ref'] for h in r['history'] if h['snapshot_ref']]
+        actual_history = {str(p.relative_to(root)) for p in (d / 'history').glob('*.json')}
+        if len(listed) != len(set(listed)) or set(listed) != actual_history:
+            errors.append('Orphan, missing or duplicate signed history file; inspect interrupted operation.')
         if previous != r['status']:
             errors.append('Current status is not last recorded transition.')
         if snapshots and resumed_core(snapshots[-1]['after'], r) != core(r):
@@ -575,6 +607,8 @@ def validate_record(root, r, online=False, api=github_api):
         for name, digest in read(d / 'generated.json').items():
             if name not in ('packet.md', 'matrix.md', 'evidence.md') or byte_digest((d / name).read_bytes()) != digest:
                 errors.append('Generated material conflict; resolve human edits explicitly.')
+        if (d / 'archive.json').exists() != r['archived'] or (not r['archived'] and r['archive_sha256'] is not None):
+            errors.append('Archive file and lifecycle marker disagree.')
         if r['archived']:
             bundle = read(d / 'archive.json')
             if fingerprint(bundle) != r['archive_sha256'] or bundle['record'] != {**r, 'archived': False, 'archive_sha256': None} or bundle['workbook'] != content:
@@ -754,7 +788,8 @@ def main(argv=None):
             if errors:
                 print('\n'.join(errors), file=sys.stderr)
                 return 1
-            print(f'PASS: {len(records)} reviews; '+('authenticated event verification.' if args.online else 'offline structure/history only, not human identity or legal correctness.'))
+            events = sum(bool(h['snapshot_ref']) for r in records for h in r['history'])
+            print(f'PASS: {len(records)} reviews; '+(f'{events} human event(s) verified online; no legal approval inferred.' if args.online else 'offline structure/history only, not human identity or legal correctness.'))
     except ReviewError as exc:
         print(str(exc), file=sys.stderr)
         return 1

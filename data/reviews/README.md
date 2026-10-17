@@ -21,3 +21,7 @@ python -m unittest discover -s tests -v
 ```
 
 校验复用原 jsonschema、readiness 和 intake 校验，不联网、不运行上游：检查准确覆盖 A 类提案、原版本及摘要、逐文件清单摘要/数量/唯一性和路径安全，并从 mode/path/blob 重建 Git tree SHA，核对既有入口/README/LICENSE blob。Git 哈希只能证明材料身份与清单完整性，不能证明许可范围或法律正确性。状态固定未托管批准、未专业复核、未入库，时效为原未核实状态及 null；不提供批准接口。未来真实批准须另立证据契约与 PR，不能放宽此 P0 快照。
+
+## 持续复核工作台
+
+LR-P1-02 的 [Review Workbench v1](../../docs/review-workbench/README.md) 另建模板、逐轮记录与人工工作表；P0 交接事实及排除边界保持冻结。初始三个实例仅材料就绪，专业/授权/签署/入库均待执行。
