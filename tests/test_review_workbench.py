@@ -296,17 +296,22 @@ class WorkbenchTests(unittest.TestCase):
         with self.assertRaises(w.ReviewError):
             w.templates(self.root, self.subject['templates']+['data/custom-template.json'])
 
-    def test_three_real_cases_unsigned_and_exact_scope(self):
+    def test_three_real_subjects_create_unsigned_exact_scope(self):
+        # Reinitialize fixed input subjects in isolation. Future production reviews,
+        # real human decisions and newly added Skills must not break this test.
         expected = {'discovery-contract-review': (27, 15), 'discovery-contract-review-zh': (4, 15), 'discovery-china-legal-counsel': (19, 16)}
-        records = w.all_records(w.ROOT)
-        self.assertEqual(len(records), 3)
-        for r in records:
-            count, checks = expected[r['subject_id']]
+        for cid, (count, checks) in expected.items():
+            ref = f'data/reviews/subjects/{cid}.json'
+            subject = w.read(w.ROOT / ref)
+            for rel in [ref, subject['scope_manifest_ref'], *subject['templates']]:
+                w.write(self.root / rel, w.read(w.ROOT / rel))
+            rid = w.init_review(self.root, ref, rid='RV-'+cid)
+            r = w.load_case(self.root, rid)
             self.assertEqual((len(r['review_scope']), len(r['checks'])), (count, checks))
             self.assertEqual(r['status'], 'evidence-ready')
             self.assertEqual(r['jurisdiction']['status'], 'proposed')
             self.assertTrue(all(r[x]['signature'] is None for x in w.ROLES))
-            self.assertEqual(w.validate_record(w.ROOT, r), [])
+            self.assertEqual(w.validate_record(self.root, r), [])
 
     def test_signed_history_protected_against_git_baseline(self):
         self.approve_professional()
@@ -381,6 +386,15 @@ class WorkbenchTests(unittest.TestCase):
         with redirect_stderr(stream):
             self.assertEqual(w.main(['--root', str(self.root), 'validate']), 1)
         self.assertIn('Duplicate JSON keys', stream.getvalue())
+    def test_rejected_signed_opinion_is_also_immutable(self):
+        self.start()
+        self.form(changes={'C05': {'check_status': 'fail', 'finding': 'SYNTHETIC rejection reason'}})
+        self.sync('professional_review', 'rejected')
+        self.assertEqual(w.validate_record(self.root, self.record()), [])
+        self.form(changes={'C05': {'finding': 'SYNTHETIC overwritten rejection'}})
+        self.assertTrue(w.validate_record(self.root, self.record()))
+        with self.assertRaises(w.ReviewError):
+            w.archive(self.root, self.rid)
 
 
 if __name__ == '__main__':

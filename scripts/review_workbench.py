@@ -570,11 +570,11 @@ def validate_record(root, r, online=False, api=github_api):
             errors.append('Current status is not last recorded transition.')
         if snapshots and resumed_core(snapshots[-1]['after'], r) != core(r):
             errors.append('Current record differs from last signed snapshot.')
-        if r['professional_review']['status'] == 'approved-scope':
+        if r['professional_review']['status'] in ('approved-scope', 'rejected'):
             check = deepcopy(r)
-            apply_professional(check, content, 'approved-scope')
+            apply_professional(check, content, r['professional_review']['status'])
             if check['checks'] != r['checks']:
-                errors.append('Approved legal judgments changed; create a new review.')
+                errors.append('Final signed legal judgments changed; create a new review.')
         for axis in ROLES:
             dim = r[axis]
             pending = 'not-admitted' if axis == 'admission_decision' else 'pending'
