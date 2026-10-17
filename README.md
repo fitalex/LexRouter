@@ -1,7 +1,7 @@
 # LexRouter
 Open-source discovery, evaluation, and routing infrastructure for Legal AI
 
-LexRouter 面向法律行业建设 AI 能力发现（Discovery）、测评（Evaluation）与路由（Routing）基础设施：先发现可追溯的能力，再以控制变量测评形成证据，最后支持基于证据的技术选型。项目采用单一主仓库、静态优先和法律专家把关的协作方式。
+LexRouter 面向法律行业建设 AI SKill、Data&Model发现（Discovery）、测评（Evaluation）与路由（Routing）引擎：先发现可追溯的法律技能、数据与模型能力，再以控制变量测评和法律专业复核形成审计证据，最后支持基于专业审计证据的技能、数据与模型选型建议及自动化路由。项目采用单一主仓库、静态优先和法律专家把关的协作方式。
 
 ## 三阶段范围
 
