@@ -12,6 +12,9 @@ on:
       - 'docs/SKILL_INTAKE_POLICY.md'
       - 'docs/P1_SELECTION_PLAN.md'
       - 'docs/P1_READINESS.md'
+      - 'docs/P1_BATCH_01_REVIEW.md'
+      - 'docs/DISCOVERY_PROTOCOL.md'
+      - 'docs/daily-specs/LR-P1-01.md'
       - 'schemas/**'
       - 'scripts/**'
       - 'tests/**'
@@ -29,6 +32,9 @@ on:
       - 'docs/SKILL_INTAKE_POLICY.md'
       - 'docs/P1_SELECTION_PLAN.md'
       - 'docs/P1_READINESS.md'
+      - 'docs/P1_BATCH_01_REVIEW.md'
+      - 'docs/DISCOVERY_PROTOCOL.md'
+      - 'docs/daily-specs/LR-P1-01.md'
       - 'schemas/**'
       - 'scripts/**'
       - 'tests/**'
@@ -60,6 +66,10 @@ jobs:
         run: python scripts/validate_skills.py tests/fixtures/valid
       - name: Validate discovery candidates (offline structure only)
         run: python scripts/validate_candidates.py data/discovery/candidates.json
+      - name: Validate P1 batch 01 (existing candidate contract)
+        run: python scripts/validate_candidates.py data/discovery/p1-batch-01.json
+      - name: Validate candidate batches, pinned entries and cross-batch duplicates (offline)
+        run: python scripts/validate_discovery_batches.py data/discovery/candidates.json data/discovery/p1-batch-01.json
       - name: Validate fixed candidate positive fixture
         run: python scripts/validate_candidates.py tests/fixtures/candidates/valid.json
       - name: Validate P1 readiness and complete candidate linkage (offline)

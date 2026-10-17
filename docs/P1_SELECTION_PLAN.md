@@ -1,6 +1,6 @@
 # P1 法律 Skills 选品计划
 
-本计划服务冻结的 P1（2026-10-20 至 2026-10-28）30–50 个结构化法律 Skills 目标，不改变路线图、排期或验收口径。当前只核实了 10 个候选入口，正式目录仍为 0；没有 30–50 条已核实成果，也不设三轨数量配额。执行规则见 [收录政策](SKILL_INTAKE_POLICY.md)，原始审计见 [P1_READINESS.md](P1_READINESS.md)，逐条可机读提案见 [p1-proposals.json](../data/intake/p1-proposals.json)。
+本计划服务冻结的 P1（2026-10-20 至 2026-10-28）30–50 个结构化法律 Skills 目标，不改变路线图、排期或验收口径。以下为 P0 的 10 条候选选品基线；LR-P1-01 于 2026-10-17 新增 10 条，联合初筛共 20 条候选记录，正式目录仍为 0。新批次 A3/C7/B0、证据与责任见 [批次审核表](P1_BATCH_01_REVIEW.md)；下述既有 A3/C7/B4 和七条阻塞保持历史状态。没有 30–50 条正式入库成果，也不设三轨数量配额。执行规则见 [收录政策](SKILL_INTAKE_POLICY.md)，原始审计见 [P1_READINESS.md](P1_READINESS.md)，逐条可机读提案见 [p1-proposals.json](../data/intake/p1-proposals.json)。
 
 ## 六类覆盖与优先顺序
 

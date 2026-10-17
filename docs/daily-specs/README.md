@@ -8,7 +8,7 @@
 | [LR-P0-02](LR-P0-02.md) | 2026-10-16 | 法律 Skills 发现规范、候选清单、独立检查与离线测试/CI | Human Maintainer 会话授权 AUTHORIZED_TO_EXECUTE；执行范围与 DoD 见任务记录 |
 | [LR-P0-03](LR-P0-03.md) | 2026-10-17（目标）；2026-10-16 复核 | 10 条候选证据与授权审计、P1 准备清单、离线关联检查与正反测试/CI | Human Maintainer 会话授权 AUTHORIZED_TO_EXECUTE；工程交付与待决事项见任务记录和 PR |
 | [LR-P0-04](LR-P0-04.md) | 2026-10-16 | 三轨收录政策、独立提案模型、10 条分流与 P1 选品计划、离线检查/测试 | Human Maintainer 会话授权 AUTHORIZED_TO_EXECUTE；后续托管、原创研发与正式入库须另审 |
-
 | [LR-P0-05](LR-P0-05.md) | 2026-10-17（目标）；2026-10-16 整理 | 三个固定候选逐文件托管预审、专业交接、离线校验/CI 与 P0 实证验收准备 | AUTHORIZED_TO_EXECUTE；托管/法律批准与合并仍待人工；[PR #5](https://github.com/fitalex/LexRouter/pull/5) |
+| [LR-P1-01](LR-P1-01.md) | 2026-10-17 执行；P1 窗口 10.20–10.28 不变 | 新增 10 条候选、联合 20 条、六类检索/人工去重、离线联合校验与 CI；新 A3/C7/B0 | 会话任务书 AUTHORIZED_TO_EXECUTE；[审核表](../P1_BATCH_01_REVIEW.md)，正式入库 0，不执行 P1-02 或合并 |
 
 本索引不代表任务已完成验收；交付与 CI 证据以对应 PR 为准。后续获授权的任务书在此追加链接，公开版本不得包含密钥、敏感卷宗或 Holdout 内容。
