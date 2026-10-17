@@ -65,6 +65,19 @@ git diff --check
 
 候选 CLI 默认检查该清单，也可传单个 JSON 文件；只离线检查 UTF-8 JSON、字段、类型、日期、URL 格式、状态一致性与 ID 唯一性，不抓取、下载或执行 Skill。错误写 stderr，标明文件和 JSON Pointer；语法错误附行列；成功退出 0，失败退出 1，参数错误退出 2。拒绝重复 JSON 键和 NaN/Infinity 等非 JSON 常量。契约在脚本中使用现有 jsonschema 实现，复用正式 Schema 的基础字段约束与错误位置辅助函数，无新增依赖，不修改正式校验器。
 
+## P1 批次扩充与联合检查（LR-P1-01）
+
+P0 的 `candidates.json`、`p1-readiness.json`、`data/intake/p1-proposals.json` 和 `data/reviews/p1-handoff.json` 保留历史原样。本批 [p1-batch-01.json](../data/discovery/p1-batch-01.json) 沿用同一候选契约，新增 10 条，联合初筛后 20 条候选记录；本批模式建议、独立能力比较、检索范围及责任交接见 [审核表](P1_BATCH_01_REVIEW.md)。没有为新批次套用旧 readiness 的覆盖/审批结论，也未扩写正式八字段。
+
+```sh
+python scripts/validate_candidates.py data/discovery/p1-batch-01.json
+python scripts/validate_discovery_batches.py data/discovery/candidates.json data/discovery/p1-batch-01.json
+```
+
+联合 CLI 显式传入各候选文件，先复用现有校验器，再检查跨文件 ID、同原仓库/文件入口及固定完整 commit SHA。GitHub blob/raw 链接、账号/仓库大小写、百分号编码、不同提交及宿主包装不会令同入口重复计数；文件路径大小写保留。重复传入同一清单报错，防止统计膨胀；失败时不认证去重总数。该批来源均为 GitHub，联合检查要求入口固定为 GitHub 原文件且 SHA 与 revision 一致；未来非 GitHub 来源须另提出固定版本规则，单文件候选契约仍不变。
+
+**语义去重必须人工完成。** 机器无法凭链接识别跨仓库镜像、相同提示词、fork 内共有工作流或套件子项；人工逐项比较任务/输入/输出、版本及授权边界，并在审核表和 `evidence_notes` 保留依据。联合检查只认证 ID/来源唯一，不声称 20 条全部已经证明独立实体能力；原 litigation-hub 等历史阻塞继续保留。目录更新时须将新批次显式加入 CI 命令、统计和人工比较范围，不能只依赖旧清单的默认命令。
+
 CI 同时检查实际候选清单、合成正反样本及原有正式校验测试；不依赖实时第三方网站。结构通过不改变记录的核查状态。每次修改候选须保留原始许可与证据，状态变化由 PR 说明理由；来源变化、许可冲突或错误应补新核查记录，不静默升级状态。
 
 进入 P1 后，必须再次核对版本、实际许可范围、法域与法规时效，提供法律专家复核依据，满足正式八字段 Schema 和贡献指南，经独立 PR 审核才能建立 `skills/<id>/metadata.json`。禁止将候选 JSON 直接搬到正式目录；正式收录也不等于测评通过或推荐。未核实法规时效的条目继续留在候选区。

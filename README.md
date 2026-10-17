@@ -11,7 +11,7 @@ LexRouter 面向法律行业建设 AI 能力发现（Discovery）、测评（Eva
 | Phase 2 | Lex-Data-Router | 法律数据与工具（法规/案例 API、MCP）；Phase 1 验收后启动 |
 | Phase 3 | Lex-Model-Router | 通用与垂直大模型（LLMs）；前两阶段成熟后启动 |
 
-当前处于 Phase 1 的 P0 仓库与规范建设。已提供工程骨架、元数据规范及校验、测评与合规基础协议，以及独立的发现候选清单和离线检查；尚无正式 Skills 条目、测评结果、榜单、站点或路由功能。不面向 C 端当事人提供法律咨询，不建设重度律所 SaaS 或实时流量代理网关。
+P0 工程已完成验收，当前按 LR-P1-01 开展 P1 发现准备；冻结的 P1 时间窗口仍为 2026-10-20 至 2026-10-28。原 10 条候选历史快照保留，本批新增 10 条，跨批次初筛后共 20 条候选记录，覆盖六类业务；候选、专业审核和正式入库分别统计。已提供工程骨架、元数据校验及合规协议；正式 Skills 仍为 0，未开展测评、榜单、站点或路由建设。不面向 C 端当事人提供法律咨询，不建设重度律所 SaaS 或实时流量代理网关。
 
 ## 文档入口
 
@@ -19,8 +19,9 @@ LexRouter 面向法律行业建设 AI 能力发现（Discovery）、测评（Eva
 - [AI Agent 协作规范](AGENTS.md) · [社区贡献指南](CONTRIBUTING.md) · [安全报告](SECURITY.md)
 - [能力元数据规范](docs/SCHEMA.md) · [JSON Schema](schemas/skill.schema.json)
 - [法律 Skills 发现协议](docs/DISCOVERY_PROTOCOL.md) · [候选来源、统计与待核实事项](data/discovery/README.md)
+- [P1 批次 01 审核表及来源检索记录](docs/P1_BATCH_01_REVIEW.md)（新增 10；A 建议 3、C 建议 7，新增 B 机会 0；专业审核均未开展）
 - [P1 入库准备审计与专业复核交接](docs/P1_READINESS.md)（3 条具备提交条件、7 条阻塞，均未正式入库）
-- [三轨收录政策](docs/SKILL_INTAKE_POLICY.md) · [P1 选品计划](docs/P1_SELECTION_PLAN.md)（3 条精选托管提案、7 条外部索引提案、4 项独立原创机会，均未批准执行后续内容工作）
+- [三轨收录政策](docs/SKILL_INTAKE_POLICY.md) · [P1 选品计划](docs/P1_SELECTION_PLAN.md)（P0 基线 A3/C7/B4；含本批累计 A6/C14/B4，均未批准执行后续内容工作）
 - [托管材料预审与专业交接](docs/reviews/README.md) · [P0 验收准备报告](docs/P0_ACCEPTANCE_REPORT.md)（工程交接，非托管/法律批准）
 - [控制变量测评协议](docs/EVAL_PROTOCOL.md) · [数据脱敏与合规](docs/ANONYMIZATION.md)
 - [每日任务索引](docs/daily-specs/README.md) · [Skills 收录规范](skills/README.md)
@@ -35,6 +36,8 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 python scripts/validate_skills.py skills
 python scripts/validate_candidates.py data/discovery/candidates.json
+python scripts/validate_candidates.py data/discovery/p1-batch-01.json
+python scripts/validate_discovery_batches.py data/discovery/candidates.json data/discovery/p1-batch-01.json
 python scripts/validate_p1_readiness.py data/discovery/p1-readiness.json
 python scripts/validate_intake_plan.py data/intake/p1-proposals.json
 python scripts/validate_p1_handoff.py
