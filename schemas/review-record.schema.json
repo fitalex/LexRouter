@@ -267,9 +267,12 @@
       "additionalProperties": false,
       "properties": {
         "status": {
-          "type": "string",
-          "minLength": 1,
-          "pattern": "\\S"
+          "enum": [
+            "pending",
+            "approved-scope",
+            "needs-changes",
+            "rejected"
+          ]
         },
         "signature": {
           "anyOf": [
@@ -286,12 +289,7 @@
                   "pattern": "\\S"
                 },
                 "reviewer_role": {
-                  "enum": [
-                    "Legal Reviewer",
-                    "Rights Reviewer",
-                    "Engineering Reviewer",
-                    "Human Maintainer"
-                  ]
+                  "const": "Rights Reviewer"
                 },
                 "credential_evidence_ref": {
                   "type": "string",
@@ -315,9 +313,11 @@
                   "format": "date-time"
                 },
                 "decision": {
-                  "type": "string",
-                  "minLength": 1,
-                  "pattern": "\\S"
+                  "enum": [
+                    "approved-scope",
+                    "needs-changes",
+                    "rejected"
+                  ]
                 },
                 "signature_evidence_ref": {
                   "type": "string",
@@ -367,9 +367,12 @@
       "additionalProperties": false,
       "properties": {
         "status": {
-          "type": "string",
-          "minLength": 1,
-          "pattern": "\\S"
+          "enum": [
+            "pending",
+            "approved-scope",
+            "needs-changes",
+            "rejected"
+          ]
         },
         "signature": {
           "anyOf": [
@@ -386,12 +389,7 @@
                   "pattern": "\\S"
                 },
                 "reviewer_role": {
-                  "enum": [
-                    "Legal Reviewer",
-                    "Rights Reviewer",
-                    "Engineering Reviewer",
-                    "Human Maintainer"
-                  ]
+                  "const": "Legal Reviewer"
                 },
                 "credential_evidence_ref": {
                   "type": "string",
@@ -415,9 +413,11 @@
                   "format": "date-time"
                 },
                 "decision": {
-                  "type": "string",
-                  "minLength": 1,
-                  "pattern": "\\S"
+                  "enum": [
+                    "approved-scope",
+                    "needs-changes",
+                    "rejected"
+                  ]
                 },
                 "signature_evidence_ref": {
                   "type": "string",
@@ -467,9 +467,12 @@
       "additionalProperties": false,
       "properties": {
         "status": {
-          "type": "string",
-          "minLength": 1,
-          "pattern": "\\S"
+          "enum": [
+            "pending",
+            "passed",
+            "needs-changes",
+            "rejected"
+          ]
         },
         "signature": {
           "anyOf": [
@@ -486,12 +489,7 @@
                   "pattern": "\\S"
                 },
                 "reviewer_role": {
-                  "enum": [
-                    "Legal Reviewer",
-                    "Rights Reviewer",
-                    "Engineering Reviewer",
-                    "Human Maintainer"
-                  ]
+                  "const": "Engineering Reviewer"
                 },
                 "credential_evidence_ref": {
                   "type": "string",
@@ -515,9 +513,11 @@
                   "format": "date-time"
                 },
                 "decision": {
-                  "type": "string",
-                  "minLength": 1,
-                  "pattern": "\\S"
+                  "enum": [
+                    "passed",
+                    "needs-changes",
+                    "rejected"
+                  ]
                 },
                 "signature_evidence_ref": {
                   "type": "string",
@@ -567,9 +567,12 @@
       "additionalProperties": false,
       "properties": {
         "status": {
-          "type": "string",
-          "minLength": 1,
-          "pattern": "\\S"
+          "enum": [
+            "not-admitted",
+            "admitted",
+            "declined",
+            "suspended"
+          ]
         },
         "signature": {
           "anyOf": [
@@ -586,12 +589,7 @@
                   "pattern": "\\S"
                 },
                 "reviewer_role": {
-                  "enum": [
-                    "Legal Reviewer",
-                    "Rights Reviewer",
-                    "Engineering Reviewer",
-                    "Human Maintainer"
-                  ]
+                  "const": "Human Maintainer"
                 },
                 "credential_evidence_ref": {
                   "type": "string",
@@ -615,9 +613,11 @@
                   "format": "date-time"
                 },
                 "decision": {
-                  "type": "string",
-                  "minLength": 1,
-                  "pattern": "\\S"
+                  "enum": [
+                    "admitted",
+                    "declined",
+                    "suspended"
+                  ]
                 },
                 "signature_evidence_ref": {
                   "type": "string",
