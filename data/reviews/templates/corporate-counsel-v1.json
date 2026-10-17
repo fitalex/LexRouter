@@ -1,0 +1,49 @@
+{
+  "template_id": "corporate-counsel",
+  "version": "1.0.0",
+  "source_ref": "docs/reviews/P1_LEGAL_REVIEW_HANDOFF.md",
+  "checks": [
+    {
+      "check_id": "CN01",
+      "issue_key": "CN01",
+      "legal_issue": "contract-review / contract-drafting playbooks；待确认：合同效力、授权、格式条款、违约责任、公司治理和出资义务，分别匹配事实时点",
+      "source_locator": "contract-review / contract-drafting playbooks",
+      "authority_hints": "民法典及合同编通则司法解释、公司法与时间效力解释；人大、最高法"
+    },
+    {
+      "check_id": "CN02",
+      "issue_key": "CN02",
+      "legal_issue": "compliance-check-playbook 的 AI、数据、广告流程；待确认：生效、修订及过渡逐条确认；区分公开内容生成、算法、数据角色/规模和境内外流向",
+      "source_locator": "compliance-check-playbook 的 AI、数据、广告流程",
+      "authority_hints": "个保法、数据安全法、网络安全法及修订、网络数据安全管理条例、生成式 AI 暂行办法、深度合成/算法推荐/AI 内容标识规则；人大、政府、网信"
+    },
+    {
+      "check_id": "CN03",
+      "issue_key": "CN03",
+      "legal_issue": "广告、知识产权、医美与平台检查；待确认：广告功效/禁限语、内容标识、授权链、生成内容版权和行业准入不能用通用规则代替",
+      "source_locator": "广告、知识产权、医美与平台检查",
+      "authority_hints": "广告法、互联网广告管理办法、著作权/商标/专利法、反不正当竞争法、医疗广告及行业规则；人大、市场监管、知识产权及有关主管机关"
+    },
+    {
+      "check_id": "CN04",
+      "issue_key": "CN04",
+      "legal_issue": "劳动、公司与升级规则；待确认：劳动争议与并购融资、刑事/监管/证券等事项的人工边界；不因知识库有材料而取消升级",
+      "source_locator": "劳动、公司与升级规则",
+      "authority_hints": "劳动合同法、公司法及司法解释、地方规定；人大、人社、最高法"
+    },
+    {
+      "check_id": "CN05",
+      "issue_key": "CN05",
+      "legal_issue": "citation-verification、source-registry、verify_citations.py；待确认：本地字符串命中不等于引用真实、有效或支持结论；库中自称“现行”或日期不作时效确认",
+      "source_locator": "citation-verification、source-registry、verify_citations.py",
+      "authority_hints": "对每条引用回到官方文本和具体结论；案例以官方全文为准"
+    },
+    {
+      "check_id": "CN06",
+      "issue_key": "CN06",
+      "legal_issue": "KB 缺失、陈旧或冲突；本机路径失效；待确认：无库/联网失败须标无法判断；明确缩范围后还能完成哪些任务，不把部分组件签署为完整工作流",
+      "source_locator": "KB 缺失、陈旧或冲突；本机路径失效",
+      "authority_hints": "在获权且另行授权的验证场景中核对失败输出和人工升级"
+    }
+  ]
+}

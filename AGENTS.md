@@ -29,6 +29,10 @@
 
 12. LR-P0-05 的逐文件预审放在 `data/reviews/`，变更后运行 `python scripts/validate_p1_handoff.py`；完整清单须与固定 Git tree 一致。eligible-for-scope-review 不是批准，P0 交接记录不得写入已托管、已完成专业审核或法规时效日期；真实后续审批另立证据和 PR。
 
+13. LR-P1-02 持续法律复核使用 [Review Workbench](docs/review-workbench/README.md)。每轮独立 Review ID，固定清单与模板，复用 C01–C10；不改 P0 审计、冻结路线图或正式八字段。新候选/业务以数据配置接入，核心程序不写候选特例。
+14. 自动材料与 workbook.md 人工意见分离；prepare 永不覆盖人工区，自动区人工修改须报冲突。AI 不代填专业结论、不代签、不自动批准。只同步经 main 基准角色/权限/精确摘要核验的本人 GitHub Review；最终决定须独立事件。白名单初始为空，配置另经人工接受，不推定身份。
+15. 工作台变更须运行 `python scripts/review_workbench.py validate --base-ref origin/main`、原有全部校验和测试；真实签署/入库 PR 须额外 `validate --online`。已签历史/归档不可改写，变化另立 Review。私有身份及法律材料保存在仓库外，公开仅限允许公开的摘要/索引。审核人按 [维护者指南](docs/review-workbench/MAINTAINER.md)操作，无须编辑 JSON。
+
 ## 交付与复核
 
 PR 列明任务编号、范围、文件、依赖理由、真实测试证据、DoD 状态及待决事项。研究结论注明来源与不确定性。法律专业判断须由具备相关专业能力的法律专家复核，重要决策及最终合并由 Human Maintainer 批准。

@@ -8,6 +8,8 @@ on:
       - 'data/intake/**'
       - 'data/reviews/**'
       - 'docs/reviews/**'
+      - 'docs/review-workbench/**'
+      - 'AGENTS.md'
       - 'docs/P0_ACCEPTANCE_REPORT.md'
       - 'docs/SKILL_INTAKE_POLICY.md'
       - 'docs/P1_SELECTION_PLAN.md'
@@ -28,6 +30,8 @@ on:
       - 'data/intake/**'
       - 'data/reviews/**'
       - 'docs/reviews/**'
+      - 'docs/review-workbench/**'
+      - 'AGENTS.md'
       - 'docs/P0_ACCEPTANCE_REPORT.md'
       - 'docs/SKILL_INTAKE_POLICY.md'
       - 'docs/P1_SELECTION_PLAN.md'
@@ -44,6 +48,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   validate:
@@ -53,6 +58,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -82,5 +89,10 @@ jobs:
         run: python scripts/validate_intake_plan.py tests/fixtures/intake/valid.json --candidates tests/fixtures/p1-readiness/candidates.json --readiness tests/fixtures/p1-readiness/valid.json
       - name: Validate proposal-only P1 file scope and legal handoff (offline)
         run: python scripts/validate_p1_handoff.py
+      - name: Validate reusable reviews and immutable history
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_BASE: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
+        run: python scripts/review_workbench.py validate --online --base-ref "$REVIEW_BASE"
       - name: Test positive and negative fixtures
         run: python -m unittest discover -s tests -v

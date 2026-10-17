@@ -23,6 +23,7 @@ P0 工程已完成验收，当前按 LR-P1-01 开展 P1 发现准备；冻结的
 - [P1 入库准备审计与专业复核交接](docs/P1_READINESS.md)（3 条具备提交条件、7 条阻塞，均未正式入库）
 - [三轨收录政策](docs/SKILL_INTAKE_POLICY.md) · [P1 选品计划](docs/P1_SELECTION_PLAN.md)（P0 基线 A3/C7/B4；含本批累计 A6/C14/B4，均未批准执行后续内容工作）
 - [托管材料预审与专业交接](docs/reviews/README.md) · [P0 验收准备报告](docs/P0_ACCEPTANCE_REPORT.md)（工程交接，非托管/法律批准）
+- [可复用法律复核工作台 v1](docs/review-workbench/README.md) · [维护者操作指南](docs/review-workbench/MAINTAINER.md)（三份待审核工作包，未签署、未入库）
 - [控制变量测评协议](docs/EVAL_PROTOCOL.md) · [数据脱敏与合规](docs/ANONYMIZATION.md)
 - [每日任务索引](docs/daily-specs/README.md) · [Skills 收录规范](skills/README.md)
 
@@ -41,6 +42,8 @@ python scripts/validate_discovery_batches.py data/discovery/candidates.json data
 python scripts/validate_p1_readiness.py data/discovery/p1-readiness.json
 python scripts/validate_intake_plan.py data/intake/p1-proposals.json
 python scripts/validate_p1_handoff.py
+python scripts/review_workbench.py validate
+python scripts/review_workbench.py status
 python -m unittest discover -s tests -v
 ```
 

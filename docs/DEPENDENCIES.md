@@ -16,3 +16,5 @@ Human Maintainer 已在 LR-P0-01A 中批准 LexRouter 自主原创代码采用�
 LR-P0-02 未新增或升级依赖；候选校验复用现有 jsonschema、URI 格式检查和 Python 标准库。第三方候选不是运行时依赖，未将其源码或全文复制入库；各候选的版本、许可事实及未核实事项独立记录在 [发现候选区](../data/discovery/README.md)，不得将本表两项 MIT 依赖的结论扩展至候选材料。
 
 LR-P0-05 未新增、升级或打包依赖，交接校验复用既有 Python 标准库/jsonschema。上游 Skill 依赖仅只读整理于[三个材料清单](reviews/README.md)，未安装为本仓库依赖；其许可不由本表推定。
+
+LR-P1-02 不新增/升级 Python 或前端依赖，复用标准库和现有 jsonschema。真实签署验证调用 GitHub CLI 的只读 gh api；CI runner 自带 gh，本地由工程人员配置官方 CLI，不打包其源码。初始记录及合成测试可离线执行；GH_TOKEN 不进入记录/日志。

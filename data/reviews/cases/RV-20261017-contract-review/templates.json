@@ -1,0 +1,107 @@
+[
+  {
+    "check_id": "C01",
+    "issue_key": "C01",
+    "legal_issue": "固定版本与范围：复核下列候选、commit、入口及拟用清单；记录实际审阅文件及 blob",
+    "source_locator": "本 Review 固定文件清单；C01",
+    "authority_hints": "指向本交接记录和 manifest；排除项不得悄然进入复核批准范围；改版重审"
+  },
+  {
+    "check_id": "C02",
+    "issue_key": "C02",
+    "legal_issue": "法域与事实：确认 CN-Mainland 及案件/合同地点、主体、行业、行为时间、判断时点；识别港澳台/涉外分支",
+    "source_locator": "本 Review 固定文件清单；C02",
+    "authority_hints": "明确可用及排除场景、必要事实、缺失信息；来源声明不等于专家确认"
+  },
+  {
+    "check_id": "C03",
+    "issue_key": "C03",
+    "legal_issue": "官方法律文本：按候选表中的任务核实每一引用，查找官方发布机关、文号、条款、原文和来源 URL",
+    "source_locator": "本 Review 固定文件清单；C03",
+    "authority_hints": "保存可访问定位、文本版本/哈希和允许保存的摘录，区分法条、司法解释、政策、行业规范和案例"
+  },
+  {
+    "check_id": "C04",
+    "issue_key": "C04",
+    "legal_issue": "法律时效：对每项核对公布/施行/修订/废止、替代文件、地方规则和过渡/溯及适用",
+    "source_locator": "本 Review 固定文件清单；C04",
+    "authority_hints": "留下事实时间→适用版本→过渡规则→结论链；抓取日、commit 日和模型截止日不能填作法规时效"
+  },
+  {
+    "check_id": "C05",
+    "issue_key": "C05",
+    "legal_issue": "引用真实性与支持性：查条号/名称/原文是否真实，引用是否支持具体结论，是否遗漏例外或冲突",
+    "source_locator": "本 Review 固定文件清单；C05",
+    "authority_hints": "每条“条款/事实→法律问题→官方条文/案例定位→适用推理→结论/限制”可追溯；不能仅检查字符串命中"
+  },
+  {
+    "check_id": "C06",
+    "issue_key": "C06",
+    "legal_issue": "风险与升级：使用独立合成/获授权脱敏场景检查下面高风险项、缺失事实、工具失效和旧法陷阱",
+    "source_locator": "本 Review 固定文件清单；C06",
+    "authority_hints": "记录输入条件、实际输出证据、错误影响、纠正建议；不直接采用上游真实合同或其测评用例；实际运行须另获授权"
+  },
+  {
+    "check_id": "C07",
+    "issue_key": "C07",
+    "legal_issue": "人工裁决：对效力、收费、期限、重大交易、数据出境等问题明确人类决定点",
+    "source_locator": "本 Review 固定文件清单；C07",
+    "authority_hints": "记录有条件通过/补正/不通过及范围，存在分歧另行复核，不由评分或免责声明替代"
+  },
+  {
+    "check_id": "C08",
+    "issue_key": "C08",
+    "legal_issue": "权利与用途：与许可审核人员确认本轮审核的精确文件、引用材料、拟用场景和排除项",
+    "source_locator": "本 Review 固定文件清单；C08",
+    "authority_hints": "法律专业适用复核与著作权/许可审核分轴留证，任何一轴未通过均不能正式托管"
+  },
+  {
+    "check_id": "C09",
+    "issue_key": "C09",
+    "legal_issue": "签署：由具备相应能力的人员自行填写真实身份、资质/专业经验、独立性、复核日期、意见、限制、实际时效核查基准及证据位置并签署",
+    "source_locator": "本 Review 固定文件清单；C09",
+    "authority_hints": "受控记录可含完整身份；公开 PR 仅提供经允许的脱敏索引/摘要，由 Human Maintainer 核实证据可访问性；本包不预填"
+  },
+  {
+    "check_id": "C10",
+    "issue_key": "C10",
+    "legal_issue": "不通过/更新：缺证则补证，法律错误则单独修正/缩范围后重审；根本不适用则保留拒绝/暂停原因",
+    "source_locator": "本 Review 固定文件清单；C10",
+    "authority_hints": "保留原版本和意见；仍在候选区，不解除其他七条阻塞；来源、许可或法规实质变化触发新审计；Human Maintainer 另审入库 PR"
+  },
+  {
+    "check_id": "CR01",
+    "issue_key": "CR01",
+    "legal_issue": "SKILL Step 2、financial-amounts、risk-matrix：违约金占合同价 30%、LPR 四倍、保证金 20% 是否被泛化；待确认：分清损失基数与合同价、借贷类型、利率时点、定金与保证金；阈值是风险提示还是强制规则，专家逐项决定",
+    "source_locator": "SKILL Step 2、financial-amounts、risk-matrix",
+    "authority_hints": "民法典合同编、合同编通则司法解释、民间借贷司法解释；人大数据库、最高法；有关利率官方公布来源"
+  },
+  {
+    "check_id": "CR02",
+    "issue_key": "CR02",
+    "legal_issue": "law-sources、Step 4 的旧《合同法司法解释一》示例与预录法条回退；待确认：新旧法过渡、事实时间和条号逐项核对；检索失败不能以模型记忆确认现行法",
+    "source_locator": "law-sources、Step 4 的旧《合同法司法解释一》示例与预录法条回退",
+    "authority_hints": "民法典及其时间效力规定、合同编通则司法解释、旧司法解释废止/替代文件；最高法"
+  },
+  {
+    "check_id": "CR03",
+    "issue_key": "CR03",
+    "legal_issue": "construction-contract、employment-contract、equity-investment 等专项结论；待确认：无资质/许可与合同效力、劳动保护、出资/治理与回购适用条件；不能一概断言无效",
+    "source_locator": "construction-contract、employment-contract、equity-investment 等专项结论",
+    "authority_hints": "建筑法、劳动合同法、公司法及时间效力司法解释、相关资质/施工/劳动规则；人大、住建部门、人社、最高法"
+  },
+  {
+    "check_id": "CR04",
+    "issue_key": "CR04",
+    "legal_issue": "compliance-checklist 的数据、竞争、贿赂、行业许可、关联交易条目；待确认：监管义务与合同无效区分；数据处理合法基础、例外、行业和地方要求逐条确认",
+    "source_locator": "compliance-checklist 的数据、竞争、贿赂、行业许可、关联交易条目",
+    "authority_hints": "个保法、数据安全法、反垄断法、反不正当竞争法、行业监管规则及修订；人大、网信、市场监管及有关主管机关"
+  },
+  {
+    "check_id": "CR05",
+    "issue_key": "CR05",
+    "legal_issue": "Word 批注、OCR、未检索成功、合同类型混合/未知；待确认：立场未经确认、关键数字识别错误、双侧条款错位可形成相反建议，须人工停止/升级",
+    "source_locator": "Word 批注、OCR、未检索成功、合同类型混合/未知",
+    "authority_hints": "原合同定位、OCR 对照和引用支持证据；法律依据须回到官方原文"
+  }
+]
