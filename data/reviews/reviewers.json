@@ -1,0 +1,6 @@
+{
+  "format_version": 1,
+  "repository": "fitalex/LexRouter",
+  "reviewers": {},
+  "note": "Fail closed: Human Maintainer configures public GitHub login → roles in a separately accepted policy PR. No inferred identity or AI signature."
+}

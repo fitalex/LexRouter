@@ -1,0 +1,813 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fitalex/LexRouter/schemas/review-record.schema.json",
+  "title": "LexRouter Review Workbench v1 — structure is not authentication",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {
+      "const": 1
+    },
+    "review_id": {
+      "type": "string",
+      "pattern": "^RV-[a-zA-Z0-9-]+$"
+    },
+    "subject_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "subject_type": {
+      "enum": [
+        "candidate",
+        "skill",
+        "original-opportunity"
+      ]
+    },
+    "source_revision": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "source_snapshot_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "scope_manifest_ref": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "scope_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "trigger_type": {
+      "enum": [
+        "initial-intake",
+        "source-update",
+        "regulatory-change",
+        "license-change",
+        "scope-change",
+        "risk-reassessment",
+        "scheduled-review"
+      ]
+    },
+    "parent_review_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "template_version": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "template_id",
+          "version",
+          "sha256"
+        ]
+      }
+    },
+    "jurisdiction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "status": {
+          "enum": [
+            "proposed",
+            "professionally-confirmed"
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "status"
+      ]
+    },
+    "review_scope": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "excluded_scope": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      },
+      "uniqueItems": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "assigned_reviewer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "evidence-ready",
+        "in-review",
+        "approved-scope",
+        "needs-changes",
+        "rejected"
+      ]
+    },
+    "track": {
+      "enum": [
+        "curated-hosting",
+        "original-development",
+        "external-reference"
+      ]
+    },
+    "next_review_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "risk_level": {
+      "enum": [
+        "unassessed",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "check_id": {
+            "type": "string"
+          },
+          "source_locator": {
+            "type": "string"
+          },
+          "legal_issue": {
+            "type": "string"
+          },
+          "fact_context": {
+            "type": "string"
+          },
+          "legal_effective_period": {
+            "type": "string"
+          },
+          "transitional_rule": {
+            "type": "string"
+          },
+          "applicability_reasoning": {
+            "type": "string"
+          },
+          "finding": {
+            "type": "string"
+          },
+          "required_changes": {
+            "type": "string"
+          },
+          "limitations": {
+            "type": "string"
+          },
+          "authority_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "uniqueItems": true
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "uniqueItems": true
+          },
+          "risk_level": {
+            "enum": [
+              "unassessed",
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "check_status": {
+            "enum": [
+              "pending",
+              "pass",
+              "needs-changes",
+              "fail",
+              "not-applicable"
+            ]
+          }
+        },
+        "required": [
+          "check_id",
+          "source_locator",
+          "legal_issue",
+          "fact_context",
+          "legal_effective_period",
+          "transitional_rule",
+          "applicability_reasoning",
+          "finding",
+          "required_changes",
+          "limitations",
+          "authority_refs",
+          "evidence_refs",
+          "risk_level",
+          "check_status"
+        ]
+      }
+    },
+    "rights_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "pending",
+            "approved-scope",
+            "needs-changes",
+            "rejected"
+          ]
+        },
+        "signature": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "reviewer_public_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "reviewer_role": {
+                  "const": "Rights Reviewer"
+                },
+                "credential_evidence_ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "conflict_declaration": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "regulatory_as_of": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date"
+                },
+                "reviewed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "decision": {
+                  "enum": [
+                    "approved-scope",
+                    "needs-changes",
+                    "rejected"
+                  ]
+                },
+                "signature_evidence_ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "binding_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "reviewer_public_id",
+                "reviewer_role",
+                "credential_evidence_ref",
+                "conflict_declaration",
+                "regulatory_as_of",
+                "reviewed_at",
+                "decision",
+                "signature_evidence_ref",
+                "binding_sha256",
+                "reason"
+              ]
+            }
+          ]
+        },
+        "gate_evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "signature",
+        "gate_evidence"
+      ]
+    },
+    "professional_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "pending",
+            "approved-scope",
+            "needs-changes",
+            "rejected"
+          ]
+        },
+        "signature": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "reviewer_public_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "reviewer_role": {
+                  "const": "Legal Reviewer"
+                },
+                "credential_evidence_ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "conflict_declaration": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "regulatory_as_of": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date"
+                },
+                "reviewed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "decision": {
+                  "enum": [
+                    "approved-scope",
+                    "needs-changes",
+                    "rejected"
+                  ]
+                },
+                "signature_evidence_ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "binding_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "reviewer_public_id",
+                "reviewer_role",
+                "credential_evidence_ref",
+                "conflict_declaration",
+                "regulatory_as_of",
+                "reviewed_at",
+                "decision",
+                "signature_evidence_ref",
+                "binding_sha256",
+                "reason"
+              ]
+            }
+          ]
+        },
+        "gate_evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "signature",
+        "gate_evidence"
+      ]
+    },
+    "engineering_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "pending",
+            "passed",
+            "needs-changes",
+            "rejected"
+          ]
+        },
+        "signature": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "reviewer_public_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "reviewer_role": {
+                  "const": "Engineering Reviewer"
+                },
+                "credential_evidence_ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "conflict_declaration": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "regulatory_as_of": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date"
+                },
+                "reviewed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "decision": {
+                  "enum": [
+                    "passed",
+                    "needs-changes",
+                    "rejected"
+                  ]
+                },
+                "signature_evidence_ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "binding_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "reviewer_public_id",
+                "reviewer_role",
+                "credential_evidence_ref",
+                "conflict_declaration",
+                "regulatory_as_of",
+                "reviewed_at",
+                "decision",
+                "signature_evidence_ref",
+                "binding_sha256",
+                "reason"
+              ]
+            }
+          ]
+        },
+        "gate_evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "signature",
+        "gate_evidence"
+      ]
+    },
+    "admission_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "not-admitted",
+            "admitted",
+            "declined",
+            "suspended"
+          ]
+        },
+        "signature": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "reviewer_public_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "reviewer_role": {
+                  "const": "Human Maintainer"
+                },
+                "credential_evidence_ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "conflict_declaration": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "regulatory_as_of": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date"
+                },
+                "reviewed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "decision": {
+                  "enum": [
+                    "admitted",
+                    "declined",
+                    "suspended"
+                  ]
+                },
+                "signature_evidence_ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "binding_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "reviewer_public_id",
+                "reviewer_role",
+                "credential_evidence_ref",
+                "conflict_declaration",
+                "regulatory_as_of",
+                "reviewed_at",
+                "decision",
+                "signature_evidence_ref",
+                "binding_sha256",
+                "reason"
+              ]
+            }
+          ]
+        },
+        "gate_evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "signature",
+        "gate_evidence"
+      ]
+    },
+    "history": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "from": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "snapshot_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "snapshot_sha256": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            ]
+          }
+        },
+        "required": [
+          "at",
+          "source",
+          "reason",
+          "from",
+          "to",
+          "snapshot_ref",
+          "snapshot_sha256"
+        ]
+      }
+    },
+    "archived": {
+      "type": "boolean"
+    },
+    "archive_sha256": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      ]
+    },
+    "suspension": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "affected_scope": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "uniqueItems": true
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": [
+            "affected_scope",
+            "reason",
+            "source",
+            "at"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "format_version",
+    "review_id",
+    "subject_id",
+    "subject_type",
+    "source_revision",
+    "source_snapshot_sha256",
+    "scope_manifest_ref",
+    "scope_manifest_sha256",
+    "trigger_type",
+    "parent_review_id",
+    "template_version",
+    "jurisdiction",
+    "review_scope",
+    "excluded_scope",
+    "created_at",
+    "assigned_reviewer",
+    "status",
+    "track",
+    "next_review_date",
+    "risk_level",
+    "checks",
+    "rights_review",
+    "professional_review",
+    "engineering_review",
+    "admission_decision",
+    "history",
+    "archived",
+    "archive_sha256",
+    "suspension"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "subject_id": "discovery-contract-review",
+  "subject_type": "candidate",
+  "source_url": "https://github.com/NOMOREKKK/contract-review-skill/blob/f73f92b6341ef4e9f1765434bf348b1acb4fb1d3/SKILL.md",
+  "source_revision": "f73f92b6341ef4e9f1765434bf348b1acb4fb1d3",
+  "scope_manifest_ref": "data/reviews/manifests/discovery-contract-review.json",
+  "templates": [
+    "data/reviews/templates/common-v1.json",
+    "data/reviews/templates/contract-review-v1.json"
+  ],
+  "jurisdiction": "CN-Mainland",
+  "track": "curated-hosting",
+  "review_scope": [
+    "LICENSE",
+    "README.md",
+    "SKILL.md",
+    "references/clause-checklist.md",
+    "references/clause-conflict-detection.md",
+    "references/compliance-checklist.md",
+    "references/contract-type-detection.md",
+    "references/contract-types/construction-contract.md",
+    "references/contract-types/employment-contract.md",
+    "references/contract-types/equity-investment.md",
+    "references/contract-types/lease-contract.md",
+    "references/contract-types/nda.md",
+    "references/contract-types/oem-contract.md",
+    "references/contract-types/purchase-contract.md",
+    "references/contract-types/sales-contract.md",
+    "references/contract-types/service-contract.md",
+    "references/contract-types/tech-development-contract.md",
+    "references/financial-amounts.md",
+    "references/output-format.md",
+    "references/risk-matrix.md",
+    "references/terminology-glossary.md",
+    "references/text-quality-checklist.md",
+    "scripts/annotate_docx.py",
+    "scripts/check_text_quality.py",
+    "scripts/detect_contract_type.py",
+    "scripts/parse_contract.py",
+    "scripts/validate.py"
+  ],
+  "excluded_scope": [
+    "固定 manifest 中所有未列入 review_scope 的文件（4 项）均排除；只读线索不构成复制许可"
+  ],
+  "public_summary_only": true,
+  "known_issues": [
+    "确认 NOMOREKKK 及贡献者对拟用文档、规则、脚本的授权链；MIT 不覆盖外部服务；跨境贸易术语、法条汇编及二进制模板另行核实。",
+    "根入口与安装示例不一致；Python 3.10+、Windows officecli 版本/API/许可证、OCR 与检索连接器需单独确认；不执行上游。",
+    "确认实际适用法域、固定版本及目标使用场景；逐条核对官方现行文本、生效/废止/过渡规则，并留存具名专业复核证据。",
+    "核对违约金、利息及保证金阈值的适用条件，避免把经验阈值写成普遍强制规则。",
+    "逐条核验合同分类规则、民法典及司法解释的生效、废止与过渡规定。"
+  ],
+  "baseline_refs": [
+    "docs/SKILL_INTAKE_POLICY.md",
+    "docs/reviews/P1_LEGAL_REVIEW_HANDOFF.md",
+    "data/reviews/p1-handoff.json",
+    "data/discovery/p1-readiness.json"
+  ]
+}
