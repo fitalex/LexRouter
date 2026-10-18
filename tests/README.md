@@ -28,3 +28,5 @@ python -m unittest discover -s tests -v
 ## Review Workbench
 
 `test_review_workbench.py` 使用隔离临时仓库和完全合成的用户/事件/依据验证 T01–T08、四轴循环、补正重提、签署核验、三轨证据、到期提醒、非 GitHub 来源与历史保护。真实三个样本只检查 27/4/19 范围及空白判断，不模拟其通过；合成事件不是真实签名。
+
+`test_review_workbench_r1.py` 覆盖 LR-P1-02-R1 的终局工作表篡改、跨角色签署、合法补正/同角色重签、提前归档、专业拒绝独立归档、重复归档及归档写入故障回滚。全部复用隔离合成身份/事件，不生成真实签名。

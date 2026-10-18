@@ -137,6 +137,9 @@ class WorkbenchTests(unittest.TestCase):
 
     def test_T02_new_version_preserves_signed_history(self):
         self.approve_professional()
+        self.sync('rights_review', 'approved-scope')
+        self.sync('engineering_review', 'passed')
+        self.sync('admission_decision', 'admitted')
         w.archive(self.root, self.rid)
         before = {p.name: p.read_bytes() for p in self.directory.glob('*.json')}
         child = w.load_case(self.root, self.child('source-update'))

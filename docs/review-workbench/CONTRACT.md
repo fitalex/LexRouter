@@ -95,7 +95,20 @@ diff 比较 path/blob、增减范围；来源变更无法从散文定位证明�
 
 法律字段覆盖问题/事实/依据、时效/过渡、适用推理、结论、风险、补正、限制和证据。专业通过须每项 pass 或有理由/证据的 not-applicable，事实/推理/时间分析/限制齐备，无未完成 required_changes；pass 需核实 authority_refs；实际 regulatory_as_of 不可晚于本人复核时间。高风险不自动等于法律错误，由本人判断并控制；程序不能判断意见法律正确性。
 
-needs-changes 补正后必须再次 start、本人再次签署。approved-scope/rejected 的法律判断终局不可改写，需新 Review；其他维度在本轮各自填写/签署，不能共用一个事件。签署快照确定性重放，校验连续历史、父记录及循环、固定边界和模板。重复同步同一事件无新决定；重复 prepare 保留工作表，自动区有人工改动则报冲突。
+needs-changes 保留合法补正路径：专业补正后必须再次 start、本人再次签署；权利/工程补正后通过本角色的新有效事件重签。approved-scope/rejected 的法律判断终局修改须新 Review。其他维度分别填写/签署，不能共用一个事件。先签权利/工程后再 start 专业复核，与先专业后其他角色一样合法；无论顺序如何，状态历史、已签证据与未签维度均独立校验。
+
+签署快照确定性重放并核对当前工作表各角色实际拥有的证据，而不是要求整份工作表永不变化：
+
+| 维度 | 已签署终局状态 | 必须保持一致的当前工作表 |
+| --- | --- | --- |
+| professional_review | approved-scope、rejected | 全部逐项法律判断及 maintenance（下次复核日期、风险） |
+| rights_review | approved-scope、rejected | rights_review 的全部 gate_evidence |
+| engineering_review | passed、rejected | engineering_review 的全部 gate_evidence |
+| admission_decision | admitted、declined、suspended | admission_decision 的 gate_evidence；suspended 还包括 suspension 的受影响范围与原因 |
+
+共用 signature 是下一位签署人的填写区，不拿它与每位旧签署人强行比较；旧身份/决定/摘要继续由不可改签署快照保留。未签维度可自由填写，needs-changes 可继续补正。终局证据改动必须先有新 Review，或符合现有权限/状态限制的同角色新复核事件。默认 validate 不豁免不一致；sync 先验证新事件本人、角色、权限、精确摘要等，才允许该角色更新自己的工作表区。其他角色的终局证据、专业终局、历史与范围不得借此绕过；apply_event 在正常导入和历史重放中执行同一限制。没有 CLI 豁免参数。重复同步旧事件仍先校验，不产生新决定，也不能解除证据保护。已入库后的权利/工程变化仍须新 Review。
+
+状态、父记录/循环、固定边界、模板及历史保护保持原有规则。重复 prepare 保留工作表，自动区有人工改动则报冲突。
 
 sync 仅读取真实 GitHub Review 事件并核对：仓库/main、ID/URL、已提交且未 dismissed、User 类型（拒绝 Bot）、当前 PR head、精确 Review ID/摘要/Policy-Base/决定/依据、PR 可信 main 基准的角色白名单及当前 write/maintain/admin 权限。Comment Review 可由作者本人提交。普通评论、机器人提交、文本签名字段或合法 JSON 不作可靠签署。
 
@@ -105,7 +118,11 @@ Policy-Base 写在本人事件中，历史验证确认其已进入 main，重查
 
 admission_decision 只在相应轨权利/原创性、专业和工程轴齐备后接受独立 admitted 事件。工程证据覆盖八字段、去重和 CI；既有正式目录校验继续执行。记录审批不复制 Skill、不生成法律日期、不合并 main。重大风险由维护者签署 suspension（精确文件+原因）并执行处置；恢复须新记录和新证据。
 
-archive 仅接受有效已签专业终局，保存原始 record/workbook。归档后只读，后续变化新建子记录。逐文件原子写入不等于多文件事务；中断可能留下孤立快照或不完整目录，validate 报告后由工程人员保留并排查，不强制覆盖“修复”。
+archive 必须先校验当前工作表和全部签署证据一致，包括已经归档后的重复调用。专业 rejected 且有签署时，可独立归档拒绝终局。专业 approved-scope 时，rights_review、engineering_review、admission_decision 也须全部已签署终局决定；pending/not-admitted/needs-changes 均不能归档。admitted 继续要求原三轨全部通过门槛；declined/suspended 可以归档为拒绝/暂停的项目决定，但不授予入库资格，也不免除专业通过记录其他维度的完成条件。已归档记录的 validate 也检查该终局门槛。
+
+条件检查均在写入前完成，失败不修改记录/历史。归档 record 和 workbook 完整包及新状态先在私有临时目录准备，再以单文件原子替换提交；如果记录替换发生正常 I/O 异常，移除本轮新建的归档文件，原 record/history 不变。两阶段的写入异常均有故障注入测试。归档后只读，后续变化新建子记录。
+
+这仍不是跨文件持久化事务：进程强制终止/主机故障可能打断两次替换，或保留临时目录；现有 archive/marker 一致性校验会拒绝把不完整状态认作有效归档。此时由工程人员保留并排查，不修改签署历史来“修复”。
 
 ## 隐私边界
 

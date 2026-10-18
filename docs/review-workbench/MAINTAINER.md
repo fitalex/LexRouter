@@ -66,7 +66,19 @@ Reason: <你独立判断的依据、适用范围和限制>
 
 可信重大风险使用 admission_decision / suspended，同时填写 suspension.affected_scope（精确文件名，用英文分号分隔）和 reason；维护者执行暂停复制、分发等实际处置。归档后须新建 risk-reassessment 记录，不删除旧证据；恢复须新证据、复核和独立 PR。
 
-本轮其他轴决定完成后，请 Codex 归档专业通过/拒绝记录。needs-changes 继续补正循环。新版本、法规/许可/范围变化、风险或人工期限到达时，告诉 Codex 触发类型和前次 Review，生成新 ID 的全新待核工作包。
+### 已签证据与后续填写
+
+已签署终局决定的工作表区必须和当前签署记录一致：专业 approved-scope/rejected 保护逐项法律判断及 maintenance；权利 approved-scope/rejected 保护 rights_review；工程 passed/rejected 保护 engineering_review；最终 admitted/declined/suspended 保护 admission_decision，suspended 还保护受影响文件和暂停原因。普通编辑不会更新旧签名，不一致时 validate 和 archive 都拒绝；重复同步旧事件也不能豁免。
+
+尚未签署的维度可以继续独立填写。共用 signature 区用于下一位签署人，可更新其身份/资质索引，不改写旧事件中的签署身份。needs-changes 仍可补正；专业补正后重新 start 再本人签署。权利、工程或最终决定的同版本/同范围证据确需修订时，先填写拟修订内容，再由该角色本人提交新摘要绑定的新有效 Review 事件，由 Codex 同步；在该事件被核验/导入前，当前工作表暂不与旧签署一致，不能归档。新事件只允许更新该角色自己的证据，不能替其他角色接受改动。专业终局修改、版本/范围扩展，以及已入库后的权利/工程变化仍需新 Review。
+
+### 归档门槛
+
+- **专业通过：** rights_review、engineering_review 和 admission_decision 都必须已经本人签署终局决定，工作表与所有签署一致才可归档。pending、not-admitted、needs-changes 均未完成；只有专业通过不够。
+- **专业拒绝：** 可独立作为拒绝终局归档，无须继续完成其他尚未开展的维度；已有签署证据仍须一致。
+- 最终 admitted、declined、suspended 可以形成各自终局记录；后两者不表示批准入库。专业通过时，即使维护者已经 declined/suspended，其他必要维度仍须完成签署才能归档。
+
+请 Codex 在满足上述条件后归档。归档条件不满足或正常写入出错时，原记录和历史保留，不留下半份归档；已归档后重复执行也会先校验证据，不能以旧归档掩盖工作表改动。新版本、法规/许可/范围变化、风险或期限到达时，告诉 Codex 触发类型和前次 Review，生成新 ID 的全新待核工作包。
 
 ## 当前人工待办
 

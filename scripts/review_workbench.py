@@ -11,8 +11,9 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-from uuid import uuid4
+from tempfile import TemporaryDirectory
 from urllib.parse import quote
+from uuid import uuid4
 
 from jsonschema import Draft202012Validator, FormatChecker
 
@@ -26,6 +27,10 @@ DECISIONS = {'professional_review': ('approved-scope', 'needs-changes', 'rejecte
              'rights_review': ('approved-scope', 'needs-changes', 'rejected'),
              'engineering_review': ('passed', 'needs-changes', 'rejected'),
              'admission_decision': ('admitted', 'declined', 'suspended')}
+# needs-changes is deliberately resumable; other signed decisions are terminal
+# for their own worksheet section, even when a different dimension is pending.
+TERMINAL_DECISIONS = {axis: frozenset(d for d in decisions if d != 'needs-changes')
+                      for axis, decisions in DECISIONS.items()}
 GATES = {'curated-hosting': ('authorization-chain', 'hosting-scope', 'attribution-and-notices'),
          'original-development': ('independent-requirements', 'original-design', 'provenance-and-dependencies', 'synthetic-tests'),
          'external-reference': ('index-description', 'no-fulltext-copy', 'metadata-and-dedup')}
@@ -440,6 +445,59 @@ def admission_ready(r):
             and r['engineering_review']['status'] == 'passed' and not r['suspension'])
 
 
+def signed_terminal(record, axis):
+    dim = record[axis]
+    return dim['status'] in TERMINAL_DECISIONS[axis] and dim['signature'] is not None
+
+
+def signed_workbook_errors(record, content, revising_axis=None):
+    """Compare only each terminal signer's owned evidence, not the whole draft.
+
+    revising_axis is used solely while replaying/importing a same-role event;
+    sync authenticates that event before allowing this exception. Professional
+    final decisions still require a child Review, never an in-place exception.
+    The shared signature form belongs to the next signer, not every old signer.
+    """
+    sections = parse_workbook(content)
+    errors = []
+    for axis in ROLES:
+        if not signed_terminal(record, axis):
+            continue
+        if axis == revising_axis and axis != 'professional_review':
+            continue
+        if axis == 'professional_review':
+            check = deepcopy(record)
+            apply_professional(check, content, record[axis]['status'])
+            maintenance = {'next_review_date': record['next_review_date'] or '',
+                           'risk_level': record['risk_level']}
+            changed = (check['checks'] != record['checks']
+                       or sections.get('maintenance') != maintenance)
+        else:
+            changed = sections.get(axis) != record[axis]['gate_evidence']
+            if axis == 'admission_decision' and record[axis]['status'] == 'suspended':
+                suspension = sections.get('suspension', {})
+                signed = record['suspension']
+                changed = (changed or signed is None
+                           or set(suspension) != {'affected_scope', 'reason'}
+                           or split_refs(suspension.get('affected_scope', '')) != signed['affected_scope']
+                           or suspension.get('reason') != signed['reason'])
+        if changed:
+            errors.append(axis+': signed terminal worksheet evidence changed; '
+                          'use a child Review or a verified same-role review event.')
+    return errors
+
+
+def archive_ready(record):
+    if not signed_terminal(record, 'professional_review'):
+        return False
+    if record['status'] == record['professional_review']['status'] == 'rejected':
+        return True
+    return (record['status'] == record['professional_review']['status'] == 'approved-scope'
+            and all(signed_terminal(record, axis) for axis in
+                    ('rights_review', 'engineering_review', 'admission_decision'))
+            and (record['admission_decision']['status'] != 'admitted' or admission_ready(record)))
+
+
 def apply_event(root, before, content, event):
     axis, decision, url = event['axis'], event['decision'], event['url']
     if axis not in ROLES or decision not in DECISIONS[axis]:
@@ -448,6 +506,8 @@ def apply_event(root, before, content, event):
         raise ReviewError('Final professional opinions require a new child review.')
     if before['admission_decision']['status'] == 'admitted' and axis != 'admission_decision':
         raise ReviewError('Admitted scope requires a new update review; maintainer may independently suspend it.')
+    if signed_workbook_errors(before, content, revising_axis=axis):
+        raise ReviewError('A new event cannot change another role\'s signed terminal worksheet evidence.')
     r, sections = deepcopy(before), parse_workbook(content)
     if axis == 'professional_review':
         if before['status'] != 'in-review' or before['assigned_reviewer'] != event['login']:
@@ -495,19 +555,19 @@ def apply_event(root, before, content, event):
            'reviewer_role': ROLES[axis], 'reviewed_at': event['submitted_at'], 'decision': decision,
            'signature_evidence_ref': url, 'binding_sha256': event['binding_sha256'], 'reason': event['reason']}
     r[axis].update(status=decision, signature=sig)
-    if structural_errors(root, r):
-        raise ReviewError('Human form violates the record contract; no record was changed.')
+    if structural_errors(root, r) or signed_workbook_errors(r, content):
+        raise ReviewError('Human form violates the record or signed-evidence contract; no record was changed.')
     return r
 
 
 def resumed_core(previous, current):
     result = deepcopy(previous)
-    if result['status'] == 'needs-changes' and current['status'] == 'in-review':
+    if result['status'] in ('evidence-ready', 'needs-changes') and current['status'] == 'in-review':
         result['status'], result['assigned_reviewer'] = 'in-review', current['assigned_reviewer']
     return result
 
 
-def validate_record(root, r, online=False, api=github_api):
+def validate_record(root, r, online=False, api=github_api, *, _revising_axis=None):
     errors = structural_errors(root, r)
     if errors:
         return errors
@@ -570,11 +630,7 @@ def validate_record(root, r, online=False, api=github_api):
             errors.append('Current status is not last recorded transition.')
         if snapshots and resumed_core(snapshots[-1]['after'], r) != core(r):
             errors.append('Current record differs from last signed snapshot.')
-        if r['professional_review']['status'] in ('approved-scope', 'rejected'):
-            check = deepcopy(r)
-            apply_professional(check, content, r['professional_review']['status'])
-            if check['checks'] != r['checks']:
-                errors.append('Final signed legal judgments changed; create a new review.')
+        errors.extend(signed_workbook_errors(r, content, revising_axis=_revising_axis))
         for axis in ROLES:
             dim = r[axis]
             pending = 'not-admitted' if axis == 'admission_decision' else 'pending'
@@ -610,6 +666,8 @@ def validate_record(root, r, online=False, api=github_api):
         if (d / 'archive.json').exists() != r['archived'] or (not r['archived'] and r['archive_sha256'] is not None):
             errors.append('Archive file and lifecycle marker disagree.')
         if r['archived']:
+            if not archive_ready(r):
+                errors.append('Archived record has unfinished required independent decisions.')
             bundle = read(d / 'archive.json')
             if fingerprint(bundle) != r['archive_sha256'] or bundle['record'] != {**r, 'archived': False, 'archive_sha256': None} or bundle['workbook'] != content:
                 errors.append('Archived original changed.')
@@ -623,12 +681,17 @@ def sync_event(root, rid, url, api=github_api):
     before = read(d / 'record.json')
     if before['archived']:
         raise ReviewError('Archived reviews are read-only.')
-    if validate_record(root, before):
-        raise ReviewError('Resolve validation errors before importing any decision.')
     if url in [h['source'] for h in before['history']]:
+        if validate_record(root, before):
+            raise ReviewError('Resolve validation errors before replaying an imported event.')
         return False
     content = (d / 'workbook.md').read_text(encoding='utf-8')
+    public_guard(content)
     event = verify_event(url, binding(before, content), rid, api)
+    # Only an authenticated, fresh same-role event can supersede that role's
+    # worksheet evidence. All other history, scope and signed sections still validate.
+    if validate_record(root, before, _revising_axis=event['axis']):
+        raise ReviewError('Resolve validation errors before importing any decision.')
     r = apply_event(root, before, content, event)
     snap = {'before': before, 'after': core(r), 'workbook': content, 'event': event}
     ref = f'{CASES}/{rid}/history/{len(r["history"]):04}.json'
@@ -659,17 +722,29 @@ def start(root, rid, reviewer, reason, source):
 def archive(root, rid):
     d = case_dir(root, rid)
     r = read(d / 'record.json')
+    if validate_record(root, r):
+        raise ReviewError('Only a valid review with matching signed worksheet evidence can be archived.')
     if r['archived']:
         return
-    if validate_record(root, r) or r['status'] not in ('approved-scope', 'rejected'):
-        raise ReviewError('Only a valid signed final professional record can be archived.')
+    if not archive_ready(r):
+        raise ReviewError('Professional approval requires signed terminal rights, engineering and admission decisions before archive; professional rejection may close independently.')
     if (d / 'archive.json').exists():
         raise ReviewError('Archive already exists; refuse overwrite.')
     history(r, r['status'], 'cli:archive', 'Preserve signed original; no admission implied.')
-    bundle = {'record': r, 'workbook': (d / 'workbook.md').read_text(encoding='utf-8')}
-    write(d / 'archive.json', bundle)
+    bundle = {'record': deepcopy(r), 'workbook': (d / 'workbook.md').read_text(encoding='utf-8')}
     r.update(archived=True, archive_sha256=fingerprint(bundle))
-    write(d / 'record.json', r)
+    # Stage both complete files before changing live evidence. If the final record
+    # replacement fails, remove only the newly created bundle; the old record is intact.
+    with TemporaryDirectory(prefix='.archive-', dir=d) as temporary:
+        staging = Path(temporary)
+        write(staging / 'archive.json', bundle)
+        write(staging / 'record.json', r)
+        (staging / 'archive.json').replace(d / 'archive.json')
+        try:
+            (staging / 'record.json').replace(d / 'record.json')
+        except OSError:
+            (d / 'archive.json').unlink()
+            raise
 
 
 def diff_reviews(root, old_id, new_id, authority=None):
