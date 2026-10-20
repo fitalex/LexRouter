@@ -1,0 +1,715 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fitalex/LexRouter/schemas/review-record-v2.schema.json",
+  "title": "Review Workbench v2: structure never authenticates a human",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/bundle"
+    },
+    {
+      "$ref": "#/$defs/ledger"
+    }
+  ],
+  "$defs": {
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "format_version": {
+          "const": 2
+        },
+        "kind": {
+          "const": "bundle"
+        },
+        "review_id": {
+          "type": "string",
+          "pattern": "^RV-[A-Za-z0-9-]+$"
+        },
+        "subject_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "subject_ref": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "source_revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "source_repository": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+        },
+        "source_manifest": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "blob_sha": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              }
+            },
+            "required": [
+              "path",
+              "blob_sha"
+            ]
+          },
+          "minItems": 1
+        },
+        "track": {
+          "enum": [
+            "curated-hosting",
+            "original-development",
+            "external-reference"
+          ]
+        },
+        "review_scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 1
+        },
+        "excluded_scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0
+        },
+        "template_versions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "template_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "template_ref": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "required": [
+              "template_id",
+              "version",
+              "sha256",
+              "template_ref"
+            ]
+          },
+          "minItems": 1
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "group_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "check_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "group_id",
+              "label",
+              "check_ids"
+            ]
+          },
+          "minItems": 1
+        },
+        "matrix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "file": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "check_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "group_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "issue": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "source_locator": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "facts": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "effective_period": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "transitional_rule": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "applicability": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "agent_finding": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "risks": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "required_changes": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "limitations": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "authority_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "minItems": 0
+              },
+              "evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "minItems": 0
+              },
+              "automation_status": {
+                "enum": [
+                  "not-verified",
+                  "agent-precheck",
+                  "ci-verified"
+                ]
+              }
+            },
+            "required": [
+              "file",
+              "check_id",
+              "group_id",
+              "issue",
+              "source_locator",
+              "facts",
+              "effective_period",
+              "transitional_rule",
+              "applicability",
+              "agent_finding",
+              "risks",
+              "required_changes",
+              "limitations",
+              "authority_refs",
+              "evidence_refs",
+              "automation_status"
+            ]
+          },
+          "minItems": 10
+        },
+        "rights_evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "status": {
+                  "enum": [
+                    "verified",
+                    "not-verified"
+                  ]
+                },
+                "summary": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "ref",
+                "status",
+                "summary"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "validity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "next_review_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "update_triggers": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "next_review_date",
+            "update_triggers"
+          ]
+        },
+        "automation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "not-verified",
+                "agent-precheck",
+                "ci-verified"
+              ]
+            }
+          },
+          "required": [
+            "status"
+          ]
+        }
+      },
+      "required": [
+        "format_version",
+        "kind",
+        "review_id",
+        "subject_id",
+        "subject_ref",
+        "source_revision",
+        "source_repository",
+        "source_manifest",
+        "track",
+        "review_scope",
+        "excluded_scope",
+        "template_versions",
+        "groups",
+        "matrix",
+        "rights_evidence",
+        "validity",
+        "automation"
+      ]
+    },
+    "ledger": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "format_version": {
+          "const": 2
+        },
+        "kind": {
+          "const": "ledger"
+        },
+        "review_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "bundle_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "sequence": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "previous_sha256": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "entry_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "event_id": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "pr_number": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "actor": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "event_url": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "event_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "reviewed_commit_sha": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "policy_main_sha": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "policy_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "bundle_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "prior_ledger_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "submitted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "form": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "review_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "axis": {
+                    "enum": [
+                      "professional_review",
+                      "admission_decision"
+                    ]
+                  },
+                  "scope": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    "minItems": 1
+                  },
+                  "groups": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "group_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "\\S"
+                        },
+                        "decision": {
+                          "enum": [
+                            "approved-scope",
+                            "needs-changes",
+                            "rejected",
+                            "not-applicable"
+                          ]
+                        },
+                        "reason": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "\\S"
+                        },
+                        "limitations": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "\\S"
+                        }
+                      },
+                      "required": [
+                        "group_id",
+                        "decision",
+                        "reason",
+                        "limitations"
+                      ]
+                    },
+                    "minItems": 1
+                  },
+                  "decision": {
+                    "enum": [
+                      "approved-scope",
+                      "needs-changes",
+                      "rejected",
+                      "admitted",
+                      "declined",
+                      "suspended"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "limitations": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "conflict_declaration": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "regulatory_as_of": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      {
+                        "const": "not-verified"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "review_id",
+                  "axis",
+                  "scope",
+                  "groups",
+                  "decision",
+                  "reason",
+                  "limitations",
+                  "conflict_declaration",
+                  "regulatory_as_of"
+                ]
+              }
+            },
+            "required": [
+              "sequence",
+              "previous_sha256",
+              "entry_sha256",
+              "event_id",
+              "pr_number",
+              "actor",
+              "event_url",
+              "event_sha256",
+              "reviewed_commit_sha",
+              "policy_main_sha",
+              "policy_sha256",
+              "bundle_sha256",
+              "prior_ledger_sha256",
+              "submitted_at",
+              "form"
+            ]
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "format_version",
+        "kind",
+        "review_id",
+        "bundle_sha256",
+        "entries"
+      ]
+    },
+    "form": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "review_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "axis": {
+          "enum": [
+            "professional_review",
+            "admission_decision"
+          ]
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 1
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "group_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "decision": {
+                "enum": [
+                  "approved-scope",
+                  "needs-changes",
+                  "rejected",
+                  "not-applicable"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "limitations": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "required": [
+              "group_id",
+              "decision",
+              "reason",
+              "limitations"
+            ]
+          },
+          "minItems": 1
+        },
+        "decision": {
+          "enum": [
+            "approved-scope",
+            "needs-changes",
+            "rejected",
+            "admitted",
+            "declined",
+            "suspended"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "conflict_declaration": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "regulatory_as_of": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "const": "not-verified"
+            }
+          ]
+        }
+      },
+      "required": [
+        "review_id",
+        "axis",
+        "scope",
+        "groups",
+        "decision",
+        "reason",
+        "limitations",
+        "conflict_declaration",
+        "regulatory_as_of"
+      ]
+    }
+  }
+}

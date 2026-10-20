@@ -1,0 +1,10 @@
+{
+  "format_version": 2,
+  "repository": "fitalex/LexRouter",
+  "ci_required": [
+    "Metadata, candidates, readiness, intake, handoff and positive/negative fixtures"
+  ],
+  "ci_app_id": 15368,
+  "credential_refs": {},
+  "max_regulatory_age_days": 90
+}
