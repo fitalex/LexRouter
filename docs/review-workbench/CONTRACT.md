@@ -1,5 +1,7 @@
 # 工程契约与 CLI
 
+本页描述 v1 契约，已签记录继续适用。[v2 契约与迁移边界](v2/PERMISSIONS_AND_MIGRATION.md)独立版本化；v2 不把机器预审写成 v1 四角色签名。
+
 ## 文件和摘要
 
 [review-record.schema.json](../../schemas/review-record.schema.json) 是独立闭合的 Draft 2020-12 契约，不改变正式八字段。每轮 `data/reviews/cases/<Review ID>/` 包含：
