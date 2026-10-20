@@ -10,6 +10,8 @@ Gate 1 新增独立 `format_version: 2`，不迁移三个真实候选，不修�
 
 短表只绑定机器已经整理的附件，不以短表摘要替代实质核法。全部组均须有明确决定、理由及限制；未实际核法的补正/拒绝意见可用 `not-verified`，通过必须实际日期。通过仍需解决适用事实、时效与过渡、法源/证据缺失以及相应轨的权利门槛。程序验证留证完整性，不能自动判定法律观点、许可证解释或受控材料真实性。
 
+对于总体 `approved-scope` 或 `admitted`，全部文件×检查项映射均检查 `authority_refs`、`evidence_refs`、`facts`、`effective_period`、`transitional_rule` 和 `applicability`。组决定为 `not-applicable` 不豁免这些字段，且其每条矩阵必须提供非空、非待核的 `not_applicable_reason`，结合本条事实及引用说明不适用条件。该字段属于受摘要绑定的附件，由准备者整理、本人审阅；组级一句理由不能覆盖缺证行。完整结构化不适用依据可以被专家采纳，但程序不判断其法律正确性。补正/拒绝路径仍可保留缺证状态，不能转为通过。
+
 ## 从本人事件到自动同步
 
 1. `pull_request_review` 的 submitted/edited/dismissed 只触发无权限 signal 工作流，不检出 PR、不使用凭据、不上传可执行产物。

@@ -1,7 +1,8 @@
-LR-P1-04R Gate 1 local execution evidence
+LR-P1-04R Gate 1 P1 REQUEST_CHANGES regression evidence
 Python 3.12.14
-Baseline a21484a36ca53f8ac9e009626b5f3a34a3e3b7b8
-All human events in unit tests are SYNTHETIC. Real imported signatures: 0.
+Repository main baseline a21484a36ca53f8ac9e009626b5f3a34a3e3b7b8
+Reviewed PR head before fix 97e2f3346c5054ae2fca8adf58ee04c0faf51a23
+All human events and inapplicability arguments in tests are SYNTHETIC. Real imported signatures: 0.
 
 $ python scripts/validate_skills.py skills
 PASS: 0 metadata file(s); directory is empty. Run fixture tests to verify the validator.
@@ -151,6 +152,13 @@ test_independent_maintainer_event_required (test_review_workbench_v2.SyncTests.t
 test_needs_changes_can_be_recorded_without_claiming_passed_gates (test_review_workbench_v2.SyncTests.test_needs_changes_can_be_recorded_without_claiming_passed_gates) ... ok
 test_role_permission_qualification_state_and_sender_fail_closed (test_review_workbench_v2.SyncTests.test_role_permission_qualification_state_and_sender_fail_closed) ... ok
 test_two_events_preserve_history_and_allow_same_dual_role_human (test_review_workbench_v2.SyncTests.test_two_events_preserve_history_and_allow_same_dual_role_human) ... ok
+test_admission_cannot_use_not_applicable_to_avoid_row_basis (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_admission_cannot_use_not_applicable_to_avoid_row_basis) ... ok
+test_all_groups_not_applicable_without_authorities_or_evidence_blocked (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_all_groups_not_applicable_without_authorities_or_evidence_blocked) ... ok
+test_handcrafted_old_bypass_ledger_is_rejected_by_history_replay (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_handcrafted_old_bypass_ledger_is_rejected_by_history_replay) ... ok
+test_missing_or_unresolved_per_check_inapplicability_basis_blocked (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_missing_or_unresolved_per_check_inapplicability_basis_blocked) ... ok
+test_needs_changes_can_still_record_unresolved_inapplicability (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_needs_changes_can_still_record_unresolved_inapplicability) ... ok
+test_partial_not_applicable_missing_any_file_check_evidence_blocked (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_partial_not_applicable_missing_any_file_check_evidence_blocked) ... ok
+test_structured_basis_permits_all_or_partial_inapplicability_and_independent_admission (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_structured_basis_permits_all_or_partial_inapplicability_and_independent_admission) ... ok
 test_concurrent_reviews_rejected_without_reordering (test_review_workbench_v2_sync_run.SignalTests.test_concurrent_reviews_rejected_without_reordering) ... ok
 test_dismissed_current_review_and_truncated_tree_rejected (test_review_workbench_v2_sync_run.SignalTests.test_dismissed_current_review_and_truncated_tree_rejected) ... ok
 test_edited_or_dismissed_history_failure_prevents_new_import (test_review_workbench_v2_sync_run.SignalTests.test_edited_or_dismissed_history_failure_prevents_new_import) ... ok
@@ -239,7 +247,7 @@ test_rejects_invalid_dates_enums_and_shapes (test_validate_skills.MetadataCLITes
 test_valid_leap_day (test_validate_skills.MetadataCLITests.test_valid_leap_day) ... ok
 
 ----------------------------------------------------------------------
-Ran 161 tests in 37.831s
+Ran 168 tests in 30.691s
 
 OK
 exit_code=0

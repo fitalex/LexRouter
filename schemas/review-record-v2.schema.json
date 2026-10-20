@@ -211,6 +211,12 @@
                 "minLength": 1,
                 "pattern": "\\S"
               },
+              "not_applicable_reason": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S",
+                "description": "Required by the approval gate for each file/check row whose signed group decision is not-applicable; explain why its cited authorities do not apply to its evidenced facts."
+              },
               "agent_finding": {
                 "type": "string",
                 "minLength": 1,

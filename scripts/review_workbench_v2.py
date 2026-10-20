@@ -382,13 +382,20 @@ def ensure_gates(api, bundle, form, ledger, head, trusted, today=None):
     for gate in GATES[bundle['track']]:
         require(bundle['rights_evidence'][gate] and all(x['status'] == 'verified' for x in bundle['rights_evidence'][gate]),
                 'Unverified track-specific rights evidence blocks approval.')
-    accepted = {g['group_id'] for g in form['groups'] if g['decision'] == 'approved-scope'}
+    decisions = {g['group_id']: g['decision'] for g in form['groups']}
     for row in bundle['matrix']:
-        if row['group_id'] in accepted:
-            require(row['authority_refs'] and row['evidence_refs']
-                    and all(not any(mark in row[key].lower() for mark in ('not-verified', '待核', '未核', '〈', '<'))
-                            for key in ('facts', 'effective_period', 'transitional_rule', 'applicability')),
-                    'Accepted legal findings require actual authorities, factual evidence and resolved applicability/timing.')
+        # An inapplicability decision is a legal finding, not an evidence waiver.
+        # Every file/check mapping is required for both professional approval and
+        # admission, including rows in groups marked wholly not-applicable.
+        fields = ['facts', 'effective_period', 'transitional_rule', 'applicability']
+        if decisions[row['group_id']] == 'not-applicable':
+            fields.append('not_applicable_reason')
+        require(row['authority_refs'] and row['evidence_refs']
+                and all(isinstance(row.get(key), str) and row[key].strip()
+                        and not any(mark in row[key].lower() for mark in ('not-verified', '待核', '未核', '〈', '<'))
+                        for key in fields),
+                'Every legal finding, including not-applicable, requires authorities, factual evidence, '
+                'resolved applicability/timing and a per-check inapplicability reason when selected.')
     checks = []
     page = 1
     while True:
