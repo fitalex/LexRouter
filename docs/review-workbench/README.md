@@ -1,4 +1,8 @@
-# LexRouter Review Workbench v1
+# LexRouter Review Workbench
+
+LR-P1-04R Gate 1 新增 [v2 短表与预审说明](v2/EXPERT_SHORT_FORM.md)、[迁移兼容性报告](v2/PERMISSIONS_AND_MIGRATION.md)和[工程验证证据](v2/VALIDATION.md)。v2 采用独立版本契约，AI 预审、本人专业签署和维护者最终决定分别留证。三个候选仅提供预览；实际迁移等待 Gate 1 工程验收。
+
+以下保留 v1 操作与历史语义，既有四轴记录继续使用原校验器，不能据 v2 规则重解释旧批准。
 
 LR-P1-02 交付仓库原生的持续法律 Skill 复核循环。当前三个实例只完成材料准备：**未专业复核、未签署、法规时效未核实、未获授权批准、未入库**。不建设 Web 后台，不运行上游代码，不复制全文，不改正式八字段 Schema 或 P0 冻结证据。
 
