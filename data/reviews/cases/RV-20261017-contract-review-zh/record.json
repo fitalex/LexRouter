@@ -36,8 +36,8 @@
     "status": "proposed"
   },
   "created_at": "2026-10-17T03:46:11Z",
-  "assigned_reviewer": null,
-  "status": "evidence-ready",
+  "assigned_reviewer": "fitalex",
+  "status": "in-review",
   "next_review_date": null,
   "risk_level": "unassessed",
   "checks": [
@@ -298,6 +298,15 @@
       "reason": "Prepare pointers and blank human forms, not legal findings.",
       "from": "draft",
       "to": "evidence-ready",
+      "snapshot_ref": null,
+      "snapshot_sha256": null
+    },
+    {
+      "at": "2026-10-18T03:30:56Z",
+      "source": "https://github.com/fitalex/LexRouter/pull/10",
+      "reason": "LR-P1-04 Task B：按已合并 main 四角色配置分配本人专业复核；仅提交材料，全部专业检查保持 pending，不作批准或入库决定。",
+      "from": "evidence-ready",
+      "to": "in-review",
       "snapshot_ref": null,
       "snapshot_sha256": null
     }
