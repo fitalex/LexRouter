@@ -1,0 +1,17 @@
+name: Review v2 signal
+
+on:
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+
+# This workflow may be supplied by a PR. It is only a wake-up signal.
+# No checkout, artifacts, credentials, or write permissions are used.
+permissions: {}
+
+jobs:
+  signal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Signal trusted review synchronizer
+        run: 'true'

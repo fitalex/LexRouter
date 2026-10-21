@@ -21,7 +21,7 @@ on:
       - 'scripts/**'
       - 'tests/**'
       - 'requirements.txt'
-      - '.github/workflows/validate-skills.yml'
+      - '.github/workflows/**'
   push:
     branches: [main]
     paths:
@@ -43,7 +43,7 @@ on:
       - 'scripts/**'
       - 'tests/**'
       - 'requirements.txt'
-      - '.github/workflows/validate-skills.yml'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 permissions:
@@ -94,5 +94,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REVIEW_BASE: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
         run: python scripts/review_workbench.py validate --online --base-ref "$REVIEW_BASE"
+      - name: Validate v2 evidence, signatures and append-only history
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_BASE: ${{ github.event.pull_request.base.sha || github.event.before || 'origin/main' }}
+        run: python scripts/review_workbench_v2.py validate --online --base-ref "$REVIEW_BASE"
       - name: Test positive and negative fixtures
         run: python -m unittest discover -s tests -v

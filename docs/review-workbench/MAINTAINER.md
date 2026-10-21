@@ -1,12 +1,14 @@
 # Human Maintainer 操作指南
 
+本页保留 v1 流程。LR-P1-04R 的 [v2 四块短表](v2/EXPERT_SHORT_FORM.md)在工程验收和候选适配后启用：本人提交专业 Comment Review，再独立作维护者决定；事件 URL 和摘要由程序提取，无须手抄。
+
 你负责法律专业判断和最终项目决定。Codex 负责创建材料、解释字段、计算摘要、同步记录和工程检查。**你无须编辑 JSON、理解 Python 或运行校验程序。当前三个样本没有任何专业意见或签署。**
 
 ## 一次性启用本人账号
 
 告诉 Codex：“为我的公开 GitHub login 准备审核角色配置 PR，由我承担 Legal Reviewer、Rights Reviewer、Engineering Reviewer 和 Human Maintainer。”可按实际需要另指派角色，不要求多人。
 
-Codex 只准备 `data/reviews/reviewers.json` 的 login→角色变更。你核实账号归属、专业能力、受控资质及权限后，审阅并自行合并该配置 PR。当前白名单为空；同步只信任已进入 main 的政策，工作分支不能自授权。建议 main 启用所需检查及人工合并保护；工具不能替代仓库管理员治理。
+Codex 只准备 `data/reviews/reviewers.json` 的 login→角色变更。你核实账号归属、专业能力、受控资质及权限后，审阅并自行合并该配置 PR。初始白名单为空；PR #8 已在 main 授权 fitalex 四种角色。同步只信任已进入 main 的政策，工作分支不能自授权。建议 main 启用所需检查及人工合并保护；工具不能替代仓库管理员治理。
 
 真实身份、资质证明和敏感签署资料留在你控制的位置，公开只用公开账号和 `controlled://reviewer/credential-index` 一类不透明索引。你核实实际材料及访问授权；软件不读取私有材料，也不认证律师资格。
 

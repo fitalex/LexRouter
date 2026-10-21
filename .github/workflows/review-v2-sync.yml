@@ -1,0 +1,39 @@
+name: Review v2 trusted sync
+
+on:
+  workflow_run:
+    workflows: [Review v2 signal]
+    types: [completed]
+
+permissions:
+  actions: write # read signal; dispatch CI after the GITHUB_TOKEN ledger commit
+  checks: read
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: review-v2-trusted-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out trusted default-branch workflow commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install trusted validation dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Verify API events and append ledger with compare-and-swap
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: python scripts/review_workbench_v2_sync_run.py --run-id "$REVIEW_RUN_ID" --write
