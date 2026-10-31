@@ -9,11 +9,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 import json
+import re
 from pathlib import Path
 from typing import Protocol
 from urllib.parse import unquote, urlsplit
 
-from .dedupe import source_identity
 from .models import FetchStatus, PinnedRef, SourceSnapshot
 from .util import (
     append_note,
@@ -59,16 +59,87 @@ class FixtureSourceStore:
         return len(self._sources)
 
 
-def _url_is_pinned_to_revision(url: str, revision: str) -> bool:
-    """Accept the same GitHub pinned shapes as the repository batch validator."""
+PERCENT_ESCAPE = re.compile(r"%[0-9A-Fa-f]{2}")
+DECODE_ROUNDS = 6
+
+
+def _canonical_segment(segment: str) -> str | None:
+    """Decode one path segment and reject path-reinterpreting forms.
+
+    Literal or encoded dot segments, encoded separators, control characters,
+    repeated slashes and unstable multi-encoded paths are rejected.  Valid
+    encoded filenames (spaces, Unicode and percent-encoded ASCII) remain valid.
+    """
+    if "%" in segment:
+        for index, character in enumerate(segment):
+            if character == "%" and not PERCENT_ESCAPE.match(segment, index):
+                return None
+    decoded = segment
+    for _ in range(DECODE_ROUNDS):
+        following = unquote(decoded)
+        if following == decoded:
+            break
+        decoded = following
+    else:
+        return None
+    if not decoded or decoded in {".", ".."}:
+        return None
+    if "/" in decoded or "\\" in decoded:
+        return None
+    if any(ord(character) < 0x20 or ord(character) == 0x7F for character in decoded):
+        return None
+    return decoded
+
+
+def _github_pinned_parts(url: str) -> tuple[str, str, str, str, tuple[str, ...]] | None:
+    """Return strict (owner, repo, kind, revision, decoded file path) or None.
+
+    The supported canonical forms are GitHub ``blob``/``raw`` URLs and
+    ``raw.githubusercontent.com`` URLs.  Owner, repository and revision must
+    be literal (not percent-encoded); file path segments may be valid encoded
+    names.  Any dot segment or separator encoded inside a segment is rejected.
+    """
+    if not is_https_url(url):
+        return None
     parsed = urlsplit(url)
     host = (parsed.hostname or "").lower()
-    parts = unquote(parsed.path).strip("/").split("/")
-    if host in {"github.com", "www.github.com"} and len(parts) >= 5:
-        return parts[2] in {"blob", "raw"} and parts[3] == revision
-    if host == "raw.githubusercontent.com" and len(parts) >= 4:
-        return parts[2] == revision
-    return False
+    if not parsed.path.startswith("/") or parsed.path == "/":
+        return None
+    raw_segments = parsed.path.split("/")[1:]
+    if not raw_segments or any(segment == "" for segment in raw_segments):
+        return None
+    decoded = [_canonical_segment(segment) for segment in raw_segments]
+    if any(segment is None for segment in decoded):
+        return None
+    values = [segment for segment in decoded if segment is not None]
+
+    if host in {"github.com", "www.github.com"}:
+        if len(values) < 5:
+            return None
+        owner, repo, kind, revision = values[:4]
+        if raw_segments[0] != owner or raw_segments[1] != repo:
+            return None
+        if kind not in {"blob", "raw"} or raw_segments[2] != kind:
+            return None
+        if raw_segments[3] != revision or not is_full_sha(revision):
+            return None
+        return owner, repo, kind, revision, tuple(values[4:])
+    if host == "raw.githubusercontent.com":
+        if len(values) < 4:
+            return None
+        owner, repo, revision = values[:3]
+        if raw_segments[0] != owner or raw_segments[1] != repo:
+            return None
+        if raw_segments[2] != revision or not is_full_sha(revision):
+            return None
+        return owner, repo, "raw", revision, tuple(values[3:])
+    return None
+
+
+def _url_is_pinned_to_revision(url: str, revision: str) -> bool:
+    """Accept only strict canonical GitHub pinned shapes."""
+    parts = _github_pinned_parts(url)
+    return parts is not None and parts[3] == revision
 
 
 class FetchAdapter:
@@ -119,11 +190,25 @@ class FetchAdapter:
                     "its recorded revision"
                 ),
             )
-        if source_identity(source_url) != source_identity(ref.url):
+        stored_parts = _github_pinned_parts(source_url)
+        requested_parts = _github_pinned_parts(ref.url)
+        if stored_parts is None or requested_parts is None:
+            return SourceSnapshot(
+                ref=ref,
+                status=FetchStatus.INVALID_SOURCE,
+                notes="stored or requested source is not a canonical GitHub pinned URL",
+            )
+        stored_identity = (stored_parts[0].lower(), stored_parts[1].lower(), stored_parts[4])
+        requested_identity = (
+            requested_parts[0].lower(),
+            requested_parts[1].lower(),
+            requested_parts[4],
+        )
+        if stored_identity != requested_identity:
             return SourceSnapshot(
                 ref=ref,
                 status=FetchStatus.SOURCE_MISMATCH,
-                notes="stored source identity does not match the requested pinned entry",
+                notes="stored source identity does not match the requested pinned file path",
             )
         if revision != ref.revision:
             return SourceSnapshot(

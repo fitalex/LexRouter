@@ -4,12 +4,16 @@ No test opens a socket, contacts a search/fetch API, executes a third-party
 Skill, or writes into ``data/discovery/`` or ``skills/``.
 """
 
+import contextlib
 from copy import deepcopy
 from dataclasses import replace
 from datetime import datetime, timezone
+import io
 import json
+import os
 from pathlib import Path
 import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -78,6 +82,12 @@ class SingleRecordStore:
 
     def get(self, source_id):
         return self.record if source_id == self.record["source_id"] else None
+
+
+def pin_url(kind="blob", revision=SHA_A, path="SKILL.md", repo="synthetic-labs/contract-review-skill"):
+    if kind == "raw-host":
+        return f"https://raw.githubusercontent.com/{repo}/{revision}/{path}"
+    return f"https://github.com/{repo}/{kind}/{revision}/{path}"
 
 
 def make_hit(**changes):
@@ -219,6 +229,70 @@ class FetchTests(unittest.TestCase):
         candidate = normalize(make_hit(), snapshot)
         self.assertNotEqual(candidate["source_verification"]["status"], "verified-public")
         self.assertEqual(candidate["candidate_status"], "needs-evidence")
+
+    def test_dot_segments_are_rejected_for_request_and_stored_urls(self):
+        dots = ("..", "%2e%2e", "%2E%2E", ".%2E", "%2E.", "%252e%252e")
+        for kind in ("blob", "raw", "raw-host"):
+            for dot in dots:
+                bad_url = pin_url(kind, path=f"{dot}/main/SKILL.md")
+                clean_url = pin_url(kind)
+                with self.subTest(kind=kind, dot=dot, side="request"):
+                    record = source_record()
+                    record["url"] = clean_url
+                    record["revision"] = SHA_A
+                    snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+                        PinnedRef(record["source_id"], bad_url, SHA_A)
+                    )
+                    self.assertNotIn(snapshot.status, {FetchStatus.OK, FetchStatus.METADATA_ONLY})
+                    self.assertIsNone(snapshot.content)
+                with self.subTest(kind=kind, dot=dot, side="stored"):
+                    record["url"] = bad_url
+                    snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+                        PinnedRef(record["source_id"], clean_url, SHA_A)
+                    )
+                    self.assertIs(snapshot.status, FetchStatus.INVALID_SOURCE)
+                    self.assertIsNone(snapshot.content)
+                    candidate = normalize(make_hit(url=clean_url), snapshot)
+                    self.assertNotEqual(
+                        candidate["source_verification"]["status"], "verified-public"
+                    )
+                    self.assertNotEqual(candidate["candidate_status"], "candidate")
+
+    def test_encoded_path_separators_are_rejected(self):
+        for kind in ("blob", "raw", "raw-host"):
+            for encoded in ("dir%2fmain", "dir%5cmain", "dir%2F..%2Fmain"):
+                with self.subTest(kind=kind, encoded=encoded):
+                    bad_url = pin_url(kind, path=f"{encoded}/SKILL.md")
+                    record = source_record()
+                    record["url"] = bad_url
+                    record["revision"] = SHA_A
+                    snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+                        PinnedRef(record["source_id"], bad_url, SHA_A)
+                    )
+                    self.assertNotIn(snapshot.status, {FetchStatus.OK, FetchStatus.METADATA_ONLY})
+                    self.assertIsNone(snapshot.content)
+
+    def test_cross_presentation_and_encoded_filename_pins_are_accepted(self):
+        for request_kind in ("blob", "raw", "raw-host"):
+            for stored_kind in ("blob", "raw", "raw-host"):
+                with self.subTest(request=request_kind, stored=stored_kind):
+                    record = source_record()
+                    record["url"] = pin_url(stored_kind, path="%53KILL.md")
+                    record["revision"] = SHA_A
+                    snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+                        PinnedRef(record["source_id"], pin_url(request_kind), SHA_A)
+                    )
+                    self.assertIs(snapshot.status, FetchStatus.OK)
+                    self.assertIn("SYNTHETIC-ALLOWED-CONTENT", snapshot.content or "")
+        for path in ("dir/legal%20skill.md", "%E6%B3%95%E8%A7%84.md"):
+            with self.subTest(path=path):
+                record = source_record()
+                record["url"] = pin_url("raw", path=path)
+                record["revision"] = SHA_A
+                snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+                    PinnedRef(record["source_id"], pin_url("raw-host", path=path), SHA_A)
+                )
+                self.assertIs(snapshot.status, FetchStatus.OK)
 
     def test_revision_mismatch_is_explicit_and_has_no_content(self):
         url = f"https://github.com/synthetic-labs/contract-review-skill/blob/{SHA_B}/SKILL.md"
@@ -586,101 +660,226 @@ class CLITests(unittest.TestCase):
 
     def test_success_writes_valid_manifest_and_audit(self):
         with tempfile.TemporaryDirectory() as folder:
-            output = Path(folder) / "candidates.json"
-            audit = Path(folder) / "audit.json"
+            output_dir = Path(folder) / "run"
             result = self.run_cli(
                 "--query", "合成合同审查",
-                "--output", output,
-                "--audit", audit,
+                "--output-dir", output_dir,
             )
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            self.assertEqual(validate_candidate_manifest(output), (2, []))
+            manifest = output_dir / "candidates.json"
+            audit = output_dir / "audit.json"
+            self.assertEqual(validate_candidate_manifest(manifest), (2, []))
             record = json.loads(audit.read_text(encoding="utf-8"))
             self.assertEqual(record["search"]["status"], "ok")
             self.assertEqual(record["content_withheld"], 1)
             self.assertIn("search=ok", result.stderr)
+            self.assertIn("wrote candidates.json and audit.json", result.stderr)
+            self.assertEqual(stat.S_IMODE(output_dir.stat().st_mode), 0o700)
+            self.assertEqual(stat.S_IMODE(manifest.stat().st_mode), 0o600)
 
     def test_empty_result_exits_zero_and_reports_zero(self):
         with tempfile.TemporaryDirectory() as folder:
-            output = Path(folder) / "candidates.json"
-            result = self.run_cli("--query", "空结果", "--output", output)
+            output_dir = Path(folder) / "run"
+            result = self.run_cli(
+                "--query", "空结果", "--output-dir", output_dir,
+            )
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(validate_candidate_manifest(output), (0, []))
+            self.assertEqual(
+                validate_candidate_manifest(output_dir / "candidates.json"),
+                (0, []),
+            )
             self.assertIn("candidates=0", result.stderr)
 
     def test_network_error_exits_one(self):
         with tempfile.TemporaryDirectory() as folder:
-            output = Path(folder) / "candidates.json"
-            audit = Path(folder) / "audit.json"
+            output_dir = Path(folder) / "run"
             result = self.run_cli(
-                "--query", "网络错误",
-                "--output", output,
-                "--audit", audit,
+                "--query", "网络错误", "--output-dir", output_dir,
             )
             self.assertEqual(result.returncode, 1, result.stderr)
-            self.assertEqual(validate_candidate_manifest(output), (0, []))
             self.assertEqual(
-                json.loads(audit.read_text(encoding="utf-8"))["search"]["error"]["code"],
+                validate_candidate_manifest(output_dir / "candidates.json"),
+                (0, []),
+            )
+            self.assertEqual(
+                json.loads(
+                    (output_dir / "audit.json").read_text(encoding="utf-8")
+                )["search"]["error"]["code"],
                 "timeout",
             )
 
     def test_refuses_to_write_anywhere_in_repository(self):
         with tempfile.TemporaryDirectory(dir=ROOT) as folder:
-            target = Path(folder) / "out.json"
-            result = self.run_cli("--query", "空结果", "--output", target)
+            target = Path(folder) / "run"
+            result = self.run_cli(
+                "--query", "空结果", "--output-dir", target,
+            )
             self.assertEqual(result.returncode, 2, result.stderr)
             self.assertFalse(target.exists())
 
     def test_refuses_same_output_and_audit_path(self):
         with tempfile.TemporaryDirectory() as folder:
-            path = Path(folder) / "same.json"
-            result = self.run_cli(
-                "--query", "空结果",
-                "--output", path,
-                "--audit", path,
+            output_dir = Path(folder) / "run"
+            first = self.run_cli(
+                "--query", "空结果", "--output-dir", output_dir,
             )
-            self.assertEqual(result.returncode, 2, result.stderr)
-            self.assertFalse(path.exists())
+            self.assertEqual(first.returncode, 0, first.stderr)
+            before = {
+                path.name: path.read_bytes()
+                for path in output_dir.iterdir()
+            }
+            second = self.run_cli(
+                "--query", "空结果", "--output-dir", output_dir,
+            )
+            self.assertEqual(second.returncode, 2, second.stderr)
+            after = {
+                path.name: path.read_bytes()
+                for path in output_dir.iterdir()
+            }
+            self.assertEqual(after, before)
 
     def test_refuses_to_overwrite_an_existing_file(self):
         with tempfile.TemporaryDirectory() as folder:
-            path = Path(folder) / "existing.json"
-            path.write_text("KEEP", encoding="utf-8")
-            result = self.run_cli("--query", "空结果", "--output", path)
+            existing = Path(folder) / "existing.json"
+            existing.write_text("KEEP", encoding="utf-8")
+            result = self.run_cli(
+                "--query", "空结果", "--output-dir", existing,
+            )
             self.assertEqual(result.returncode, 2, result.stderr)
-            self.assertEqual(path.read_text(encoding="utf-8"), "KEEP")
+            self.assertEqual(existing.read_text(encoding="utf-8"), "KEEP")
+
+            existing_dir = Path(folder) / "existing-dir"
+            existing_dir.mkdir()
+            sentinel = existing_dir / "KEEP"
+            sentinel.write_text("KEEP", encoding="utf-8")
+            result = self.run_cli(
+                "--query", "空结果", "--output-dir", existing_dir,
+            )
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertEqual(sentinel.read_text(encoding="utf-8"), "KEEP")
 
     def test_no_output_when_audit_path_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
-            output = Path(folder) / "out.json"
-            audit = ROOT / "data" / "discovery" / "audit-should-not-exist.json"
+            target = Path(folder) / "missing" / "run"
             result = self.run_cli(
-                "--query", "空结果",
-                "--output", output,
-                "--audit", audit,
+                "--query", "空结果", "--output-dir", target,
             )
             self.assertEqual(result.returncode, 2, result.stderr)
-            self.assertFalse(output.exists())
-            self.assertFalse(audit.exists())
+            self.assertFalse(target.exists())
+            self.assertFalse(target.parent.exists())
 
     def test_precheck_rejects_repository_file_and_symlink_alias(self):
         with tempfile.TemporaryDirectory() as folder:
-            alias = Path(folder) / "alias.json"
-            alias.symlink_to(ROOT / "README.md")
-            for target in (ROOT / "README.md", alias):
+            alias = Path(folder) / "repo"
+            alias.symlink_to(ROOT, target_is_directory=True)
+            for target in (ROOT / "README.md", alias / "new-run"):
                 with self.subTest(target=target):
                     with self.assertRaises(ValueError):
-                        offline_cli.precheck_outputs([("candidate manifest", target)])
+                        offline_cli._resolve_output_parent(target)
 
     def test_refuses_to_write_into_candidate_or_skills_directories(self):
-        for relative in ("data/discovery/offline-should-not-exist.json", "skills/offline-should-not-exist.json"):
+        for relative in (
+            "data/discovery/r3-offline-should-not-exist",
+            "skills/r3-offline-should-not-exist",
+        ):
             with self.subTest(relative=relative):
                 target = ROOT / relative
                 self.assertFalse(target.exists())
-                result = self.run_cli("--query", "空结果", "--output", target)
+                result = self.run_cli(
+                    "--query", "空结果", "--output-dir", target,
+                )
                 self.assertEqual(result.returncode, 2, result.stderr)
-                self.assertIn("refusing to write", result.stderr)
                 self.assertFalse(target.exists())
+
+    def test_parent_symlink_swap_does_not_publish_in_repository(self):
+        with tempfile.TemporaryDirectory() as outside, tempfile.TemporaryDirectory(dir=ROOT) as protected:
+            safe = Path(outside) / "safe"
+            safe.mkdir()
+            alias = Path(outside) / "alias"
+            alias.symlink_to(safe, target_is_directory=True)
+            protected_path = Path(protected)
+            original_mkdir = offline_cli.os.mkdir
+            swapped = False
+
+            def mkdir(path, mode=0o777, *, dir_fd=None):
+                nonlocal swapped
+                if not swapped:
+                    alias.unlink()
+                    alias.symlink_to(protected_path, target_is_directory=True)
+                    swapped = True
+                return original_mkdir(path, mode, dir_fd=dir_fd)
+
+            stderr = io.StringIO()
+            with patch.object(offline_cli.os, "mkdir", side_effect=mkdir), \
+                    contextlib.redirect_stderr(stderr):
+                result = offline_cli.main([
+                    "--query", "空结果",
+                    "--output-dir", str(alias / "run"),
+                ])
+            self.assertEqual(result, 0)
+            self.assertIn("wrote candidates.json and audit.json", stderr.getvalue())
+            self.assertFalse((protected_path / "run").exists())
+            self.assertTrue((safe / "run" / "candidates.json").is_file())
+
+    def test_rollback_preserves_other_writer_replacement(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output_dir = Path(folder) / "run"
+            original_write = offline_cli._write_file
+
+            def write_file(dir_fd, name, text, created):
+                if name == offline_cli.OUTPUT_MANIFEST:
+                    original_write(dir_fd, name, text, created)
+                    os.unlink(name, dir_fd=dir_fd)
+                    replacement = os.open(
+                        name,
+                        os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+                        0o600,
+                        dir_fd=dir_fd,
+                    )
+                    try:
+                        os.write(replacement, b"OTHER-WRITER")
+                    finally:
+                        os.close(replacement)
+                else:
+                    raise OSError("injected second publish failure")
+
+            with patch.object(offline_cli, "_write_file", side_effect=write_file):
+                with self.assertRaises(offline_cli.OutputWriteError) as raised:
+                    offline_cli.write_output_dir(output_dir, "M", "A")
+            self.assertIn("candidates.json", raised.exception.residual)
+            self.assertEqual(
+                (output_dir / "candidates.json").read_text(encoding="utf-8"),
+                "OTHER-WRITER",
+            )
+            self.assertFalse((output_dir / "audit.json").exists())
+
+    def test_persistent_cleanup_failure_reports_residual(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output_dir = Path(folder) / "run"
+            original_write = offline_cli._write_file
+            original_unlink = offline_cli.os.unlink
+
+            def write_file(dir_fd, name, text, created):
+                if name == offline_cli.OUTPUT_MANIFEST:
+                    return original_write(dir_fd, name, text, created)
+                original_write(dir_fd, name, text, created)
+                raise OSError("injected failure after audit was created")
+
+            def unlink(path, *args, **kwargs):
+                if str(path) == offline_cli.OUTPUT_MANIFEST:
+                    raise PermissionError("injected persistent cleanup failure")
+                return original_unlink(path, *args, **kwargs)
+
+            with patch.object(offline_cli, "_write_file", side_effect=write_file),                     patch.object(offline_cli.os, "unlink", side_effect=unlink):
+                with self.assertRaises(offline_cli.OutputWriteError) as raised:
+                    offline_cli.write_output_dir(output_dir, "M", "A")
+            self.assertIn("candidates.json", raised.exception.residual)
+            self.assertTrue((output_dir / "candidates.json").exists())
+            self.assertFalse((output_dir / "audit.json").exists())
+            self.assertTrue(any(
+                "cannot remove" in error
+                for error in raised.exception.cleanup_errors
+            ))
 
     def test_missing_fixture_and_bad_arguments_exit_two(self):
         result = self.run_cli(
@@ -690,6 +889,12 @@ class CLITests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("cannot load fixtures", result.stderr)
         self.assertEqual(self.run_cli().returncode, 2)
+        with tempfile.TemporaryDirectory() as folder:
+            legacy = self.run_cli(
+                "--query", "空结果",
+                "--output", Path(folder) / "legacy.json",
+            )
+            self.assertEqual(legacy.returncode, 2)
 
 
 if __name__ == "__main__":
