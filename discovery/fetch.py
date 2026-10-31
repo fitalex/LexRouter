@@ -110,6 +110,15 @@ class FetchAdapter:
                 status=FetchStatus.INVALID_SOURCE,
                 notes="stored source requires an HTTPS URL and a full 40-character commit SHA",
             )
+        if not _url_is_pinned_to_revision(source_url, revision):
+            return SourceSnapshot(
+                ref=ref,
+                status=FetchStatus.INVALID_SOURCE,
+                notes=(
+                    "stored source URL is not a GitHub blob/raw URL pinned to "
+                    "its recorded revision"
+                ),
+            )
         if source_identity(source_url) != source_identity(ref.url):
             return SourceSnapshot(
                 ref=ref,

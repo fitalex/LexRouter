@@ -212,7 +212,12 @@ def _jurisdiction(
         )
     if not is_https_url(evidence_url):
         evidence_url = clean(hit.url)
-        notes = append_note(notes, "无独立法域证据链接，仅保留命中入口，不能视为已核实。")
+        status = "pending-verification"
+        notes = append_note(
+            notes,
+            "未提供可定位的法域声明证据；仅保留来源入口，"
+            "降为 pending-verification。",
+        )
     if not notes:
         notes = "未获得法域声明；不做推断。"
     return {

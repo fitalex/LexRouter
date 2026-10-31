@@ -4,6 +4,7 @@ No test opens a socket, contacts a search/fetch API, executes a third-party
 Skill, or writes into ``data/discovery/`` or ``skills/``.
 """
 
+from copy import deepcopy
 from dataclasses import replace
 from datetime import datetime, timezone
 import json
@@ -40,6 +41,7 @@ from validate_discovery_batches import (  # noqa: E402
     validate_batches,
 )
 from validate_skills import validate as validate_formal_metadata  # noqa: E402
+import discovery_offline as offline_cli  # noqa: E402
 
 
 FIXTURES = ROOT / "tests" / "fixtures" / "discovery"
@@ -62,6 +64,20 @@ def fixed_now():
 
 def make_adapter():
     return DiscoveryAdapter.from_fixtures(SEARCH_FIXTURE, SOURCE_FIXTURE, now=fixed_now)
+
+
+def source_record():
+    return deepcopy(json.loads(SOURCE_FIXTURE.read_text(encoding="utf-8"))["sources"][0])
+
+
+class SingleRecordStore:
+    """Return one mutated synthetic record for negative pin tests."""
+
+    def __init__(self, record):
+        self.record = record
+
+    def get(self, source_id):
+        return self.record if source_id == self.record["source_id"] else None
 
 
 def make_hit(**changes):
@@ -163,6 +179,46 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(snapshot.license, "MIT")
         self.assertIn(ALLOWED_URL, snapshot.evidence_urls)
         self.assertIn("SYNTHETIC-ALLOWED-CONTENT", snapshot.content or "")
+
+    def test_stored_url_must_be_pinned_to_its_recorded_revision(self):
+        record = source_record()
+        record["url"] = record["url"].replace(SHA_A, SHA_B)
+        snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+            PinnedRef(record["source_id"], ALLOWED_URL, SHA_A)
+        )
+        self.assertIs(snapshot.status, FetchStatus.INVALID_SOURCE)
+        self.assertIsNone(snapshot.content)
+
+    def test_stored_url_must_not_be_a_branch(self):
+        record = source_record()
+        record["url"] = (
+            "https://github.com/synthetic-labs/contract-review-skill/blob/main/SKILL.md"
+        )
+        snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+            PinnedRef(record["source_id"], ALLOWED_URL, SHA_A)
+        )
+        self.assertIs(snapshot.status, FetchStatus.INVALID_SOURCE)
+        self.assertIsNone(snapshot.content)
+
+    def test_exact_stored_pin_is_accepted(self):
+        record = source_record()
+        snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+            PinnedRef(record["source_id"], ALLOWED_URL, SHA_A)
+        )
+        self.assertIs(snapshot.status, FetchStatus.OK)
+        self.assertIn("SYNTHETIC-ALLOWED-CONTENT", snapshot.content or "")
+
+    def test_invalid_stored_pin_never_verifies_or_leaks_content(self):
+        record = source_record()
+        record["url"] = record["url"].replace(SHA_A, SHA_B)
+        snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+            PinnedRef(record["source_id"], ALLOWED_URL, SHA_A)
+        )
+        self.assertIs(snapshot.status, FetchStatus.INVALID_SOURCE)
+        self.assertIsNone(snapshot.content)
+        candidate = normalize(make_hit(), snapshot)
+        self.assertNotEqual(candidate["source_verification"]["status"], "verified-public")
+        self.assertEqual(candidate["candidate_status"], "needs-evidence")
 
     def test_revision_mismatch_is_explicit_and_has_no_content(self):
         url = f"https://github.com/synthetic-labs/contract-review-skill/blob/{SHA_B}/SKILL.md"
@@ -314,6 +370,25 @@ class NormalizeTests(unittest.TestCase):
         self.assertEqual(candidate["jurisdiction"]["evidence_url"], ALLOWED_URL)
         self.assertEqual(candidate["runtime"], "other")
         self.assertEqual(candidate["candidate_status"], "needs-evidence")
+
+    def test_missing_jurisdiction_evidence_is_not_source_declared(self):
+        for evidence in ("", "http://insecure.example/readme"):
+            with self.subTest(evidence=evidence):
+                snapshot = replace(self.allowed_snapshot, jurisdiction={
+                    "value": "CN-Mainland",
+                    "status": "source-declared",
+                    "evidence_url": evidence,
+                    "notes": "",
+                })
+                candidate = normalize(self.allowed_hit, snapshot)
+                self.assertEqual(candidate["jurisdiction"]["value"], "CN-Mainland")
+                self.assertEqual(
+                    candidate["jurisdiction"]["status"], "pending-verification"
+                )
+                self.assertTrue(
+                    candidate["jurisdiction"]["evidence_url"].endswith("/SKILL.md")
+                )
+                self.assertEqual(candidate["candidate_status"], "needs-evidence")
 
     def test_verified_states_require_evidence_and_never_claim_legal_review(self):
         no_license = replace(
@@ -548,6 +623,54 @@ class CLITests(unittest.TestCase):
                 json.loads(audit.read_text(encoding="utf-8"))["search"]["error"]["code"],
                 "timeout",
             )
+
+    def test_refuses_to_write_anywhere_in_repository(self):
+        with tempfile.TemporaryDirectory(dir=ROOT) as folder:
+            target = Path(folder) / "out.json"
+            result = self.run_cli("--query", "空结果", "--output", target)
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertFalse(target.exists())
+
+    def test_refuses_same_output_and_audit_path(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "same.json"
+            result = self.run_cli(
+                "--query", "空结果",
+                "--output", path,
+                "--audit", path,
+            )
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertFalse(path.exists())
+
+    def test_refuses_to_overwrite_an_existing_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "existing.json"
+            path.write_text("KEEP", encoding="utf-8")
+            result = self.run_cli("--query", "空结果", "--output", path)
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertEqual(path.read_text(encoding="utf-8"), "KEEP")
+
+    def test_no_output_when_audit_path_is_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / "out.json"
+            audit = ROOT / "data" / "discovery" / "audit-should-not-exist.json"
+            result = self.run_cli(
+                "--query", "空结果",
+                "--output", output,
+                "--audit", audit,
+            )
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertFalse(output.exists())
+            self.assertFalse(audit.exists())
+
+    def test_precheck_rejects_repository_file_and_symlink_alias(self):
+        with tempfile.TemporaryDirectory() as folder:
+            alias = Path(folder) / "alias.json"
+            alias.symlink_to(ROOT / "README.md")
+            for target in (ROOT / "README.md", alias):
+                with self.subTest(target=target):
+                    with self.assertRaises(ValueError):
+                        offline_cli.precheck_outputs([("candidate manifest", target)])
 
     def test_refuses_to_write_into_candidate_or_skills_directories(self):
         for relative in ("data/discovery/offline-should-not-exist.json", "skills/offline-should-not-exist.json"):
