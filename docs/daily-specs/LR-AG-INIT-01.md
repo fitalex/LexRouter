@@ -42,38 +42,84 @@
 
 ### 1. Markdown 相对链接与锚点自动化检查
 
-**可复现扫描命令：**
+**包含锚点与标题 Slug 匹配的可复现扫描命令：**
 ```sh
 python3 -c "
 import re, sys
 from pathlib import Path
+
 root = Path('.').resolve()
 md_files = sorted([p for p in root.rglob('*.md') if '.venv' not in p.parts])
+
+def extract_anchors(text: str) -> set:
+    anchors = set()
+    for m in re.finditer(r'<[a-zA-Z0-9]+[^>]+(?:id|name)=[\"\x27]([^\"\x27]+)[\"\x27]', text):
+        anchors.add(m.group(1))
+    heading_counts = {}
+    for line in text.splitlines():
+        line = line.strip()
+        if not line.startswith('#'):
+            continue
+        h_text = re.sub(r'^#+\s*', '', line).strip()
+        cleaned = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', h_text)
+        cleaned = re.sub(r'[*_~\x60]', '', cleaned).strip()
+        slug = re.sub(r'[^\w\s-]', '', cleaned.lower())
+        slug = re.sub(r'[-\s]+', '-', slug).strip('-')
+        if not slug:
+            continue
+        if slug in heading_counts:
+            heading_counts[slug] += 1
+            unique_slug = f'{slug}-{heading_counts[slug]}'
+        else:
+            heading_counts[slug] = 0
+            unique_slug = slug
+        anchors.add(unique_slug)
+    return anchors
+
 link_pat = re.compile(r'\[([^\]]+)\]\(([^)]+)\)')
-broken, total = [], 0
+broken_files, broken_anchors = [], []
+ext_cnt, rel_cnt, anc_cnt = 0, 0, 0
+
 for md in md_files:
     text = md.read_text(encoding='utf-8')
-    for m in link_pat.finditer(text):
-        label, url = m.groups()
-        total += 1
-        url = url.strip()
-        if url.startswith(('http://', 'https://', 'mailto:', '#')):
+    clean_text = re.sub(r'\x60{3}[\s\S]*?\x60{3}', '', text)
+    clean_text = re.sub(r'\x60[^\x60\n]*\x60', '', clean_text)
+    for m in link_pat.finditer(clean_text):
+        label, url = m.group(1).strip(), m.group(2).strip()
+        if url.startswith(('http://', 'https://', 'mailto:')):
+            ext_cnt += 1
             continue
-        target_path_str = url.split('#')[0]
-        if not target_path_str:
-            continue
-        target_path = (md.parent / target_path_str).resolve()
+        target_path_str, sep, anchor = url.partition('#')
+        target_path = (md.parent / target_path_str).resolve() if target_path_str else md
         if not target_path.exists():
-            broken.append((str(md.relative_to(root)), label, url))
-print(f'Checked {len(md_files)} Markdown files, {total} total links. Broken: {len(broken)}')
-if broken:
-    for b in broken: print('  BROKEN:', b)
+            broken_files.append((str(md.relative_to(root)), label, url))
+            continue
+        rel_cnt += 1
+        if sep:
+            anc_cnt += 1
+            target_anchors = extract_anchors(target_path.read_text(encoding='utf-8'))
+            if anchor not in target_anchors:
+                broken_anchors.append((str(md.relative_to(root)), label, url))
+
+print(f'Checked {len(md_files)} Markdown files.')
+print(f'Total Markdown links found: {ext_cnt + rel_cnt}')
+print(f'  - External links (HTTP/HTTPS/mailto, offline unverified): {ext_cnt}')
+print(f'  - Local relative file links (verified exists on disk): {rel_cnt}')
+print(f'  - Local anchor references (verified in target headings): {anc_cnt}')
+print(f'Broken relative files: {len(broken_files)}')
+print(f'Broken anchors: {len(broken_anchors)}')
+if broken_files or broken_anchors:
     sys.exit(1)
 "
 ```
 **统计口径与实际执行结果：**
-- **初始基线审计（基于 commit `0cf2072`）**：Checked 58 Markdown files, 531 total links. Broken: 0. 锚点目标均有效存在。
-- **本任务增改后（分支 `docs/lr-ag-init-01`）**：Checked 60 Markdown files, 567 total links. Broken: 0. 锚点目标均有效存在。
+- **当前分支（分支 `docs/lr-ag-init-01`，共 60 个 Markdown 文件）**：
+  - 发现 Markdown 样式链接总数：567 项
+  - 外部链接（HTTP/HTTPS/mailto）：264 项，遵循离线规范，未联网在线验证
+  - 本地相对文件/目录链接：303 项，已全部通过本地磁盘存在性验证，0 缺失
+  - 本地锚点引用：6 项（全部跨文件），经提取目标文件标题 Slug 与 HTML 显式 Anchor 进行完整匹配验证，全部有效匹配，0 锚点失效
+- **初始基线审计（基于 commit `0cf2072`，共 58 个 Markdown 文件）**：
+  - 发现 Markdown 样式链接总数：531 项（外部链接 257 项未联网验证；本地文件链接 274 项存在；本地锚点 6 项均有效匹配；0 本地断链，0 锚点失效）
 
 ### 2. 仓库既有元数据与业务规则校验 CLI
 ```sh
@@ -135,7 +181,7 @@ git diff --check
 | 序号 | 验收标准（DoD） | 完成状态 | 证明材料与说明 |
 | --- | --- | --- | --- |
 | D01 | 确认仅修改本任务授权的 Markdown 文档 | 已完成 | 仅新增基线手册、本任务书及更新任务索引，无任何代码与 Schema 改动 |
-| D02 | 检查新增及修改的 Markdown 相对链接与锚点 | 已完成 | 自动化脚本扫描：基线 58 文件 531 链接、变更后 60 文件 567 链接，均为 0 断链 |
+| D02 | 检查新增及修改的 Markdown 相对链接与锚点 | 已完成 | 自动化脚本扫描：全库 567 项 Markdown 链接，其中外部链接 264 项（离线未联网验证），本地相对文件链接 303 项（全部存在，0 缺失），本地锚点 6 项（目标标题 Slug 全部匹配，0 锚点失效） |
 | D03 | 运行 `git diff --check` 无格式异常 | 已完成 | 运行结果干净，退出码 0 |
 | D04 | 执行适用的仓库校验与全量测试套件 | 已完成 | 10 项 CLI 检查全部本地 PASS，168 项单测全部本地 OK（临时规避参数） |
 | D05 | 如实记录已执行、未执行与平台注意事项 | 已完成 | 如实记录 CI 未触发（paths 过滤），记录 macOS 软链接路径差异（临时规避，根因待排查） |

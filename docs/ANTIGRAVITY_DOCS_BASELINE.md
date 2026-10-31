@@ -90,35 +90,79 @@ Level 4: 上游来源公开声明与说明文本（待核实线索）
 
 ### 1. Confirmed（已确认需记录或修正的事项）
 - **C-01｜Markdown 相对链接与锚点完整性**：
-  - **统计口径严格区分**：
-    - **初始基线审计（基于 commit `0cf2072`）**：全仓库 58 个 Markdown 文件、531 个相对文件链接与锚点，**有效率 100%，无死链，无失效相对路径**。
-    - **本任务分支（分支 `docs/lr-ag-init-01`）**：全仓库 60 个 Markdown 文件、567 个相对文件链接与锚点，**有效率 100%，0 断链**。
-  - **可复现扫描命令**：
+  - **统计口径严格区分与分类说明**：
+    - 全库扫描匹配到的 Markdown 样式链接总数 `[label](url)` 为 **567 项**（基于当前分支 `docs/lr-ag-init-01`，共 60 个 Markdown 文件）。
+    - **外部链接**：264 项（以 `http://`、`https://` 或 `mailto:` 开头），遵循离线与沙箱安全原则，**未进行联网在线验证**。
+    - **本地相对文件/目录链接**：303 项，已全部通过本地磁盘存在性验证，**0 缺失**。
+    - **本地锚点引用**：6 项（全部为跨文件引用 `#anchor`），经全面提取目标文件标题 Slug 与显式 HTML Anchor 进行真实匹配验证，**全部有效匹配，0 锚点失效**。
+    - **初始基线对比（基于 commit `0cf2072`，共 58 个 Markdown 文件）**：总链接数 531 项（外部链接 257 项未联网验证；本地文件链接 274 项存在；本地锚点 6 项均有效匹配；0 本地断链，0 锚点失效）。
+  - **包含锚点与标题 Slug 匹配的可复现扫描命令**：
     ```sh
     python3 -c "
     import re, sys
     from pathlib import Path
+
     root = Path('.').resolve()
     md_files = sorted([p for p in root.rglob('*.md') if '.venv' not in p.parts])
+
+    def extract_anchors(text: str) -> set:
+        anchors = set()
+        for m in re.finditer(r'<[a-zA-Z0-9]+[^>]+(?:id|name)=[\"\x27]([^\"\x27]+)[\"\x27]', text):
+            anchors.add(m.group(1))
+        heading_counts = {}
+        for line in text.splitlines():
+            line = line.strip()
+            if not line.startswith('#'):
+                continue
+            h_text = re.sub(r'^#+\s*', '', line).strip()
+            cleaned = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', h_text)
+            cleaned = re.sub(r'[*_~\x60]', '', cleaned).strip()
+            slug = re.sub(r'[^\w\s-]', '', cleaned.lower())
+            slug = re.sub(r'[-\s]+', '-', slug).strip('-')
+            if not slug:
+                continue
+            if slug in heading_counts:
+                heading_counts[slug] += 1
+                unique_slug = f'{slug}-{heading_counts[slug]}'
+            else:
+                heading_counts[slug] = 0
+                unique_slug = slug
+            anchors.add(unique_slug)
+        return anchors
+
     link_pat = re.compile(r'\[([^\]]+)\]\(([^)]+)\)')
-    broken, total = [], 0
+    broken_files, broken_anchors = [], []
+    ext_cnt, rel_cnt, anc_cnt = 0, 0, 0
+
     for md in md_files:
         text = md.read_text(encoding='utf-8')
-        for m in link_pat.finditer(text):
-            label, url = m.groups()
-            total += 1
-            url = url.strip()
-            if url.startswith(('http://', 'https://', 'mailto:', '#')):
+        clean_text = re.sub(r'\x60{3}[\s\S]*?\x60{3}', '', text)
+        clean_text = re.sub(r'\x60[^\x60\n]*\x60', '', clean_text)
+        for m in link_pat.finditer(clean_text):
+            label, url = m.group(1).strip(), m.group(2).strip()
+            if url.startswith(('http://', 'https://', 'mailto:')):
+                ext_cnt += 1
                 continue
-            target_path_str = url.split('#')[0]
-            if not target_path_str:
-                continue
-            target_path = (md.parent / target_path_str).resolve()
+            target_path_str, sep, anchor = url.partition('#')
+            target_path = (md.parent / target_path_str).resolve() if target_path_str else md
             if not target_path.exists():
-                broken.append((str(md.relative_to(root)), label, url))
-    print(f'Checked {len(md_files)} Markdown files, {total} total links. Broken: {len(broken)}')
-    if broken:
-        for b in broken: print('  BROKEN:', b)
+                broken_files.append((str(md.relative_to(root)), label, url))
+                continue
+            rel_cnt += 1
+            if sep:
+                anc_cnt += 1
+                target_anchors = extract_anchors(target_path.read_text(encoding='utf-8'))
+                if anchor not in target_anchors:
+                    broken_anchors.append((str(md.relative_to(root)), label, url))
+
+    print(f'Checked {len(md_files)} Markdown files.')
+    print(f'Total Markdown links found: {ext_cnt + rel_cnt}')
+    print(f'  - External links (HTTP/HTTPS/mailto, offline unverified): {ext_cnt}')
+    print(f'  - Local relative file links (verified exists on disk): {rel_cnt}')
+    print(f'  - Local anchor references (verified in target headings): {anc_cnt}')
+    print(f'Broken relative files: {len(broken_files)}')
+    print(f'Broken anchors: {len(broken_anchors)}')
+    if broken_files or broken_anchors:
         sys.exit(1)
     "
     ```
