@@ -48,7 +48,7 @@
 - **法域**：只读取快照中的显式声明；`unknown` 不推断。快照声称 `verified` 时降为 `source-declared`，因为本适配器不执行法律专业复核。若快照缺少有效、可定位的法域证据 URL，仅保留命中入口并降为 `pending-verification`，不得因回退 URL 自动保持 `source-declared`。
 - **授权**：`verified` 仅在存在可识别许可名称与至少一个 HTTPS 许可证据时保留；未知状态降为 `pending-verification`；`not-permitted` 直接导致 `rejected`。搜索摘要中的许可线索不构成授权。
 - **来源**：没有快照时只能得到 `unverified`；读取失败映射为 `unavailable` 或 `unverified`，并保留错误原因。请求与存储 URL 都必须符合严格 GitHub 规范语法：只接受 `blob`/`raw`/`raw.githubusercontent.com` 固定 revision 形式；owner/repo/revision 不得百分号编码；文件路径段不得包含字面或编码 dot-segment、编码分隔符、空段或控制字符。失败返回 `invalid-ref`/`invalid-source`，不返回正文，也不得成为 `verified-public`。
-- **写入**：离线 CLI 只接受 `--output-dir`，在仓库外新建一个进程独占的私有目录（`0700`），固定写入 `candidates.json` 与 `audit.json`（`0600`）。不提供任意文件名，不接受已有目录或仓库路径。目录通过已打开的父目录 fd 与 `mkdir`/`open(..., dir_fd=...)` 创建和写入，避免预检后父 symlink 切换；不产生临时文件。若第二次写入失败，按创建时记录的 `st_dev`/`st_ino` 只清理仍属于本次运行的对象，其他写入者替换的文件保留；清理逐项 best-effort，失败时退出非零并报告残留，不报告成功。
+- **写入**：离线 CLI 只接受 `--output-dir`，在仓库外新建一个进程独占的私有目录（`0700`），固定写入 `candidates.json` 与 `audit.json`（`0600`）。不提供任意文件名，不接受已有目录或仓库路径。目录通过已打开的父目录 fd 与 `mkdir`/`open(..., dir_fd=...)` 创建和写入，避免预检后父 symlink 切换；不产生临时文件。创建文件的 fd 保持打开到发布结束（防止 inode 被复用），若后续写入失败，按 fd 与路径 stat 的 `st_dev`/`st_ino` 只清理仍属于本次运行的对象，其他写入者替换的文件保留；清理逐项 best-effort，失败时退出非零并报告残留，不报告成功。
 - **全文**：只有 `content_policy: synthetic-own` 的合成 fixture 才返回正文；`reference-only` 即使本地存放了正文也返回 `metadata-only` 且 `content=None`。归一化结果从不包含正文字段。
 - **候选判定**：仅当来源 `verified-public`、授权 `verified`、法域 `CN-Mainland` 且状态为 `source-declared`/`verified` 时才为 `candidate`；其余为 `needs-evidence`。这不等于法律或入库批准。
 - **去重**：复用仓库校验器的 GitHub 同入口规则（大小写、blob/raw、raw host、百分号编码、不同 revision）。跨仓库镜像、同义工作流、fork 共有内容仍须人工比较；测试只证明同入口不重复计数。
@@ -113,7 +113,7 @@ git diff --check
 7. **调度**：未实现 cron、队列、后台服务或 API Key 管理。
 8. **法律与授权**：全部状态仍待具备能力的人类复核；`candidate` 仅是继续整理状态。
 9. **输出契约变更**：CLI 已移除任意 `--output`/`--audit` 文件参数，调用方必须改用 `--output-dir` 并在目录中读取 `candidates.json`/`audit.json`。旧命令会以参数错误退出 2。
-10. **输出残余风险**：私有目录为 `0700`，回滚按创建时的 `st_dev`/`st_ino` 身份校验；同 UID 在目录内“原地修改”而非替换的文件不在可检测范围。直接写两个固定文件不提供崩溃/断电后的成对可见性或 fsync 持久性保证；失败会非零退出并报告残留，不报告成功。
+10. **输出残余风险**：私有目录为 `0700`，回滚按创建时保持打开的 fd 及路径 stat 的 `st_dev`/`st_ino` 身份校验，替换会得到不同 inode；同 UID 在目录内“原地修改”而非替换的文件不在可检测范围。直接写两个固定文件不提供崩溃/断电后的成对可见性或 fsync 持久性保证；失败会非零退出并报告残留，不报告成功。
 11. **平台边界**：目录身份校验依赖 `/proc/self/fd`（Linux）或 `F_GETPATH`（macOS）；两者都不可用时拒绝 `--output-dir` 模式。当前原型只支持 GitHub 固定 URL 形式，其他宿主须另立固定版本规则。
 
 ## 7. 给 Antigravity 的文档变更清单（未执行）

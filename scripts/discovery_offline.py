@@ -138,22 +138,33 @@ def _write_file(dir_fd, name, text, created):
     )
     try:
         info = os.fstat(descriptor)
-        created.append((name, info.st_dev, info.st_ino))
-        remaining = memoryview(text.encode("utf-8"))
-        while remaining:
-            written = os.write(descriptor, remaining)
-            if written <= 0:
-                raise OSError("short write while publishing output")
-            remaining = remaining[written:]
-    finally:
+    except OSError:
         os.close(descriptor)
+        raise
+    # Keep the descriptor open until publication finishes.  The open inode
+    # cannot be reused, so a later replacement necessarily has another inode.
+    created.append((name, descriptor, info.st_dev, info.st_ino))
+    remaining = memoryview(text.encode("utf-8"))
+    while remaining:
+        written = os.write(descriptor, remaining)
+        if written <= 0:
+            raise OSError("short write while publishing output")
+        remaining = remaining[written:]
+
+
+def _close_created(created):
+    for _, descriptor, _, _ in created:
+        try:
+            os.close(descriptor)
+        except OSError:
+            pass
 
 
 def _rollback_outputs(dir_fd, name, parent_fd, dir_identity, created):
     """Best-effort cleanup of objects this run created; never trust a pathname alone."""
     residual = []
     cleanup_errors = []
-    for file_name, device, inode in reversed(created):
+    for file_name, _descriptor, device, inode in reversed(created):
         try:
             info = os.stat(file_name, dir_fd=dir_fd, follow_symlinks=False)
         except FileNotFoundError:
@@ -207,7 +218,7 @@ def write_output_dir(path, manifest, audit):
         try:
             _write_file(dir_fd, OUTPUT_MANIFEST, manifest, created)
             _write_file(dir_fd, OUTPUT_AUDIT, audit, created)
-        except OSError as exc:
+        except Exception as exc:
             residual, cleanup_errors = _rollback_outputs(
                 dir_fd, name, parent_fd, dir_identity, created
             )
@@ -223,6 +234,7 @@ def write_output_dir(path, manifest, audit):
             ) from exc
         return actual_dir
     finally:
+        _close_created(created)
         if dir_fd is not None:
             os.close(dir_fd)
         if parent_fd is not None:
