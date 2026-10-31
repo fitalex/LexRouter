@@ -92,8 +92,8 @@ def write_outputs(outputs):
             # after the preflight check; the temporary file stays in the same
             # directory, so both paths are on the same filesystem.
             os.link(temporary_name, target)
-            temporary_name.unlink()
             written.append(target)
+            temporary_name.unlink()
     except (OSError, ValueError):
         for _, temporary_name in temporary:
             try:
