@@ -1,0 +1,77 @@
+{
+  "fixture_version": 1,
+  "provider": "synthetic-discovery-search",
+  "notes": "Synthetic offline responses only. No real query, endpoint, account, page or legal material is represented.",
+  "queries": {
+    "合成合同审查": {
+      "retrieved_at": "2026-10-30",
+      "results": [
+        {
+          "id": "synthetic-hit-contract",
+          "source_id": "synthetic-contract-review",
+          "title": "Synthetic contract review workflow",
+          "url": "https://github.com/synthetic-labs/contract-review-skill/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/SKILL.md",
+          "snippet": "Synthetic fixture snippet for a contract-review workflow; it is not a real capability description or legal claim.",
+          "rank": 1,
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "business_categories": ["contract-review"],
+          "runtime": "claude-skill",
+          "runtime_evidence": "Synthetic fixture: the fictional README says ~/.claude/skills/.",
+          "maintainer": "synthetic-labs (fictional fixture publisher)"
+        },
+        {
+          "id": "synthetic-hit-contract-mirror",
+          "source_id": "synthetic-contract-review",
+          "title": "Synthetic contract review workflow mirror",
+          "url": "https://raw.githubusercontent.com/synthetic-labs/contract-review-skill/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/SKILL.md",
+          "snippet": "Synthetic duplicate mirror used to verify canonical source-entry deduplication.",
+          "rank": 3,
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "business_categories": ["contract-review"],
+          "runtime": "claude-skill",
+          "maintainer": "synthetic-labs (fictional fixture publisher)"
+        },
+        {
+          "id": "synthetic-hit-restricted",
+          "source_id": "synthetic-restricted-index",
+          "title": "Synthetic restricted legal index",
+          "url": "https://github.com/synthetic-labs/restricted-legal-index/blob/cccccccccccccccccccccccccccccccccccccccc/SKILL.md",
+          "snippet": "Synthetic fixture whose policy permits metadata and links only; full text must not be copied.",
+          "rank": 2,
+          "revision": "cccccccccccccccccccccccccccccccccccccccc",
+          "business_categories": ["legal-research"],
+          "runtime": "prompt",
+          "runtime_evidence": "Synthetic fixture: runtime is unverified.",
+          "maintainer": "synthetic-labs (fictional fixture publisher)"
+        }
+      ]
+    },
+    "空结果": {
+      "retrieved_at": "2026-10-30",
+      "results": []
+    },
+    "网络错误": {
+      "error": {
+        "code": "timeout",
+        "message": "synthetic provider timeout; no external request was made",
+        "retryable": true
+      }
+    },
+    "结构错误": {
+      "retrieved_at": "2026-10-30",
+      "results": "not-an-array"
+    },
+    "缺失字段": {
+      "retrieved_at": "2026-10-30",
+      "results": [
+        {
+          "id": "synthetic-hit-broken",
+          "source_id": "synthetic-broken-entry",
+          "url": "https://github.com/synthetic-labs/broken-entry/blob/dddddddddddddddddddddddddddddddddddddddd/SKILL.md",
+          "retrieved_at": "2026-10-30",
+          "revision": "dddddddddddddddddddddddddddddddddddddddd"
+        }
+      ]
+    }
+  }
+}
