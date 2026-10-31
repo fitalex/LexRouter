@@ -14,6 +14,6 @@
 | LR-P1-03 | 2026-10-18 | 配置 fitalex 审阅角色白名单（Legal/Rights/Engineering/Maintainer） | [PR #8](https://github.com/fitalex/LexRouter/pull/8)；配置位于 `data/reviews/reviewers.json` |
 | LR-P1-04R | 2026-10-20 | Gate 1: Review Workbench v2 契约、专家短表、信任同步与迁移兼容性测试 | [PR #15](https://github.com/fitalex/LexRouter/pull/15)；详情见 [v2 工作台说明](../review-workbench/v2/EXPERT_SHORT_FORM.md) |
 | LR-GOV-01 | 2026-10-27 | 多 Agent 协作规范 V2 与 DeepSeek Harness 自动化 Discovery 分工 | [PR #17](https://github.com/fitalex/LexRouter/pull/17)；确立五方分工与每周检索机制（待启用） |
-| [LR-AG-INIT-01](LR-AG-INIT-01.md) | 2026-10-31 | Antigravity 工作区初始化、文档基线审计、建立维护基线手册与任务索引更新 | Human Maintainer 会话任务书；[基线手册](../ANTIGRAVITY_DOCS_BASELINE.md) 与 Draft PR |
+| [LR-AG-INIT-01](LR-AG-INIT-01.md) | 2026-10-31 | Antigravity 工作区初始化、文档基线审计、建立维护基线手册与任务索引更新 | Human Maintainer 会话任务书；[基线手册](../ANTIGRAVITY_DOCS_BASELINE.md) 与 Draft [PR #19](https://github.com/fitalex/LexRouter/pull/19) |
 
 本索引不代表任务已完成验收；交付与 CI 证据以对应 PR 为准。后续获授权的任务书在此追加链接，公开版本不得包含密钥、敏感卷宗或 Holdout 内容。

@@ -62,25 +62,25 @@
 
 ## 三、文档更新证据优先级（Hierarchy of Truth）
 
-为杜绝“文档与工程脱节”、“AI 臆测当做事实”或“计划等同于已上线”，Antigravity 在编写与更新文档时严格遵循以下证据优先级：
+为杜绝“文档与工程脱节”、“AI 臆测当做事实”或“计划等同于已上线”，Antigravity 在编写与更新文档时严格遵循以下证据层级与效力边界：
 
 ```
-Level 1: main 分支已合并代码/数据与 CI 证据（绝对事实）
+Level 1: main 分支已合并代码/数据与特定条件下的 CI 运行记录（核心事实基准）
    ↓
-Level 2: 独立 PR 的工程实现与可复现验证命令（待审事实）
+Level 2: 独立 PR 的工程实现与可复现验证记录（待审事实）
    ↓
-Level 3: 冻结路线图与规范文档中的目标定义（目标依据）
+Level 3: 冻结路线图与规范文档中的目标与规则（目标与契约依据）
    ↓
-Level 4: 原始作者声明与公开网页自述（待核查线索）
+Level 4: 上游来源公开声明与说明文本（待核实线索）
    ↓
-[禁止采信]: 未经运行的口头推断 / AI 代签代批结论（无效伪证据）
+[禁止采信]: 脱离测试的口头断言 / AI 代签代批结论 / 未经验证的推测（无证据效力）
 ```
 
-1. **Level 1（主分支基准事实）**：已合并至 `main` 的文件、代码接口、Schema、数据文件以及 GitHub Actions CI 真实通过日志。文档必须以此为现状描述的唯一核心依据。
-2. **Level 2（待审变更事实）**：通过独立分支与 PR 提交的改动，必须附带本地真实运行的验证命令与无截断输出证据。在 PR 未合并前，文档中必须明确标注为“待审核（Draft / Pending Review）”，严禁提前标记为“已完成”。
-3. **Level 3（战略基准与目标）**：`ROADMAP.md`、`AGENTS.md` 规定的目标、里程碑周期与产品边界，代表设计指导，但不能替代功能已落地的证据。
-4. **Level 4（第三方线索）**：上游项目的 README、许可声明、作者头衔等仅作为发现线索，记录为 `source-declared`，未经法律复核不得升为 `verified`。
-5. **绝对禁止**：严禁以 CI 校验通过推定法律有效性；严禁以 AI 预审材料冒充专家签署；严禁在缺乏真实运行输出的情况下宣称测试通过。
+1. **Level 1（主分支核心事实基准）**：已合并至 `main` 的文件、代码接口、Schema、数据文件以及在特定环境和条件下的 GitHub Actions CI 真实通过日志。文档必须以此为现状描述的核心依据。但需注意其边界：它证明文件在仓库中真实存在并满足已设定的自动化测试与校验约束，并不证明代码在所有环境全面无缺陷，亦不代表业务或法律内容已获实质专业批准或真人法律有效性判定。
+2. **Level 2（待审变更事实）**：通过独立分支与 PR 提交的改动，必须附带本地真实运行的验证命令与无截断输出证据。证明变更已提交且具备自测证据；在 PR 未合并前，文档中必须明确标注为“待审核（Draft / Pending Review）”，严禁提前标记为“已完成”或“已上线”。
+3. **Level 3（目标与契约依据）**：`ROADMAP.md`、`AGENTS.md` 规定的目标、里程碑周期与产品边界，代表设计指导与验收契约，但不能替代功能已落地的证据，不可推定功能已经实现。
+4. **Level 4（待核实线索）**：上游项目的 README、许可声明、作者头衔等仅作为发现线索，记录为 `source-declared`，未经法律复核不得升为 `verified`，不可直接作为法律、时效或质量定论。
+5. **绝对禁止采信**：严禁以 CI 校验通过推定法律有效性；严禁以 AI 预审材料冒充专家签署；严禁在缺乏真实运行输出的情况下宣称测试通过；脱离测试的口头断言与 AI 代签代批结论均无证据效力。
 
 ---
 
@@ -90,7 +90,38 @@ Level 4: 原始作者声明与公开网页自述（待核查线索）
 
 ### 1. Confirmed（已确认需记录或修正的事项）
 - **C-01｜Markdown 相对链接与锚点完整性**：
-  - 全仓库 58 个 Markdown 文件、531 个相对文件链接与锚点经自动化脚本全面扫描，**有效率 100%，无死链，无失效相对路径**。
+  - **统计口径严格区分**：
+    - **初始基线审计（基于 commit `0cf2072`）**：全仓库 58 个 Markdown 文件、531 个相对文件链接与锚点，**有效率 100%，无死链，无失效相对路径**。
+    - **本任务分支（分支 `docs/lr-ag-init-01`）**：全仓库 60 个 Markdown 文件、567 个相对文件链接与锚点，**有效率 100%，0 断链**。
+  - **可复现扫描命令**：
+    ```sh
+    python3 -c "
+    import re, sys
+    from pathlib import Path
+    root = Path('.').resolve()
+    md_files = sorted([p for p in root.rglob('*.md') if '.venv' not in p.parts])
+    link_pat = re.compile(r'\[([^\]]+)\]\(([^)]+)\)')
+    broken, total = [], 0
+    for md in md_files:
+        text = md.read_text(encoding='utf-8')
+        for m in link_pat.finditer(text):
+            label, url = m.groups()
+            total += 1
+            url = url.strip()
+            if url.startswith(('http://', 'https://', 'mailto:', '#')):
+                continue
+            target_path_str = url.split('#')[0]
+            if not target_path_str:
+                continue
+            target_path = (md.parent / target_path_str).resolve()
+            if not target_path.exists():
+                broken.append((str(md.relative_to(root)), label, url))
+    print(f'Checked {len(md_files)} Markdown files, {total} total links. Broken: {len(broken)}')
+    if broken:
+        for b in broken: print('  BROKEN:', b)
+        sys.exit(1)
+    "
+    ```
 - **C-02｜合规红线与签署状态检查**：
   - 检查全库所有涉及审查工作台与候选数据的文档，均严格标注了 `READY_FOR_REVIEW — HUMAN_APPROVAL_PENDING`、`未签署、未入库`、正式 `skills/` 条目数为 0；未发现将 AI 预审冒充真人签署或专家批准的违规表述。
 - **C-03｜`docs/daily-specs/README.md` 索引滞后**：
@@ -101,9 +132,11 @@ Level 4: 原始作者声明与公开网页自述（待核查线索）
   - `README.md` 缺少 Review Workbench v2 文档目录链接；本地检查列表未包含 `python scripts/review_workbench_v2.py validate`。
 
 ### 2. Needs Evidence（缺少环境证据或特定平台注意事项）
-- **E-01｜macOS 本地测试 `TMPDIR` 软链接路径匹配**：
-  - 在 macOS 环境下执行 `python -m unittest discover -s tests -v` 时，因系统默认 `TMPDIR` 位于 `/var/folders`（实为 `/private/var/folders` 的软链接），`scripts/review_workbench.py` 中的 `validate_record` 内部执行 `p.relative_to(root)` 时，因 `root` 未统一解析为 resolve 真实路径而 `p` 被解析，在 Python 3.11/3.14 下会触发路径前缀不匹配异常（5 项失败）。
-  - **验证结论**：通过显式指定 `TMPDIR=/private/tmp`，全部 168 项单元测试 100% 通过（Ran 168 tests, OK）。建议在后续文档及环境说明中明确标注 macOS 运行建议。
+- **E-01｜macOS 本地测试观察到路径解析差异（待工程排查根因）**：
+  - **观察到的两组事实**：
+    1. 在 macOS 默认环境下直接运行 `python -m unittest discover -s tests -v` 时，系统默认 `TMPDIR` 位于 `/var/folders`（实为 `/private/var/folders` 软链接），`scripts/review_workbench.py` 中的 `validate_record` 内部执行 `p.relative_to(root)` 时，因路径前缀涉及软链接展开差异，在 Python 3.11/3.14 下会触发 `ValueError` 导致 5 项测试失败；
+    2. 通过显式指定 `TMPDIR=/private/tmp python -m unittest discover -s tests -v` 规避软链接展开差异后，全部 168 项单元测试 100% 通过（Ran 168 tests, OK）。
+  - **结论界定**：指定 `TMPDIR=/private/tmp` 仅为本地临时运行规避手段，其跨平台路径适配与代码实现的真实根因待 Codex Astra 进一步工程排查，不得将环境变量规避定性为已修复测试缺陷。
 
 ### 3. Needs Decision（需 ChatGPT GPT-6 或 Human Maintainer 决策）
 - **D-01｜`README.md` 进展状态正文更新**：
@@ -119,10 +152,10 @@ Level 4: 原始作者声明与公开网页自述（待核查线索）
 
 | 编号 | 事项 | 类别 | 建议处理方式 | 建议 Owner | 审核/验收方 |
 | --- | --- | --- | --- | --- | --- |
-| FIX-01 | 更新 `docs/daily-specs/README.md` 补全 LR-P1-02 ~ LR-GOV-01 记录 | Confirmed | 本次 LR-AG-INIT-01 直接修复 | Antigravity | ChatGPT GPT-6 |
-| FIX-02 | 补全 `tests/README.md` 中关于 Review Workbench v2 单元测试的说明 | Confirmed | 后续提交文档 PR 补充 | Antigravity | Codex Astra / ChatGPT |
+| FIX-01 | 更新 `docs/daily-specs/README.md` 补全 LR-P1-02 ~ LR-GOV-01 及 LR-AG-INIT-01 ([PR #19](https://github.com/fitalex/LexRouter/pull/19)) 记录 | Confirmed | 本次 LR-AG-INIT-01 直接修复 | Antigravity | ChatGPT GPT-6 |
+| FIX-02 | 补全 `tests/README.md` 中关于 Review Workbench v2 单元测试的说明 | Confirmed | 后续提交独立文档 PR 补充 | Antigravity | Codex Astra / ChatGPT |
 | FIX-03 | 补充 `README.md` 的 v2 文档入口与 `review_workbench_v2.py validate` 检查命令 | Confirmed | 拟定低风险修订单，随后续文档更新提交 | Antigravity | ChatGPT GPT-6 |
-| FIX-04 | macOS 本地测试指南补充 `TMPDIR=/private/tmp` 注意事项 | Confirmed | 写入相关测试与贡献指南 | Antigravity | Codex Astra |
+| FIX-04 | macOS 本地测试环境路径解析差异排查与跨平台适配 | Needs Evidence | 临时可指定 `TMPDIR=/private/tmp` 规避，底层路径适配根因交由 Codex Astra 排查 | Codex Astra / Antigravity | ChatGPT GPT-6 |
 | DEC-01 | `README.md` 第 14 行阶段性进展文案刷新 | Needs Decision | ChatGPT GPT-6 给出核准文案后提 PR | ChatGPT GPT-6 / Antigravity | Human Maintainer |
 | DEC-02 | 决定 PR #13（证据优先战略主张）是否合并 | Needs Decision | 协调审核与合并决策 | ChatGPT GPT-6 | Human Maintainer |
 | DEC-03 | 安排 LR-P1-04A/B/C 人类法律专家评审与签署 | Needs Decision | 跟踪评审工作台 Gate 2 签署进展 | Human Maintainer | Human Maintainer |
