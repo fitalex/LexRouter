@@ -1,6 +1,6 @@
 # 元数据工具测试
 
-Gate 2 的 `test_gate2_adaptation.py` 为三个真实候选共用九项回归，由 Validate Skills 的候选矩阵显式运行。默认完整单测不配置候选时明确跳过该模块；矩阵缺配置或缺数据则失败。实现和候选数据隔离，完整 v1 原件与历史对照独立固定基线，不生成真实签署。运行参数和信任边界见 [Gate 2 回归自动化说明](../docs/review-workbench/v2/GATE2_CI_REGRESSION.md)。
+Gate 2 的 `test_gate2_adaptation.py` 为三个真实候选共用九项回归，由 Validate Skills 的候选矩阵显式运行。默认完整单测不配置候选时明确跳过该模块；矩阵缺配置或缺数据则失败。实现和候选数据隔离，v1 原件与历史对照独立固定基线；空资质/空账本仅限 Gate 2 快照，活动账本按生产事件认证。跨 Gate 生命周期、多个 bundle、关闭/合并及分支删除另由 test_gate2_lifecycle.py 和 test_gate2_refs.py 覆盖，不生成真实签署。运行参数和信任边界见 [Gate 2 回归自动化说明](../docs/review-workbench/v2/GATE2_CI_REGRESSION.md)。
 
 LR-P1-01 的 `test_validate_discovery_batches.py` 使用临时合成候选，覆盖多批合法统计、同套件不同任务、跨批 ID 重复、同入口跨 SHA/宿主/raw 与 blob/大小写/百分号编码、固定版本/入口证据遗漏、重复输入、原候选契约错误、坏 JSON/UTF-8/缺文件、CLI 0/1/2 和禁网运行。它不声称自动完成语义去重；真实批次的人工比较见 `docs/P1_BATCH_01_REVIEW.md`。CI 分别运行新批契约及显式新旧联合检查，不抓取第三方站点；无新增依赖。
 

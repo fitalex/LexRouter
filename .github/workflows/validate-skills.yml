@@ -144,23 +144,19 @@ jobs:
           gh api "repos/fitalex/LexRouter/pulls/$CANDIDATE_PR" > "$RUNNER_TEMP/gate2-pr.json"
           gh api repos/fitalex/LexRouter/git/ref/heads/main > "$RUNNER_TEMP/gate2-main.json"
           python - <<'PYREFS'
-          import json, os, re, subprocess
+          import json, os, subprocess, sys
           from pathlib import Path
           directory = Path(os.environ['RUNNER_TEMP'])
           pr = json.loads((directory / 'gate2-pr.json').read_text())
           main = json.loads((directory / 'gate2-main.json').read_text())['object']['sha']
-          head = pr['head']['sha']
-          if os.environ['EVENT_PR'] == os.environ['CANDIDATE_PR']:
-              # A check for event head A must never silently test newer head B.
-              head = os.environ['EVENT_HEAD']
-          assert pr['base']['repo']['full_name'] == 'fitalex/LexRouter'
-          assert pr['head']['repo']['full_name'] == 'fitalex/LexRouter'
-          assert pr['base']['ref'] == 'main'
-          assert all(re.fullmatch(r'[0-9a-f]{40}', ref) for ref in (head, main))
+          sys.path.insert(0, 'implementation/tests')
+          from gate2_refs import resolve
+          refs = resolve(pr, main, os.environ['EVENT_PR'], os.environ['EVENT_HEAD'])
+          head = refs['head']
           implementation = subprocess.check_output(['git', '-C', 'implementation', 'rev-parse', 'HEAD'], text=True).strip()
-          print(f'Implementation={implementation}; candidate={head}; accepted main={main}', flush=True)
+          print(f"Implementation={implementation}; candidate={head}; accepted main={main}; lifecycle={refs['state']}", flush=True)
           with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
-              output.write(f'head={head}\nmain={main}\n')
+              output.write(''.join(f'{key}={value}\n' for key, value in refs.items()))
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
               summary.write(f"Implementation: `{implementation}`; Gate 2 PR #{os.environ['CANDIDATE_PR']}: `{head}`; accepted main: `{main}`.\n")
           PYREFS
@@ -175,6 +171,9 @@ jobs:
       - name: Run all nine shared regressions against the real candidate
         working-directory: implementation
         env:
+          GH_TOKEN: ${{ github.token }}
+          GATE2_PR: ${{ matrix.pr }}
+          GATE2_ACTIVE: ${{ steps.refs.outputs.active }}
           GATE2_REQUIRED: '1'
           GATE2_CANDIDATE_ROOT: ${{ github.workspace }}/candidate-data
           GATE2_BASE_REF: ${{ steps.refs.outputs.main }}

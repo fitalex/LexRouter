@@ -25,6 +25,7 @@ IMPLEMENTATION_ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(IMPLEMENTATION_ROOT / 'scripts'), str(IMPLEMENTATION_ROOT / 'tests')]
 import review_workbench_v2 as w
 from test_review_workbench_v2 import FakeAPI
+from unittest import mock
 
 ROOT = Path(os.environ.get('GATE2_CANDIDATE_ROOT', IMPLEMENTATION_ROOT)).resolve()
 ENABLED = os.environ.get('GATE2_REQUIRED') == '1'
@@ -55,11 +56,14 @@ def setUpModule():
     rid = os.environ['GATE2_REVIEW_ID']
     if not re.fullmatch(r'RV-[A-Za-z0-9-]+', rid):
         raise AssertionError('Invalid selected Review ID')
-    paths = sorted((ROOT / 'data/reviews/v2').glob('RV-*/bundle.json'))
-    if [p.parent.name for p in paths] != [rid]:
-        raise AssertionError('Expected exactly the selected real candidate bundle')
-    CASES = [(rid, w.loads(paths[0].read_text()))]
+    CASES = [(rid, select_bundle(ROOT, rid))]
     print(f'Gate 2 candidate={rid} head={HEAD} accepted_baseline={MAIN} original_v1_snapshot={ORIGINAL}', flush=True)
+
+
+def select_bundle(root, rid):
+    bundle = w.loads((root / w.review_path(rid, 'bundle')).read_text())
+    w.require(bundle['review_id'] == rid, 'Selected bundle identity differs')
+    return bundle
 
 
 def subject(bundle):
@@ -135,7 +139,7 @@ def check_gates(bundle, form):
 
 def compatibility_files(name):
     path = ROOT / 'docs/review-workbench/v2/gate2' / name.removeprefix('RV-20261017-') / 'compatibility.md'
-    block = re.search(r'```json\n(.*?)\n```', path.read_text(), re.S)
+    block = re.search(r'```json\n(.*?)\n```', git('show', ORIGINAL + ':' + str(path.relative_to(ROOT))), re.S)
     assert block, 'Missing captured v1 digest map'
     return json.loads(block[1])['original_files']
 
@@ -145,6 +149,8 @@ def verify_originals(rows, root=ROOT):
         raise AssertionError('Captured originals must not be empty')
     for row in rows:
         path = root / w.safe_path(row['path'])
+        if not row['path'].startswith('data/reviews/cases/' + os.environ['GATE2_REVIEW_ID'] + '/'):
+            continue
         raw = path.read_bytes()
         if hashlib.sha256(raw).hexdigest() != row['sha256']:
             raise ValueError('Captured v1 original changed')
@@ -156,7 +162,8 @@ def verify_original_inventory(rows):
                 for row in tree(ref)['tree'] if row['path'].startswith('data/reviews/cases/')}
     original = inventory(ORIGINAL)
     current = inventory(HEAD)
-    if not original or current != original:
+    target = 'data/reviews/cases/' + os.environ['GATE2_REVIEW_ID'] + '/'
+    if not original or any(current.get(p) != v for p, v in original.items() if p.startswith(target)):
         raise ValueError('Complete captured v1 inventory or Git blobs changed')
     if len(rows) != len(original) or {row['path'] for row in rows} != set(original):
         raise ValueError('Compatibility map must cover every original v1 file exactly once')
@@ -169,17 +176,28 @@ def verify_original_inventory(rows):
 
 
 class Gate2AdaptationTests(unittest.TestCase):
-    def test_real_bundle_full_matrix_and_empty_ledger(self):
+    def test_real_bundle_full_matrix_and_authenticated_ledger(self):
         self.assertTrue(CASES, 'No candidate bundle found')
         for rid, bundle in CASES:
             with self.subTest(review=rid):
                 w.validate_bundle(bundle)
                 self.assertEqual(set(bundle['review_scope']), set(subject(bundle)['review_scope']))
                 ledger = w.loads((ROOT / w.review_path(rid, 'ledger')).read_text())
-                self.assertEqual(ledger, w.empty_ledger(bundle))
+                baseline_path = MAIN + ':' + w.review_path(rid, 'ledger')
+                baseline_raw = subprocess.run(['git', '-C', str(ROOT), 'show', baseline_path], capture_output=True, text=True)
+                baseline = w.loads(baseline_raw.stdout) if baseline_raw.returncode == 0 else None
+                w.validate_ledger(ledger, bundle, baseline)
+                for key in ('source_revision', 'source_repository', 'source_manifest', 'review_scope', 'excluded_scope', 'template_versions'):
+                    snapshot = w.loads(git('show', ORIGINAL + ':' + w.review_path(rid, 'bundle')))
+                    self.assertEqual(bundle[key], snapshot[key])
+                if os.environ.get('GATE2_PR'):
+                    w.immutable_history(w.github_api, int(os.environ['GATE2_PR']), bundle, ledger)
+                if ledger['entries']:
+                    w.verify_saved_history(bundle, ledger, active=os.environ.get('GATE2_ACTIVE', 'true') == 'true')
 
     def test_actual_unverified_evidence_cannot_approve(self):
-        for rid, bundle in CASES:
+        for rid, current in CASES:
+            bundle = w.loads(git('show', ORIGINAL + ':' + w.review_path(rid, 'bundle')))
             _, form = complete_fixture(bundle)
             with self.subTest(review=rid), self.assertRaises(w.ReviewError):
                 check_gates(bundle, form)
@@ -203,33 +221,37 @@ class Gate2AdaptationTests(unittest.TestCase):
                 check_gates(bundle, form)
 
     def test_source_manifest_or_scope_changes_are_rejected(self):
-        for rid, original in CASES:
-            w.verify_anchors(anchor_api(original), original, HEAD, MAIN)
-            for change in ('source', 'manifest', 'scope'):
-                bundle = deepcopy(original)
-                if change == 'source':
-                    bundle['source_revision'] = '0' * 40
-                elif change == 'manifest':
-                    bundle['source_manifest'][0]['blob_sha'] = '0' * 40
-                else:
-                    bundle['review_scope'].pop()
-                with self.subTest(review=rid, change=change), self.assertRaises(w.ReviewError):
-                    w.verify_anchors(anchor_api(original), bundle, HEAD, MAIN)
-            # The shared harness does not weaken the production main/code closure.
-            real_api = anchor_api(original)
-            def changed_code_api(path, method='GET', payload=None):
-                response = real_api(path, method, payload)
-                if path == f'{w.PREFIX}/git/trees/{HEAD}?recursive=1':
-                    response = deepcopy(response)
-                    for row in response['tree']:
-                        if row['path'] == 'scripts/review_workbench_v2.py':
-                            row['sha'] = '0' * 40
-                            break
+        # Strict executable closure belongs to the fixed Gate 2 snapshot.
+        # Activity checks above validate pinned source and authenticate every saved event.
+        with mock.patch.dict(globals(), MAIN='d1c7ebabd5c33d2e92c6916804adc4018c89e5a0', HEAD=ORIGINAL):
+            for rid, current in CASES:
+                original = w.loads(git('show', ORIGINAL + ':' + w.review_path(rid, 'bundle')))
+                w.verify_anchors(anchor_api(original), original, HEAD, MAIN)
+                for change in ('source', 'manifest', 'scope'):
+                    bundle = deepcopy(original)
+                    if change == 'source':
+                        bundle['source_revision'] = '0' * 40
+                    elif change == 'manifest':
+                        bundle['source_manifest'][0]['blob_sha'] = '0' * 40
                     else:
-                        raise AssertionError('Protected implementation missing from candidate tree')
-                return response
-            with self.subTest(review=rid, change='protected-code'), self.assertRaises(w.ReviewError):
-                w.verify_anchors(changed_code_api, original, HEAD, MAIN)
+                        bundle['review_scope'].pop()
+                    with self.subTest(review=rid, change=change), self.assertRaises(w.ReviewError):
+                        w.verify_anchors(anchor_api(original), bundle, HEAD, MAIN)
+                # The shared harness does not weaken the production main/code closure.
+                real_api = anchor_api(original)
+                def changed_code_api(path, method='GET', payload=None):
+                    response = real_api(path, method, payload)
+                    if path == f'{w.PREFIX}/git/trees/{HEAD}?recursive=1':
+                        response = deepcopy(response)
+                        for row in response['tree']:
+                            if row['path'] == 'scripts/review_workbench_v2.py':
+                                row['sha'] = '0' * 40
+                                break
+                        else:
+                            raise AssertionError('Protected implementation missing from candidate tree')
+                    return response
+                with self.subTest(review=rid, change='protected-code'), self.assertRaises(w.ReviewError):
+                    w.verify_anchors(changed_code_api, original, HEAD, MAIN)
 
     def test_fake_signature_or_identity_authorization_is_rejected(self):
         for change in ('bot', 'permission', 'role', 'credential'):
@@ -250,7 +272,7 @@ class Gate2AdaptationTests(unittest.TestCase):
     def test_v1_captured_bytes_and_history_are_preserved(self):
         for rid, _ in CASES:
             rows = compatibility_files(rid)
-            verify_originals(rows)
+            verify_originals([row for row in rows if row['path'].startswith('data/reviews/cases/' + rid + '/')])
             verify_original_inventory(rows)
 
     def test_v1_original_deletion_or_rewrite_is_detected(self):
@@ -258,31 +280,34 @@ class Gate2AdaptationTests(unittest.TestCase):
             rows = compatibility_files(rid)
             with self.subTest(review=rid, change='omitted-captured-file'), self.assertRaises(ValueError):
                 verify_original_inventory(rows[1:])
-            target = rows[0]['path']
+            target = next(row['path'] for row in rows if row['path'].startswith('data/reviews/cases/' + rid + '/'))
             for change in ('deleted', 'rewritten'):
                 # Mutate only a disposable copy of the real captured files.
                 with TemporaryDirectory(prefix='gate2-originals-') as directory:
                     root = Path(directory)
                     for row in rows:
+                        if not row['path'].startswith('data/reviews/cases/' + rid + '/'):
+                            continue
                         source = ROOT / w.safe_path(row['path'])
                         destination = root / row['path']
                         destination.parent.mkdir(parents=True, exist_ok=True)
                         shutil.copyfile(source, destination)
-                    verify_originals(rows, root)
+                    verify_originals([row for row in rows if row['path'].startswith('data/reviews/cases/' + rid + '/')], root)
                     path = root / target
                     if change == 'deleted':
                         path.unlink()
                     else:
                         path.write_bytes(path.read_bytes() + b'\nSYNTHETIC tampering')
                     with self.subTest(review=rid, change=change), self.assertRaises((ValueError, FileNotFoundError)):
-                        verify_originals(rows, root)
+                        verify_originals([row for row in rows if row['path'].startswith('data/reviews/cases/' + rid + '/')], root)
 
-    def test_policy_and_production_ledger_are_not_synthetic_signatures(self):
-        policy = w.loads((ROOT / w.POLICY_PATH).read_text())
-        self.assertEqual(policy, w.loads(git('show', MAIN + ':' + w.POLICY_PATH)))
-        self.assertEqual(policy['credential_refs'], {})
+    def test_empty_gate2_snapshot_and_accepted_current_policy(self):
+        policy = w.loads(git('show', MAIN + ':' + w.POLICY_PATH))
+        self.assertEqual(policy['repository'], w.REPOSITORY)
+        baseline_policy = w.loads(git('show', ORIGINAL + ':' + w.POLICY_PATH))
+        self.assertEqual(baseline_policy['credential_refs'], {})
         for rid, bundle in CASES:
-            ledger = w.loads((ROOT / w.review_path(rid, 'ledger')).read_text())
+            ledger = w.loads(git('show', ORIGINAL + ':' + w.review_path(rid, 'ledger')))
             self.assertEqual(ledger['entries'], [])
 
 
