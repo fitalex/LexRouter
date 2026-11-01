@@ -101,3 +101,84 @@ jobs:
         run: python scripts/review_workbench_v2.py validate --online --base-ref "$REVIEW_BASE"
       - name: Test positive and negative fixtures
         run: python -m unittest discover -s tests -v
+
+  gate2-adaptation:
+    name: Gate 2 candidate regressions (PR ${{ matrix.pr }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pr: 9
+            review: RV-20261017-contract-review
+            original: 6d86b10f34965eee4f65ccbe94078067c1cde5db
+          - pr: 10
+            review: RV-20261017-contract-review-zh
+            original: ad1a925a185f7063571962ea99f3624ba12ec6f3
+          - pr: 11
+            review: RV-20261017-china-legal-counsel
+            original: ca313b5a9ea619700eac5ea0333dd958fa55226a
+    steps:
+      - name: Check out shared implementation
+        uses: actions/checkout@v4
+        with:
+          path: implementation
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install shared implementation dependency
+        run: python -m pip install -r implementation/requirements.txt
+      - name: Resolve live candidate and accepted main once
+        id: refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_PR: ${{ matrix.pr }}
+          EVENT_PR: ${{ github.event.pull_request.number || '' }}
+          EVENT_HEAD: ${{ github.event.pull_request.head.sha || '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/fitalex/LexRouter/pulls/$CANDIDATE_PR" > "$RUNNER_TEMP/gate2-pr.json"
+          gh api repos/fitalex/LexRouter/git/ref/heads/main > "$RUNNER_TEMP/gate2-main.json"
+          python - <<'PYREFS'
+          import json, os, re, subprocess
+          from pathlib import Path
+          directory = Path(os.environ['RUNNER_TEMP'])
+          pr = json.loads((directory / 'gate2-pr.json').read_text())
+          main = json.loads((directory / 'gate2-main.json').read_text())['object']['sha']
+          head = pr['head']['sha']
+          if os.environ['EVENT_PR'] == os.environ['CANDIDATE_PR']:
+              # A check for event head A must never silently test newer head B.
+              head = os.environ['EVENT_HEAD']
+          assert pr['base']['repo']['full_name'] == 'fitalex/LexRouter'
+          assert pr['head']['repo']['full_name'] == 'fitalex/LexRouter'
+          assert pr['base']['ref'] == 'main'
+          assert all(re.fullmatch(r'[0-9a-f]{40}', ref) for ref in (head, main))
+          implementation = subprocess.check_output(['git', '-C', 'implementation', 'rev-parse', 'HEAD'], text=True).strip()
+          print(f'Implementation={implementation}; candidate={head}; accepted main={main}', flush=True)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'head={head}\nmain={main}\n')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write(f"Implementation: `{implementation}`; Gate 2 PR #{os.environ['CANDIDATE_PR']}: `{head}`; accepted main: `{main}`.\n")
+          PYREFS
+      - name: Check out pinned candidate as read-only test data
+        uses: actions/checkout@v4
+        with:
+          repository: fitalex/LexRouter
+          ref: ${{ steps.refs.outputs.head }}
+          path: candidate-data
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Run all nine shared regressions against the real candidate
+        working-directory: implementation
+        env:
+          GATE2_REQUIRED: '1'
+          GATE2_CANDIDATE_ROOT: ${{ github.workspace }}/candidate-data
+          GATE2_BASE_REF: ${{ steps.refs.outputs.main }}
+          GATE2_HEAD_REF: ${{ steps.refs.outputs.head }}
+          GATE2_ORIGINAL_REF: ${{ matrix.original }}
+          GATE2_REVIEW_ID: ${{ matrix.review }}
+        run: python -m unittest discover -s tests -p test_gate2_adaptation.py -v
