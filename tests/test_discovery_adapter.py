@@ -6,6 +6,7 @@ Skill, or writes into ``data/discovery/`` or ``skills/``.
 
 import contextlib
 from copy import deepcopy
+import hashlib
 from dataclasses import replace
 from datetime import datetime, timezone
 import io
@@ -257,6 +258,33 @@ class FetchTests(unittest.TestCase):
                         candidate["source_verification"]["status"], "verified-public"
                     )
                     self.assertNotEqual(candidate["candidate_status"], "candidate")
+
+    def test_lossy_url_decode_does_not_conflate_distinct_files(self):
+        stored_url = pin_url("blob", path="%2553KILL.md")
+        request_url = pin_url("blob", path="SKILL.md")
+        record = source_record()
+        record["url"] = stored_url
+        record["revision"] = SHA_A
+        snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+            PinnedRef(record["source_id"], request_url, SHA_A)
+        )
+        self.assertIs(snapshot.status, FetchStatus.SOURCE_MISMATCH)
+        self.assertIsNone(snapshot.content)
+        candidate = normalize(make_hit(url=request_url), snapshot)
+        self.assertNotEqual(candidate["source_verification"]["status"], "verified-public")
+        self.assertNotEqual(candidate["candidate_status"], "candidate")
+
+        same = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+            PinnedRef(record["source_id"], stored_url, SHA_A)
+        )
+        self.assertIs(same.status, FetchStatus.OK)
+        self.assertIn("SYNTHETIC-ALLOWED-CONTENT", same.content or "")
+
+        record["url"] = pin_url("blob", path="%53KILL.md")
+        decoded = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+            PinnedRef(record["source_id"], pin_url("blob"), SHA_A)
+        )
+        self.assertIs(decoded.status, FetchStatus.OK)
 
     def test_encoded_path_separators_are_rejected(self):
         for kind in ("blob", "raw", "raw-host"):
@@ -668,14 +696,29 @@ class CLITests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             manifest = output_dir / "candidates.json"
             audit = output_dir / "audit.json"
+            complete = output_dir / "complete.json"
             self.assertEqual(validate_candidate_manifest(manifest), (2, []))
             record = json.loads(audit.read_text(encoding="utf-8"))
             self.assertEqual(record["search"]["status"], "ok")
             self.assertEqual(record["content_withheld"], 1)
             self.assertIn("search=ok", result.stderr)
-            self.assertIn("wrote candidates.json and audit.json", result.stderr)
+            self.assertIn(
+                "wrote candidates.json, audit.json and complete.json",
+                result.stderr,
+            )
+            marker = json.loads(complete.read_text(encoding="utf-8"))
+            self.assertEqual(marker["status"], "complete")
+            self.assertEqual(
+                marker["candidates_sha256"],
+                hashlib.sha256(manifest.read_bytes()).hexdigest(),
+            )
+            self.assertEqual(
+                marker["audit_sha256"],
+                hashlib.sha256(audit.read_bytes()).hexdigest(),
+            )
             self.assertEqual(stat.S_IMODE(output_dir.stat().st_mode), 0o700)
             self.assertEqual(stat.S_IMODE(manifest.stat().st_mode), 0o600)
+            self.assertEqual(stat.S_IMODE(complete.stat().st_mode), 0o600)
 
     def test_empty_result_exits_zero_and_reports_zero(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -817,7 +860,7 @@ class CLITests(unittest.TestCase):
                     "--output-dir", str(alias / "run"),
                 ])
             self.assertEqual(result, 0)
-            self.assertIn("wrote candidates.json and audit.json", stderr.getvalue())
+            self.assertIn("wrote candidates.json, audit.json and complete.json", stderr.getvalue())
             self.assertFalse((protected_path / "run").exists())
             self.assertTrue((safe / "run" / "candidates.json").is_file())
 
@@ -826,9 +869,9 @@ class CLITests(unittest.TestCase):
             output_dir = Path(folder) / "run"
             original_write = offline_cli._write_file
 
-            def write_file(dir_fd, name, text, created):
+            def write_file(dir_fd, name, text, identity, expected_path):
                 if name == offline_cli.OUTPUT_MANIFEST:
-                    original_write(dir_fd, name, text, created)
+                    original_write(dir_fd, name, text, identity, expected_path)
                     os.unlink(name, dir_fd=dir_fd)
                     replacement = os.open(
                         name,
@@ -852,34 +895,118 @@ class CLITests(unittest.TestCase):
                 "OTHER-WRITER",
             )
             self.assertFalse((output_dir / "audit.json").exists())
+            self.assertFalse((output_dir / "complete.json").exists())
+
+    def test_manifest_replacement_after_publish_is_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output_dir = Path(folder) / "run"
+            original_write = offline_cli._write_file
+
+            def write_file(dir_fd, name, text, identity, expected_path):
+                if name == offline_cli.OUTPUT_MANIFEST:
+                    original_write(dir_fd, name, text, identity, expected_path)
+                    os.unlink(name, dir_fd=dir_fd)
+                    replacement = os.open(
+                        name,
+                        os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+                        0o600,
+                        dir_fd=dir_fd,
+                    )
+                    try:
+                        os.write(replacement, b"OTHER-WRITER")
+                    finally:
+                        os.close(replacement)
+                else:
+                    original_write(dir_fd, name, text, identity, expected_path)
+
+            with patch.object(offline_cli, "_write_file", side_effect=write_file):
+                with self.assertRaises(offline_cli.OutputWriteError) as raised:
+                    offline_cli.write_output_dir(output_dir, "M", "A")
+            self.assertIn("candidates.json", raised.exception.residual)
+            self.assertEqual(
+                (output_dir / "candidates.json").read_text(encoding="utf-8"),
+                "OTHER-WRITER",
+            )
+            self.assertFalse((output_dir / "complete.json").exists())
+
+    def test_failure_never_uses_destructive_unlink(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output_dir = Path(folder) / "run"
+            original_write = offline_cli._write_file
+
+            def write_file(dir_fd, name, text, identity, expected_path):
+                if name == offline_cli.OUTPUT_MANIFEST:
+                    return original_write(dir_fd, name, text, identity, expected_path)
+                raise OSError("injected second publish failure")
+
+            with patch.object(offline_cli, "_write_file", side_effect=write_file), \
+                    patch.object(offline_cli.os, "unlink", side_effect=AssertionError(
+                        "destructive unlink forbidden"
+                    )):
+                with self.assertRaises(offline_cli.OutputWriteError):
+                    offline_cli.write_output_dir(output_dir, "M", "A")
+            self.assertTrue((output_dir / "candidates.json").exists())
+            self.assertFalse((output_dir / "complete.json").exists())
 
     def test_persistent_cleanup_failure_reports_residual(self):
         with tempfile.TemporaryDirectory() as folder:
             output_dir = Path(folder) / "run"
-            original_write = offline_cli._write_file
-            original_unlink = offline_cli.os.unlink
+            original_open = offline_cli.os.open
 
-            def write_file(dir_fd, name, text, created):
-                if name == offline_cli.OUTPUT_MANIFEST:
-                    return original_write(dir_fd, name, text, created)
-                original_write(dir_fd, name, text, created)
-                raise OSError("injected failure after audit was created")
+            def open_(path, flags, mode=0o777, *, dir_fd=None):
+                if path == "run" and flags & os.O_DIRECTORY and dir_fd is not None:
+                    raise PermissionError("injected child open failure")
+                return original_open(path, flags, mode, dir_fd=dir_fd)
 
-            def unlink(path, *args, **kwargs):
-                if str(path) == offline_cli.OUTPUT_MANIFEST:
-                    raise PermissionError("injected persistent cleanup failure")
-                return original_unlink(path, *args, **kwargs)
-
-            with patch.object(offline_cli, "_write_file", side_effect=write_file),                     patch.object(offline_cli.os, "unlink", side_effect=unlink):
+            with patch.object(offline_cli.os, "open", side_effect=open_), \
+                    patch.object(offline_cli.os, "rmdir", side_effect=PermissionError(
+                        "injected rmdir failure"
+                    )):
                 with self.assertRaises(offline_cli.OutputWriteError) as raised:
                     offline_cli.write_output_dir(output_dir, "M", "A")
-            self.assertIn("candidates.json", raised.exception.residual)
-            self.assertTrue((output_dir / "candidates.json").exists())
-            self.assertFalse((output_dir / "audit.json").exists())
-            self.assertTrue(any(
-                "cannot remove" in error
-                for error in raised.exception.cleanup_errors
-            ))
+            self.assertIn("run", raised.exception.residual)
+            self.assertTrue(raised.exception.cleanup_errors)
+            self.assertTrue(output_dir.exists())
+            self.assertEqual(list(output_dir.iterdir()), [])
+
+    def test_replaced_private_directory_is_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output_dir = Path(folder) / "run"
+            original_open = offline_cli.os.open
+            swapped = False
+
+            def open_(path, flags, mode=0o777, *, dir_fd=None):
+                nonlocal swapped
+                if path == "run" and flags & os.O_DIRECTORY and dir_fd is not None and not swapped:
+                    os.rename("run", "ours", src_dir_fd=dir_fd, dst_dir_fd=dir_fd)
+                    os.mkdir("run", 0o755, dir_fd=dir_fd)
+                    swapped = True
+                return original_open(path, flags, mode, dir_fd=dir_fd)
+
+            with patch.object(offline_cli.os, "open", side_effect=open_):
+                with self.assertRaises(offline_cli.OutputWriteError):
+                    offline_cli.write_output_dir(output_dir, "M", "A")
+            self.assertFalse((output_dir / "candidates.json").exists())
+            self.assertEqual(stat.S_IMODE(output_dir.stat().st_mode), 0o755)
+
+    def test_opened_directory_moved_into_repository_is_rejected(self):
+        with tempfile.TemporaryDirectory() as outside, tempfile.TemporaryDirectory(dir=ROOT) as inside:
+            output_dir = Path(outside) / "run"
+            protected = Path(inside) / "run"
+            original_write = offline_cli._write_file
+            moved = False
+
+            def write_file(dir_fd, name, text, identity, expected_path):
+                nonlocal moved
+                if not moved:
+                    os.rename(output_dir, protected)
+                    moved = True
+                return original_write(dir_fd, name, text, identity, expected_path)
+
+            with patch.object(offline_cli, "_write_file", side_effect=write_file):
+                with self.assertRaises(offline_cli.OutputWriteError):
+                    offline_cli.write_output_dir(output_dir, "M", "A")
+            self.assertFalse((protected / "candidates.json").exists())
 
     def test_missing_fixture_and_bad_arguments_exit_two(self):
         result = self.run_cli(

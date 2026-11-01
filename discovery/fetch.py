@@ -64,31 +64,41 @@ DECODE_ROUNDS = 6
 
 
 def _canonical_segment(segment: str) -> str | None:
-    """Decode one path segment and reject path-reinterpreting forms.
+    """Return the single-decoded identity, rejecting unsafe deeper layers.
 
-    Literal or encoded dot segments, encoded separators, control characters,
-    repeated slashes and unstable multi-encoded paths are rejected.  Valid
-    encoded filenames (spaces, Unicode and percent-encoded ASCII) remain valid.
+    URL path semantics decode a segment once; using repeated decoding for the
+    identity would conflate distinct files such as ``%2553KILL.md`` and
+    ``SKILL.md``.  Identity therefore uses exactly one decode.  A separate
+    safety probe walks deeper encodings only to reject dot segments, encoded
+    separators or control characters that a further decoder could expose.
     """
     if "%" in segment:
         for index, character in enumerate(segment):
             if character == "%" and not PERCENT_ESCAPE.match(segment, index):
                 return None
-    decoded = segment
+    identity = unquote(segment)
+    if not identity or identity in {".", ".."}:
+        return None
+    if "/" in identity or "\\" in identity:
+        return None
+    if any(ord(character) < 0x20 or ord(character) == 0x7F for character in identity):
+        return None
+
+    probe = identity
     for _ in range(DECODE_ROUNDS):
-        following = unquote(decoded)
-        if following == decoded:
+        following = unquote(probe)
+        if following == probe:
             break
-        decoded = following
+        probe = following
+        if not probe or probe in {".", ".."}:
+            return None
+        if "/" in probe or "\\" in probe:
+            return None
+        if any(ord(character) < 0x20 or ord(character) == 0x7F for character in probe):
+            return None
     else:
         return None
-    if not decoded or decoded in {".", ".."}:
-        return None
-    if "/" in decoded or "\\" in decoded:
-        return None
-    if any(ord(character) < 0x20 or ord(character) == 0x7F for character in decoded):
-        return None
-    return decoded
+    return identity
 
 
 def _github_pinned_parts(url: str) -> tuple[str, str, str, str, tuple[str, ...]] | None:

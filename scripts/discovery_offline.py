@@ -2,12 +2,15 @@
 """Run the Discovery adapter against local synthetic fixtures only.
 
 This command never contacts a search or fetch endpoint and never schedules a
-run.  Output files are written only into a new private directory created by
-this process, with fixed names ``candidates.json`` and ``audit.json``.  No
-arbitrary output file path, existing file or repository path is accepted.
+run.  Output is written only into a new private directory outside the repository,
+with fixed ``candidates.json``, ``audit.json`` and ``complete.json`` names.  A
+directory without ``complete.json`` is a failed/incomplete run; published files
+are never deleted during cleanup, so a concurrent replacement cannot be removed
+by this process.
 """
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -26,10 +29,11 @@ DEFAULT_SEARCH = ROOT / "tests" / "fixtures" / "discovery" / "search_responses.j
 DEFAULT_SOURCES = ROOT / "tests" / "fixtures" / "discovery" / "sources.json"
 OUTPUT_MANIFEST = "candidates.json"
 OUTPUT_AUDIT = "audit.json"
+OUTPUT_COMPLETE = "complete.json"
 
 
 class OutputWriteError(Exception):
-    """A failed output publication that may have left residual files."""
+    """A failed output publication with any residual files and cleanup errors."""
 
     def __init__(self, message, *, residual=(), cleanup_errors=()):
         super().__init__(message)
@@ -83,53 +87,128 @@ def _resolve_output_parent(path):
     return parent, name
 
 
+def _check_directory_descriptor(descriptor, identity, expected_path=None):
+    info = os.fstat(descriptor)
+    if not stat.S_ISDIR(info.st_mode):
+        raise OSError("output path is no longer a directory")
+    if (info.st_dev, info.st_ino) != identity:
+        raise OSError("output directory identity changed")
+    if stat.S_IMODE(info.st_mode) != 0o700:
+        raise OSError("output directory is not private (expected mode 0700)")
+    if info.st_uid != os.geteuid():
+        raise OSError("output directory owner changed")
+    actual = _fd_path(descriptor)
+    if actual is None:
+        raise OSError("cannot verify the output directory identity")
+    if expected_path is not None and actual != expected_path:
+        raise OSError(f"output directory path changed: {actual}")
+    if _within_repository(actual):
+        raise OSError(f"output directory moved inside the repository: {actual}")
+
+
+def _assert_directory_safe(descriptor, identity, expected_path):
+    _check_directory_descriptor(descriptor, identity, expected_path)
+
+
+def _remove_empty_dir(parent_fd, name, identity):
+    """Remove an empty directory only when its object identity still matches."""
+    residual = []
+    cleanup_errors = []
+    try:
+        info = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+    except FileNotFoundError:
+        return residual, cleanup_errors
+    except OSError as exc:
+        return [name], [f"{name}: cannot inspect ({exc})"]
+    if (info.st_dev, info.st_ino) != identity or not stat.S_ISDIR(info.st_mode):
+        return [name], [f"{name}: replaced by another writer; preserved"]
+    try:
+        child_fd = os.open(
+            name,
+            os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0),
+            dir_fd=parent_fd,
+        )
+        try:
+            names = os.listdir(child_fd)
+        finally:
+            os.close(child_fd)
+    except OSError as exc:
+        return [name], [f"{name}: cannot list ({exc})"]
+    if names:
+        return sorted(names), []
+    try:
+        os.rmdir(name, dir_fd=parent_fd)
+    except OSError as exc:
+        return [name], [f"{name}: cannot remove empty directory ({exc})"]
+    return residual, cleanup_errors
+
+
 def _create_private_dir(path):
-    """Create a new 0700 directory relative to an opened parent descriptor."""
+    """Create a new 0700 directory and bind every check to its opened fd."""
     parent, name = _resolve_output_parent(path)
     parent_fd = None
     dir_fd = None
-    created_dir = False
+    created = False
     created_info = None
     try:
         parent_fd = os.open(parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
         actual_parent = _fd_path(parent_fd)
         if actual_parent is None:
-            raise ValueError("cannot verify the output parent directory identity")
+            raise OSError("cannot verify the output parent directory identity")
         if _within_repository(actual_parent):
-            raise ValueError(f"refusing to write inside the repository worktree: {actual_parent}")
+            raise OSError(f"refusing to write inside the repository worktree: {actual_parent}")
+
         os.mkdir(name, 0o700, dir_fd=parent_fd)
-        created_dir = True
+        created = True
         created_info = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
         dir_fd = os.open(
             name,
             os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0),
             dir_fd=parent_fd,
         )
-        actual_dir = _fd_path(dir_fd)
-        if actual_dir is None:
-            raise ValueError("cannot verify the output directory identity")
-        if _within_repository(actual_dir):
-            raise ValueError(f"refusing to write inside the repository worktree: {actual_dir}")
         info = os.fstat(dir_fd)
-        return parent_fd, dir_fd, name, actual_dir, (info.st_dev, info.st_ino)
-    except Exception:
+        if (info.st_dev, info.st_ino) != (
+            created_info.st_dev, created_info.st_ino
+        ):
+            raise OSError("output directory was replaced between create and open")
+        identity = (info.st_dev, info.st_ino)
+        actual_dir = _fd_path(dir_fd)
+        assert actual_dir is not None
+        _check_directory_descriptor(dir_fd, identity, actual_dir)
+        return parent_fd, dir_fd, name, actual_dir, identity
+    except Exception as exc:
+        residual = []
+        cleanup_errors = []
         if dir_fd is not None:
             os.close(dir_fd)
+            dir_fd = None
+        if parent_fd is not None and created and created_info is not None:
+            residual, cleanup_errors = _remove_empty_dir(
+                parent_fd, name, (created_info.st_dev, created_info.st_ino)
+            )
+        elif parent_fd is not None and created:
+            residual = [name]
+            cleanup_errors = [f"{name}: cannot inspect the created directory"]
         if parent_fd is not None:
-            if created_dir and created_info is not None:
-                try:
-                    current = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
-                    if (current.st_dev, current.st_ino) == (
-                        created_info.st_dev, created_info.st_ino
-                    ):
-                        os.rmdir(name, dir_fd=parent_fd)
-                except OSError:
-                    pass
             os.close(parent_fd)
-        raise
+            parent_fd = None
+        if isinstance(exc, OutputWriteError):
+            raise
+        detail = f"{path}: {exc}"
+        if residual:
+            detail += f"; residual: {', '.join(residual)}"
+        if cleanup_errors:
+            detail += f"; cleanup: {'; '.join(cleanup_errors)}"
+        raise OutputWriteError(
+            detail,
+            residual=residual,
+            cleanup_errors=cleanup_errors,
+        ) from exc
 
 
-def _write_file(dir_fd, name, text, created):
+def _write_file(dir_fd, name, text, identity, expected_path):
+    """Create one fixed file and return its content/inode identity."""
+    _assert_directory_safe(dir_fd, identity, expected_path)
     descriptor = os.open(
         name,
         os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0),
@@ -138,90 +217,123 @@ def _write_file(dir_fd, name, text, created):
     )
     try:
         info = os.fstat(descriptor)
-    except OSError:
+        if not stat.S_ISREG(info.st_mode) or stat.S_IMODE(info.st_mode) != 0o600:
+            raise OSError(f"{name}: unexpected file mode")
+        if info.st_uid != os.geteuid():
+            raise OSError(f"{name}: unexpected file owner")
+        payload = text.encode("utf-8")
+        remaining = memoryview(payload)
+        while remaining:
+            written = os.write(descriptor, remaining)
+            if written <= 0:
+                raise OSError(f"{name}: short write")
+            remaining = remaining[written:]
+        os.fsync(descriptor)
+    finally:
         os.close(descriptor)
-        raise
-    # Keep the descriptor open until publication finishes.  The open inode
-    # cannot be reused, so a later replacement necessarily has another inode.
-    created.append((name, descriptor, info.st_dev, info.st_ino))
-    remaining = memoryview(text.encode("utf-8"))
-    while remaining:
-        written = os.write(descriptor, remaining)
-        if written <= 0:
-            raise OSError("short write while publishing output")
-        remaining = remaining[written:]
+    _assert_directory_safe(dir_fd, identity, expected_path)
+    return hashlib.sha256(payload).hexdigest(), len(payload), info.st_dev, info.st_ino
 
 
-def _close_created(created):
-    for _, descriptor, _, _ in created:
-        try:
-            os.close(descriptor)
-        except OSError:
-            pass
-
-
-def _rollback_outputs(dir_fd, name, parent_fd, dir_identity, created):
-    """Best-effort cleanup of objects this run created; never trust a pathname alone."""
-    residual = []
-    cleanup_errors = []
-    for file_name, _descriptor, device, inode in reversed(created):
-        try:
-            info = os.stat(file_name, dir_fd=dir_fd, follow_symlinks=False)
-        except FileNotFoundError:
-            continue
-        except OSError as exc:
-            cleanup_errors.append(f"{file_name}: cannot inspect ({exc})")
-            residual.append(file_name)
-            continue
-        if (info.st_dev, info.st_ino) != (device, inode) or not stat.S_ISREG(info.st_mode):
-            cleanup_errors.append(f"{file_name}: replaced by another writer; preserved")
-            residual.append(file_name)
-            continue
-        try:
-            os.unlink(file_name, dir_fd=dir_fd)
-        except FileNotFoundError:
-            continue
-        except OSError as exc:
-            cleanup_errors.append(f"{file_name}: cannot remove ({exc})")
-            residual.append(file_name)
-
+def _read_file(dir_fd, name, identity, expected_path):
+    _assert_directory_safe(dir_fd, identity, expected_path)
+    descriptor = os.open(
+        name,
+        os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0),
+        dir_fd=dir_fd,
+    )
+    digest = hashlib.sha256()
+    size = 0
     try:
-        remaining = sorted(os.listdir(dir_fd))
-    except OSError as exc:
-        remaining = None
-        cleanup_errors.append(f"cannot list output directory ({exc})")
-    if remaining is not None:
-        residual = sorted(set(residual) | set(remaining))
-        if not remaining:
-            try:
-                info = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
-            except OSError as exc:
-                cleanup_errors.append(f"cannot inspect output directory ({exc})")
-            else:
-                if (info.st_dev, info.st_ino) == dir_identity and stat.S_ISDIR(info.st_mode):
-                    try:
-                        os.rmdir(name, dir_fd=parent_fd)
-                    except OSError as exc:
-                        cleanup_errors.append(f"cannot remove empty output directory ({exc})")
-                else:
-                    cleanup_errors.append("output directory was replaced; preserved")
-    return residual, cleanup_errors
+        info = os.fstat(descriptor)
+        if not stat.S_ISREG(info.st_mode) or stat.S_IMODE(info.st_mode) != 0o600:
+            raise OSError(f"{name}: unexpected file mode")
+        if info.st_uid != os.geteuid():
+            raise OSError(f"{name}: unexpected file owner")
+        while True:
+            chunk = os.read(descriptor, 65536)
+            if not chunk:
+                break
+            digest.update(chunk)
+            size += len(chunk)
+    finally:
+        os.close(descriptor)
+    _assert_directory_safe(dir_fd, identity, expected_path)
+    return digest.hexdigest(), size
+
+
+def _verify_file(dir_fd, name, expected, identity, expected_path):
+    expected_hash, expected_size, expected_dev, expected_ino = expected
+    info = os.stat(name, dir_fd=dir_fd, follow_symlinks=False)
+    if (
+        not stat.S_ISREG(info.st_mode)
+        or stat.S_IMODE(info.st_mode) != 0o600
+        or info.st_uid != os.geteuid()
+    ):
+        raise OSError(f"{name}: no longer the published private file")
+    if (info.st_dev, info.st_ino) != (expected_dev, expected_ino):
+        raise OSError(f"{name}: replaced by another writer")
+    digest, size = _read_file(dir_fd, name, identity, expected_path)
+    if digest != expected_hash or size != expected_size:
+        raise OSError(f"{name}: content changed after publication")
+
+
+def _residual_names(dir_fd):
+    try:
+        return sorted(os.listdir(dir_fd))
+    except OSError:
+        return []
 
 
 def write_output_dir(path, manifest, audit):
-    """Publish both files into one new private directory, or fail nonzero."""
+    """Publish a complete three-file run, or fail without deleting any file."""
     parent_fd = None
     dir_fd = None
-    created = []
     try:
-        parent_fd, dir_fd, name, actual_dir, dir_identity = _create_private_dir(path)
+        parent_fd, dir_fd, name, actual_dir, identity = _create_private_dir(path)
         try:
-            _write_file(dir_fd, OUTPUT_MANIFEST, manifest, created)
-            _write_file(dir_fd, OUTPUT_AUDIT, audit, created)
-        except Exception as exc:
-            residual, cleanup_errors = _rollback_outputs(
-                dir_fd, name, parent_fd, dir_identity, created
+            manifest_info = _write_file(
+                dir_fd, OUTPUT_MANIFEST, manifest, identity, actual_dir
             )
+            audit_info = _write_file(
+                dir_fd, OUTPUT_AUDIT, audit, identity, actual_dir
+            )
+            _verify_file(
+                dir_fd, OUTPUT_MANIFEST, manifest_info, identity, actual_dir
+            )
+            _verify_file(
+                dir_fd, OUTPUT_AUDIT, audit_info, identity, actual_dir
+            )
+
+            complete = json.dumps({
+                "format_version": 1,
+                "status": "complete",
+                "candidates_sha256": manifest_info[0],
+                "candidates_bytes": manifest_info[1],
+                "audit_sha256": audit_info[0],
+                "audit_bytes": audit_info[1],
+            }, ensure_ascii=False, sort_keys=True) + "\n"
+            complete_info = _write_file(
+                dir_fd, OUTPUT_COMPLETE, complete, identity, actual_dir
+            )
+
+            # Re-check after the marker: a replacement before this point must
+            # never be reported as a successful publication.
+            _verify_file(
+                dir_fd, OUTPUT_MANIFEST, manifest_info, identity, actual_dir
+            )
+            _verify_file(
+                dir_fd, OUTPUT_AUDIT, audit_info, identity, actual_dir
+            )
+            _verify_file(
+                dir_fd, OUTPUT_COMPLETE, complete_info, identity, actual_dir
+            )
+            _assert_directory_safe(dir_fd, identity, actual_dir)
+        except Exception as exc:
+            residual = _residual_names(dir_fd)
+            cleanup_errors = []
+            if not residual:
+                residual, cleanup_errors = _remove_empty_dir(parent_fd, name, identity)
             detail = f"{actual_dir}: {exc}"
             if residual:
                 detail += f"; residual: {', '.join(residual)}"
@@ -234,7 +346,6 @@ def write_output_dir(path, manifest, audit):
             ) from exc
         return actual_dir
     finally:
-        _close_created(created)
         if dir_fd is not None:
             os.close(dir_fd)
         if parent_fd is not None:
@@ -249,7 +360,7 @@ def main(argv=None):
     parser.add_argument("--limit", type=positive_int, default=20, help="maximum hits to process")
     parser.add_argument(
         "--output-dir",
-        help="new private directory for candidates.json and audit.json (default: manifest on stdout)",
+        help="new private directory for candidates.json, audit.json and complete.json (default: manifest on stdout)",
     )
     args = parser.parse_args(argv)
 
@@ -269,7 +380,10 @@ def main(argv=None):
         except (OSError, ValueError, OutputWriteError) as exc:
             print(f"FAIL: cannot publish output directory: {exc}", file=sys.stderr)
             return 2
-        print(f"wrote {OUTPUT_MANIFEST} and {OUTPUT_AUDIT} to {published}", file=sys.stderr)
+        print(
+            f"wrote {OUTPUT_MANIFEST}, {OUTPUT_AUDIT} and {OUTPUT_COMPLETE} to {published}",
+            file=sys.stderr,
+        )
     else:
         print(manifest, end="")
 
