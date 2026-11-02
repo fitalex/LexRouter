@@ -3,10 +3,19 @@
 
 This command never contacts a search or fetch endpoint and never schedules a
 run.  Output is written only into a new private directory outside the repository,
-with fixed ``candidates.json``, ``audit.json`` and ``complete.json`` names.  A
-directory without ``complete.json`` is a failed/incomplete run; published files
-are never deleted during cleanup, so a concurrent replacement cannot be removed
-by this process.
+with fixed ``candidates.json``, ``audit.json`` and ``complete.json`` names.
+
+Security precondition: ``--output-dir`` must be under a trusted parent controlled
+by the caller, with no untrusted same-UID process renaming entries in that parent
+during the run.  The 0700 mode and descriptor identity checks detect many
+replacement races after the directory is opened, but they do **not** defend
+against a malicious same-UID writer that can control the parent directory before
+the first directory identity is captured.  That case is UNSUPPORTED.
+
+``complete.json`` is a byte-integrity marker, not proof that the run succeeded.
+A consumer must bind the marker to a trustworthy exit status of that exact
+invocation and also inspect ``audit.json``.  Failed publications never delete
+already-written files; they exit nonzero and report residual paths.
 """
 
 import argparse
@@ -110,14 +119,12 @@ def _assert_directory_safe(descriptor, identity, expected_path):
     _check_directory_descriptor(descriptor, identity, expected_path)
 
 
-def _remove_empty_dir(parent_fd, name, identity):
-    """Remove an empty directory only when its object identity still matches."""
-    residual = []
-    cleanup_errors = []
+def _retained_dir_state(parent_fd, name, identity):
+    """Inspect a failed run directory; never delete it or its contents."""
     try:
         info = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
     except FileNotFoundError:
-        return residual, cleanup_errors
+        return [name], [f"{name}: output directory disappeared; location unknown"]
     except OSError as exc:
         return [name], [f"{name}: cannot inspect ({exc})"]
     if (info.st_dev, info.st_ino) != identity or not stat.S_ISDIR(info.st_mode):
@@ -136,15 +143,17 @@ def _remove_empty_dir(parent_fd, name, identity):
         return [name], [f"{name}: cannot list ({exc})"]
     if names:
         return sorted(names), []
-    try:
-        os.rmdir(name, dir_fd=parent_fd)
-    except OSError as exc:
-        return [name], [f"{name}: cannot remove empty directory ({exc})"]
-    return residual, cleanup_errors
+    return [name], [f"{name}: empty output directory retained; automatic rmdir disabled"]
 
 
 def _create_private_dir(path):
-    """Create a new 0700 directory and bind every check to its opened fd."""
+    """Create a new 0700 directory and bind every check to its opened fd.
+
+    Trust boundary: the parent directory is controlled by the caller and no
+    untrusted same-UID process renames entries there during the run.  A swap
+    between mkdir and the first identity capture is UNSUPPORTED and is not
+    claimed to be detected; checks after capture fail closed.
+    """
     parent, name = _resolve_output_parent(path)
     parent_fd = None
     dir_fd = None
@@ -183,7 +192,7 @@ def _create_private_dir(path):
             os.close(dir_fd)
             dir_fd = None
         if parent_fd is not None and created and created_info is not None:
-            residual, cleanup_errors = _remove_empty_dir(
+            residual, cleanup_errors = _retained_dir_state(
                 parent_fd, name, (created_info.st_dev, created_info.st_ino)
             )
         elif parent_fd is not None and created:
@@ -285,8 +294,8 @@ def _residual_names(dir_fd):
         return []
 
 
-def write_output_dir(path, manifest, audit):
-    """Publish a complete three-file run, or fail without deleting any file."""
+def write_output_dir(path, manifest, audit, run_status="unknown"):
+    """Publish a byte-complete three-file run, or fail without deleting files."""
     parent_fd = None
     dir_fd = None
     try:
@@ -307,7 +316,8 @@ def write_output_dir(path, manifest, audit):
 
             complete = json.dumps({
                 "format_version": 1,
-                "status": "complete",
+                "status": "bytes-complete",
+                "run_status": run_status,
                 "candidates_sha256": manifest_info[0],
                 "candidates_bytes": manifest_info[1],
                 "audit_sha256": audit_info[0],
@@ -333,7 +343,9 @@ def write_output_dir(path, manifest, audit):
             residual = _residual_names(dir_fd)
             cleanup_errors = []
             if not residual:
-                residual, cleanup_errors = _remove_empty_dir(parent_fd, name, identity)
+                residual, cleanup_errors = _retained_dir_state(
+                    parent_fd, name, identity
+                )
             detail = f"{actual_dir}: {exc}"
             if residual:
                 detail += f"; residual: {', '.join(residual)}"
@@ -375,13 +387,17 @@ def main(argv=None):
     audit = json.dumps(run.audit(), ensure_ascii=False, indent=2) + "\n"
 
     if args.output_dir:
+        run_status = "ok" if not run.failures else "failed"
         try:
-            published = write_output_dir(args.output_dir, manifest, audit)
+            published = write_output_dir(
+                args.output_dir, manifest, audit, run_status=run_status
+            )
         except (OSError, ValueError, OutputWriteError) as exc:
             print(f"FAIL: cannot publish output directory: {exc}", file=sys.stderr)
             return 2
         print(
-            f"wrote {OUTPUT_MANIFEST}, {OUTPUT_AUDIT} and {OUTPUT_COMPLETE} to {published}",
+            f"published {OUTPUT_MANIFEST}, {OUTPUT_AUDIT} and {OUTPUT_COMPLETE} "
+            f"to {published} (run_status={run_status}, byte marker only)",
             file=sys.stderr,
         )
     else:

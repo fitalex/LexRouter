@@ -76,7 +76,10 @@ def _canonical_segment(segment: str) -> str | None:
         for index, character in enumerate(segment):
             if character == "%" and not PERCENT_ESCAPE.match(segment, index):
                 return None
-    identity = unquote(segment)
+    try:
+        identity = unquote(segment, encoding="utf-8", errors="strict")
+    except UnicodeDecodeError:
+        return None
     if not identity or identity in {".", ".."}:
         return None
     if "/" in identity or "\\" in identity:
@@ -86,7 +89,10 @@ def _canonical_segment(segment: str) -> str | None:
 
     probe = identity
     for _ in range(DECODE_ROUNDS):
-        following = unquote(probe)
+        try:
+            following = unquote(probe, encoding="utf-8", errors="strict")
+        except UnicodeDecodeError:
+            return None
         if following == probe:
             break
         probe = following

@@ -286,6 +286,34 @@ class FetchTests(unittest.TestCase):
         )
         self.assertIs(decoded.status, FetchStatus.OK)
 
+    def test_invalid_utf8_is_rejected_not_lossy_replacement(self):
+        valid_request = pin_url("blob", path="%EF%BF%BD.md")
+        for bad in ("%FF.md", "%FE.md", "%C0.md"):
+            with self.subTest(bad=bad):
+                record = source_record()
+                record["url"] = pin_url("blob", path=bad)
+                record["revision"] = SHA_A
+                snapshot = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+                    PinnedRef(record["source_id"], valid_request, SHA_A)
+                )
+                self.assertNotIn(
+                    snapshot.status, {FetchStatus.OK, FetchStatus.METADATA_ONLY}
+                )
+                self.assertIsNone(snapshot.content)
+                candidate = normalize(make_hit(url=valid_request), snapshot)
+                self.assertNotEqual(
+                    candidate["source_verification"]["status"], "verified-public"
+                )
+                self.assertNotEqual(candidate["candidate_status"], "candidate")
+
+        record["url"] = valid_request
+        record["revision"] = SHA_A
+        legal = FetchAdapter(SingleRecordStore(record)).fetch_pinned(
+            PinnedRef(record["source_id"], valid_request, SHA_A)
+        )
+        self.assertIs(legal.status, FetchStatus.OK)
+        self.assertIn("SYNTHETIC-ALLOWED-CONTENT", legal.content or "")
+
     def test_encoded_path_separators_are_rejected(self):
         for kind in ("blob", "raw", "raw-host"):
             for encoded in ("dir%2fmain", "dir%5cmain", "dir%2F..%2Fmain"):
@@ -703,11 +731,12 @@ class CLITests(unittest.TestCase):
             self.assertEqual(record["content_withheld"], 1)
             self.assertIn("search=ok", result.stderr)
             self.assertIn(
-                "wrote candidates.json, audit.json and complete.json",
+                "published candidates.json, audit.json and complete.json",
                 result.stderr,
             )
             marker = json.loads(complete.read_text(encoding="utf-8"))
-            self.assertEqual(marker["status"], "complete")
+            self.assertEqual(marker["status"], "bytes-complete")
+            self.assertEqual(marker["run_status"], "ok")
             self.assertEqual(
                 marker["candidates_sha256"],
                 hashlib.sha256(manifest.read_bytes()).hexdigest(),
@@ -860,7 +889,7 @@ class CLITests(unittest.TestCase):
                     "--output-dir", str(alias / "run"),
                 ])
             self.assertEqual(result, 0)
-            self.assertIn("wrote candidates.json, audit.json and complete.json", stderr.getvalue())
+            self.assertIn("published candidates.json, audit.json and complete.json", stderr.getvalue())
             self.assertFalse((protected_path / "run").exists())
             self.assertTrue((safe / "run" / "candidates.json").is_file())
 
@@ -871,7 +900,9 @@ class CLITests(unittest.TestCase):
 
             def write_file(dir_fd, name, text, identity, expected_path):
                 if name == offline_cli.OUTPUT_MANIFEST:
-                    original_write(dir_fd, name, text, identity, expected_path)
+                    result = original_write(
+                        dir_fd, name, text, identity, expected_path
+                    )
                     os.unlink(name, dir_fd=dir_fd)
                     replacement = os.open(
                         name,
@@ -883,6 +914,7 @@ class CLITests(unittest.TestCase):
                         os.write(replacement, b"OTHER-WRITER")
                     finally:
                         os.close(replacement)
+                    return result
                 else:
                     raise OSError("injected second publish failure")
 
@@ -904,7 +936,9 @@ class CLITests(unittest.TestCase):
 
             def write_file(dir_fd, name, text, identity, expected_path):
                 if name == offline_cli.OUTPUT_MANIFEST:
-                    original_write(dir_fd, name, text, identity, expected_path)
+                    result = original_write(
+                        dir_fd, name, text, identity, expected_path
+                    )
                     os.unlink(name, dir_fd=dir_fd)
                     replacement = os.open(
                         name,
@@ -916,8 +950,11 @@ class CLITests(unittest.TestCase):
                         os.write(replacement, b"OTHER-WRITER")
                     finally:
                         os.close(replacement)
+                    return result
                 else:
-                    original_write(dir_fd, name, text, identity, expected_path)
+                    return original_write(
+                        dir_fd, name, text, identity, expected_path
+                    )
 
             with patch.object(offline_cli, "_write_file", side_effect=write_file):
                 with self.assertRaises(offline_cli.OutputWriteError) as raised:
@@ -959,13 +996,31 @@ class CLITests(unittest.TestCase):
                 return original_open(path, flags, mode, dir_fd=dir_fd)
 
             with patch.object(offline_cli.os, "open", side_effect=open_), \
-                    patch.object(offline_cli.os, "rmdir", side_effect=PermissionError(
-                        "injected rmdir failure"
+                    patch.object(offline_cli.os, "rmdir", side_effect=AssertionError(
+                        "automatic rmdir forbidden"
                     )):
                 with self.assertRaises(offline_cli.OutputWriteError) as raised:
                     offline_cli.write_output_dir(output_dir, "M", "A")
             self.assertIn("run", raised.exception.residual)
             self.assertTrue(raised.exception.cleanup_errors)
+            self.assertTrue(output_dir.exists())
+            self.assertEqual(list(output_dir.iterdir()), [])
+
+    def test_failed_publish_retains_empty_directory(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output_dir = Path(folder) / "run"
+            with patch.object(
+                offline_cli, "_write_file", side_effect=OSError("injected first write failure")
+            ), patch.object(
+                offline_cli.os, "rmdir", side_effect=AssertionError("automatic rmdir forbidden")
+            ):
+                with self.assertRaises(offline_cli.OutputWriteError) as raised:
+                    offline_cli.write_output_dir(output_dir, "M", "A")
+            self.assertIn("run", raised.exception.residual)
+            self.assertTrue(any(
+                "automatic rmdir disabled" in error
+                for error in raised.exception.cleanup_errors
+            ))
             self.assertTrue(output_dir.exists())
             self.assertEqual(list(output_dir.iterdir()), [])
 
@@ -980,6 +1035,7 @@ class CLITests(unittest.TestCase):
                 if path == "run" and flags & os.O_DIRECTORY and dir_fd is not None and not swapped:
                     os.rename("run", "ours", src_dir_fd=dir_fd, dst_dir_fd=dir_fd)
                     os.mkdir("run", 0o755, dir_fd=dir_fd)
+                    os.chmod(output_dir, 0o755)
                     swapped = True
                 return original_open(path, flags, mode, dir_fd=dir_fd)
 
@@ -1007,6 +1063,61 @@ class CLITests(unittest.TestCase):
                 with self.assertRaises(offline_cli.OutputWriteError):
                     offline_cli.write_output_dir(output_dir, "M", "A")
             self.assertFalse((protected / "candidates.json").exists())
+
+    def test_final_verification_failure_after_marker_still_needs_exit_zero(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output_dir = Path(folder) / "run"
+            content = {
+                "manifest": None,
+                "audit": None,
+            }
+            original_read = offline_cli._read_file
+
+            def read(dir_fd, name, identity, expected_path):
+                if (output_dir / offline_cli.OUTPUT_COMPLETE).exists() \
+                        and name == offline_cli.OUTPUT_MANIFEST:
+                    raise OSError("injected final read failure after marker publication")
+                return original_read(dir_fd, name, identity, expected_path)
+
+            stderr = io.StringIO()
+            with patch.object(offline_cli, "_read_file", side_effect=read), \
+                    contextlib.redirect_stderr(stderr):
+                result = offline_cli.main([
+                    "--query", "空结果", "--output-dir", str(output_dir),
+                ])
+            self.assertEqual(result, 2)
+            marker = json.loads(
+                (output_dir / offline_cli.OUTPUT_COMPLETE).read_text(encoding="utf-8")
+            )
+            self.assertEqual(marker["status"], "bytes-complete")
+            self.assertEqual(marker["run_status"], "ok")
+            self.assertEqual(
+                marker["candidates_sha256"],
+                hashlib.sha256(
+                    (output_dir / offline_cli.OUTPUT_MANIFEST).read_bytes()
+                ).hexdigest(),
+            )
+            self.assertIn("FAIL:", stderr.getvalue())
+
+    def test_business_failure_marker_is_failed_not_success(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output_dir = Path(folder) / "run"
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                result = offline_cli.main([
+                    "--query", "网络错误", "--output-dir", str(output_dir),
+                ])
+            self.assertEqual(result, 1)
+            marker = json.loads(
+                (output_dir / offline_cli.OUTPUT_COMPLETE).read_text(encoding="utf-8")
+            )
+            audit = json.loads(
+                (output_dir / offline_cli.OUTPUT_AUDIT).read_text(encoding="utf-8")
+            )
+            self.assertEqual(marker["status"], "bytes-complete")
+            self.assertEqual(marker["run_status"], "failed")
+            self.assertEqual(audit["search"]["status"], "error")
+            self.assertEqual(len(audit["failures"]), 1)
 
     def test_missing_fixture_and_bad_arguments_exit_two(self):
         result = self.run_cli(
