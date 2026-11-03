@@ -1,0 +1,63 @@
+{
+  "fixture_version": 1,
+  "notes": "All sources, licenses, jurisdictions and text in this file are synthetic fixtures authored for offline tests. They are not real projects, legal materials, license evidence or professional conclusions.",
+  "sources": [
+    {
+      "source_id": "synthetic-contract-review",
+      "url": "https://github.com/synthetic-labs/contract-review-skill/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/SKILL.md",
+      "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "retrieved_at": "2026-10-30",
+      "title": "Synthetic contract review workflow",
+      "maintainer": "synthetic-labs (fictional fixture publisher)",
+      "license": "MIT",
+      "authorization_status": "verified",
+      "authorization_evidence_urls": [
+        "https://github.com/synthetic-labs/contract-review-skill/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/LICENSE"
+      ],
+      "authorization_notes": "Synthetic fixture license declaration; this is not a real license review or redistribution approval.",
+      "jurisdiction": {
+        "value": "CN-Mainland",
+        "status": "source-declared",
+        "evidence_url": "https://github.com/synthetic-labs/contract-review-skill/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/README.md",
+        "notes": "Synthetic fixture declaration only; not a legal applicability finding."
+      },
+      "business_categories": ["contract-review"],
+      "runtime": "claude-skill",
+      "runtime_evidence": "Synthetic fixture: fictional README uses ~/.claude/skills/.",
+      "evidence_urls": [
+        "https://github.com/synthetic-labs/contract-review-skill/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/SKILL.md",
+        "https://github.com/synthetic-labs/contract-review-skill/blob/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/README.md"
+      ],
+      "content_policy": "synthetic-own",
+      "content": "SYNTHETIC-ALLOWED-CONTENT. This text was authored for LexRouter offline tests. It is not a third-party Skill and must not be presented as legal advice.",
+      "notes": "Synthetic source fixture; metadata and content are not real-world evidence."
+    },
+    {
+      "source_id": "synthetic-restricted-index",
+      "url": "https://github.com/synthetic-labs/restricted-legal-index/blob/cccccccccccccccccccccccccccccccccccccccc/SKILL.md",
+      "revision": "cccccccccccccccccccccccccccccccccccccccc",
+      "retrieved_at": "2026-10-30",
+      "title": "Synthetic restricted legal index",
+      "maintainer": "synthetic-labs (fictional fixture publisher)",
+      "license": "not-identified",
+      "authorization_status": "pending-verification",
+      "authorization_evidence_urls": [],
+      "authorization_notes": "Synthetic fixture: no license evidence is available; do not copy the full text.",
+      "jurisdiction": {
+        "value": "unknown",
+        "status": "pending-verification",
+        "evidence_url": "https://github.com/synthetic-labs/restricted-legal-index/blob/cccccccccccccccccccccccccccccccccccccccc/SKILL.md",
+        "notes": "Synthetic fixture: no jurisdiction evidence."
+      },
+      "business_categories": ["legal-research"],
+      "runtime": "prompt",
+      "runtime_evidence": "Synthetic fixture: runtime is unverified.",
+      "evidence_urls": [
+        "https://github.com/synthetic-labs/restricted-legal-index/blob/cccccccccccccccccccccccccccccccccccccccc/SKILL.md"
+      ],
+      "content_policy": "reference-only",
+      "content": "DO-NOT-COPY-SYNTHETIC-MARKER. The store may contain this synthetic marker, but the adapter must withhold it under the reference-only policy.",
+      "notes": "Synthetic source fixture: full text intentionally present in the store to test withholding."
+    }
+  ]
+}
