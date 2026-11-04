@@ -1,4 +1,4 @@
-# AI Agent 开发与协作规范（V2）
+# AI Agent 开发与协作规范（V2.1）
 
 本规范适用于 LexRouter 仓库的 AI Agent 与贡献者。实行 **单任务负责人（Single Owner）+ 交叉复核（Cross Review）+ 人工验收（Human Gate）**。角色分工不授权自动合并、修改冻结策略或替代真人专业签署。
 
@@ -25,10 +25,35 @@
 | 单元测试、缺陷复现、模块回归 | 模块开发 Owner | 另一工程 Agent 独立验证 |
 | 中文法律 Skills Discovery（检索、归一化、去重） | DeepSeek Harness | Codex Astra 集成校验、ChatGPT 审计、必要时人工判断 |
 | LexExamBench 评测集工程 | Codex Astra 主导；DeepSeek Harness 协作 | ChatGPT 审计；专业试题与标准由具备能力的人类复核；独立仓库规则另行适用 |
+| 第三方 Skill 原版质量测试、对照实验与评级证据 | Codex Astra | DeepSeek Harness 独立复现；ChatGPT 审计测试与证据；真人法律专业人士核对法律标准答案和专业评分；Human Maintainer 授权实际运行及发布 |
 | 文档、任务书索引、项目阶段记录 | Antigravity | ChatGPT 复核，技术事实由模块 Owner 确认 |
 | 研究、替代方案或独立方案评测 | Gemini（按需） | ChatGPT 整合，重大决策由 Human Maintainer 决定 |
 
 任务书明确 Owner、审阅者、文件或接口范围、输入、输出、DoD、冻结边界、交接材料和 PR 链接。不以 Token 配额平分任务。并行工作应从最新 main 各自创建独立分支和 PR，不共享可写分支；涉及同一文件、Schema 或 Review 历史时，先由 ChatGPT 协调写入顺序、基准 commit 和交接。
+
+## 最新协作流程与三项独立任务（2026-11-04）
+
+```mermaid
+flowchart TD
+    H["Human Maintainer：目标、授权及最终决定"] --> C["ChatGPT GPT-6：拆任务、定验收、审计"]
+    C --> E["Codex Astra：核心工程与质量测评"]
+    C --> D["DeepSeek Harness：法律 Skill 发现、独立模块与交叉测试"]
+    C --> A["Antigravity：文档与索引同步"]
+    C -. 按需 .-> G["Gemini：专项研究与方案比较"]
+    E --> R["交叉复核及 ChatGPT 证据审计"]
+    D --> R
+    A --> R
+    G --> R
+    R --> H
+```
+
+**Phase 1 三项任务分别验收，不互相代替：**
+
+1. **发现（Discovery）**：DeepSeek Harness 检索、去重和保存来源证据；Codex Astra 校验适配器和集成，ChatGPT 审计。发现候选不代表经过质量测试或获准入库。每周 Search/Fetch 自动调度仍须单独授权和验证。
+2. **质量测试（Evaluation）**：Codex Astra 固定第三方 Skill 原作者版本，准备或运行控制变量 A/B 测试，DeepSeek Harness 独立复现。真人法律专业人士核对法律标准答案、法规时效和专业评分；ChatGPT 审计测试设计、运行证据与评级规则。**仅在运行权限已确认、真实 Run Artifacts 和必要的真人核验齐备后，才能形成正式评级；此前标为「待评测」或「未评级」。不得为了提高分数修改第三方 Skill 原版，也不要求原作者补正。** 当前试点见 [Issue #25](https://github.com/fitalex/LexRouter/issues/25)。
+3. **收录与专业审核（Intake / Review）**：第三方许可、托管权限、法律适用性和最终目录收录按各自流程判断。Codex Astra 维护审核工具；具备相应专业能力的真人负责法律意见，Human Maintainer 作出授权与收录决定。**质量评级不等于许可批准、专业签署或正式入库；未获运行授权的 Skill 只允许准备测试计划。**
+
+真人法律专业复核可由具备相应能力的 Human Maintainer 兼任，也可交给获授权的独立专业人士；维护者身份本身不替代专业复核。所有任务保持 **唯一 Owner → 独立证据 → 交叉复核 → ChatGPT 审计 → Human Maintainer 最终决定** 的顺序。涉及人类决策的交接材料必须提供清晰目标、直达工作链接、逐步操作和可勾选清单。
 
 ## 文档 Owner 规则
 
