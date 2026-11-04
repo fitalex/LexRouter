@@ -1,4 +1,4 @@
-# AI Agent 开发与协作规范（V2.1）
+# AI Agent 开发与协作规范（V2.2）
 
 本规范适用于 LexRouter 仓库的 AI Agent 与贡献者。实行 **单任务负责人（Single Owner）+ 交叉复核（Cross Review）+ 人工验收（Human Gate）**。角色分工不授权自动合并、修改冻结策略或替代真人专业签署。
 
@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | Human Maintainer（人类维护者） | 目标与重大决策、法律专业判断及本人签署、授权接受、最终入库决定、PR 验收与合并 | AI 不得代签、代批或自动合并 |
 | ChatGPT GPT-6 | 项目协调、任务书、范围和 DoD、PR 审计、Gate 验收建议 | 审计不等于法律结论或最终合并 |
+| Claude（Anthropic） | 独立审计与交叉复核：对 PR、任务书、评测设计和 Run Artifacts 出具独立审计意见；对法律 Skill 内容做 AI 预审；对任务书和协作规范挑错 | 非 Owner；不合并、不代签、不修改冻结路线图；不运行第三方 Skill；不替代真人法律专业复核，AI 预审不等于法律结论；不接触密钥、Holdout 或未脱敏材料 |
 | Codex Astra | 核心架构、复杂工程、评测引擎、CI、权限与签署安全、工程集成 | 不自行接受法律授权或签署专业意见 |
 | DeepSeek Harness | 边界明确的代码与适配器、单测与回归测试、缺陷复现、中国法律 Skills 自动化发现 | 不擅改核心安全契约、不自动判定法源、授权或正式入库 |
 | Antigravity | 文档编写、更新、索引、归档、交叉引用和版本一致性维护 | 不自行修改冻结路线、专业结论或正式 Schema |
@@ -25,35 +26,50 @@
 | 单元测试、缺陷复现、模块回归 | 模块开发 Owner | 另一工程 Agent 独立验证 |
 | 中文法律 Skills Discovery（检索、归一化、去重） | DeepSeek Harness | Codex Astra 集成校验、ChatGPT 审计、必要时人工判断 |
 | LexExamBench 评测集工程 | Codex Astra 主导；DeepSeek Harness 协作 | ChatGPT 审计；专业试题与标准由具备能力的人类复核；独立仓库规则另行适用 |
-| 第三方 Skill 原版质量测试、对照实验与评级证据 | Codex Astra | DeepSeek Harness 独立复现；ChatGPT 审计测试与证据；真人法律专业人士核对法律标准答案和专业评分；Human Maintainer 授权实际运行及发布 |
+| 第三方 Skill 原版质量测试、对照实验与评级证据 | Codex Astra | DeepSeek Harness 独立复现；ChatGPT 与 Claude 分别审计测试设计、评分规则和运行证据；真人法律专业人士核对法律标准答案和专业评分；Human Maintainer 授权实际运行及发布 |
+| 协作规范、权限与治理类文档（AGENTS.md、收录政策等） | 任务书指定的起草者 | Claude 独立审计；起草者或定标准者为 ChatGPT 时，不得仅由 ChatGPT 审计；Human Maintainer 最终决定 |
+| 法律 Skill 内容 AI 预审（法规引用、逻辑一致性、风险提示） | 任务书指定的 Owner | Claude 独立预审，仅供专业人士参考；真人法律专业人士作出法律意见；AI 预审不写成真人批准 |
 | 文档、任务书索引、项目阶段记录 | Antigravity | ChatGPT 复核，技术事实由模块 Owner 确认 |
 | 研究、替代方案或独立方案评测 | Gemini（按需） | ChatGPT 整合，重大决策由 Human Maintainer 决定 |
 
 任务书明确 Owner、审阅者、文件或接口范围、输入、输出、DoD、冻结边界、交接材料和 PR 链接。不以 Token 配额平分任务。并行工作应从最新 main 各自创建独立分支和 PR，不共享可写分支；涉及同一文件、Schema 或 Review 历史时，先由 ChatGPT 协调写入顺序、基准 commit 和交接。
 
+### 独立审计规则
+
+1. **定标准者不独审。** 下列任务除 ChatGPT 审计外，必须另有 Claude（或 Human Maintainer 指定的其他非定标准者）出具独立审计意见，两份意见分别记录，不合并为一句"已审计"：（a）协作规范、权限与治理类文档，含 AGENTS.md 和收录政策；（b）第三方 Skill 评测的评分规则、评级规则和运行证据；（c）涉及签署、权限、授权或 Human Gate 的工程与 Review Workbench 变更。其余任务按分工表执行。Human Maintainer 可对任何任务追加独立审计要求。
+2. **审计意见格式。** 写明审计对象及基准 commit、检查范围、按严重程度排序的发现、未检查项和建议结论（通过 / 需修改 / 需人工决策）。审计意见只构成证据，不自动产生权限。
+3. **分歧处理。** ChatGPT 与 Claude 的审计意见不一致时，任何一方不得单方裁定；原 Owner 在原 PR 回应，列出分歧点交 Human Maintainer 决定。
+4. **Claude 的使用边界。** Claude 不担任 Owner，不执行第三方 Skill 评测，不提交合并或代签。Claude 不保留会话间状态，依靠任务书、基准 commit 和 PR 记录工作。由 Human Maintainer 或 ChatGPT 在任务书中指定其审计范围和基准 commit；规则 1 所列任务必须在任务书中指定独立审计，ChatGPT 不得省略或豁免，只有 Human Maintainer 可以豁免，且须在任务书或 PR 中书面记录豁免理由。审计结果以 PR 评论或报告提交。
+
 ## 最新协作流程与三项独立任务（2026-11-04）
 
 ```mermaid
 flowchart TD
-    H["Human Maintainer：目标、授权及最终决定"] --> C["ChatGPT GPT-6：拆任务、定验收、审计"]
+    H["Human Maintainer：目标、授权及最终决定"] --> C["ChatGPT GPT-6：拆任务、定验收"]
     C --> E["Codex Astra：核心工程与质量测评"]
     C --> D["DeepSeek Harness：法律 Skill 发现、独立模块与交叉测试"]
     C --> A["Antigravity：文档与索引同步"]
     C -. 按需 .-> G["Gemini：专项研究与方案比较"]
-    E --> R["交叉复核及 ChatGPT 证据审计"]
+    E <-. 交叉复现与复核 .-> D
+    E --> R["交叉复核"]
     D --> R
     A --> R
     G --> R
-    R --> H
+    R --> C2["ChatGPT GPT-6：证据审计"]
+    R -. 按独立审计规则触发 .-> L["Claude：独立审计"]
+    R -. 涉及法律判断 .-> P["真人法律专业人士：法律标准与专业复核"]
+    C2 --> H
+    L --> H
+    P --> H
 ```
 
 **Phase 1 三项任务分别验收，不互相代替：**
 
 1. **发现（Discovery）**：DeepSeek Harness 检索、去重和保存来源证据；Codex Astra 校验适配器和集成，ChatGPT 审计。发现候选不代表经过质量测试或获准入库。每周 Search/Fetch 自动调度仍须单独授权和验证。
-2. **质量测试（Evaluation）**：Codex Astra 固定第三方 Skill 原作者版本，准备或运行控制变量 A/B 测试，DeepSeek Harness 独立复现。真人法律专业人士核对法律标准答案、法规时效和专业评分；ChatGPT 审计测试设计、运行证据与评级规则。**仅在运行权限已确认、真实 Run Artifacts 和必要的真人核验齐备后，才能形成正式评级；此前标为「待评测」或「未评级」。不得为了提高分数修改第三方 Skill 原版，也不要求原作者补正。** 当前试点见 [Issue #25](https://github.com/fitalex/LexRouter/issues/25)。
-3. **收录与专业审核（Intake / Review）**：第三方许可、托管权限、法律适用性和最终目录收录按各自流程判断。Codex Astra 维护审核工具；具备相应专业能力的真人负责法律意见，Human Maintainer 作出授权与收录决定。**质量评级不等于许可批准、专业签署或正式入库；未获运行授权的 Skill 只允许准备测试计划。**
+2. **质量测试（Evaluation）**：Codex Astra 固定第三方 Skill 原作者版本，准备或运行控制变量 A/B 测试，DeepSeek Harness 独立复现。真人法律专业人士核对法律标准答案、法规时效和专业评分；ChatGPT 与 Claude 分别审计测试设计、运行证据与评级规则，两份审计意见分别记录。**仅在运行权限已确认、真实 Run Artifacts 和必要的真人核验齐备后，才能形成正式评级；此前标为「待评测」或「未评级」。不得为了提高分数修改第三方 Skill 原版，也不要求原作者补正。** 当前试点见 [Issue #25](https://github.com/fitalex/LexRouter/issues/25)。
+3. **收录与专业审核（Intake / Review）**：第三方许可、托管权限、法律适用性和最终目录收录按各自流程判断。Codex Astra 维护审核工具；具备相应专业能力的真人负责法律意见，Human Maintainer 作出授权与收录决定。**质量评级不等于许可批准、专业签署或正式入库；未获运行授权的 Skill 只允许准备测试计划。** AI 预审（含 Claude 的预审）不等于真人法律意见，也不等于许可批准或收录批准。
 
-真人法律专业复核可由具备相应能力的 Human Maintainer 兼任，也可交给获授权的独立专业人士；维护者身份本身不替代专业复核。所有任务保持 **唯一 Owner → 独立证据 → 交叉复核 → ChatGPT 审计 → Human Maintainer 最终决定** 的顺序。涉及人类决策的交接材料必须提供清晰目标、直达工作链接、逐步操作和可勾选清单。
+真人法律专业复核可由具备相应能力的 Human Maintainer 兼任，也可交给获授权的独立专业人士；维护者身份本身不替代专业复核。所有任务保持 **唯一 Owner → 独立证据 → 交叉复核 → ChatGPT 审计（规则 1 所列任务另须 Claude 独立审计）→ Human Maintainer 最终决定** 的顺序。涉及人类决策的交接材料必须提供清晰目标、直达工作链接、逐步操作和可勾选清单。
 
 ## 文档 Owner 规则
 
@@ -94,7 +110,7 @@ Antigravity 负责高质量、中文可读的文档及索引维护。以已合�
 
 ## PR 与跨 Agent 质量控制
 
-统一执行 **任务书 → 独立分支 → 实现与自测 → PR 和实际证据 → 交叉复核 → ChatGPT 审计 → Human Maintainer 决定合并**。审核不通过由原 Owner 在原 PR 修复；不可通过新 PR 掩盖历史问题。PR 必须记录真实命令、测试结果、CI 链接、差异、未解决问题和 DoD。文档 PR 需核对链接、版本和事实一致性；不能把未运行测试报告为通过。
+统一执行 **任务书 → 独立分支 → 实现与自测 → PR 和实际证据 → 交叉复核 → ChatGPT 审计（规则 1 所列任务另须 Claude 独立审计）→ Human Maintainer 决定合并**。审核不通过由原 Owner 在原 PR 修复；不可通过新 PR 掩盖历史问题。PR 必须记录真实命令、测试结果、CI 链接、差异、未解决问题和 DoD。文档 PR 需核对链接、版本和事实一致性；不能把未运行测试报告为通过。
 
 Review Workbench v1/v2 保留各自已接受的审核契约。v2 中真实专业决定与最终入库决定必须由授权真人提交两个独立事件；Codex、DeepSeek、Antigravity 或自动化只可准备、测试、校验和同步已核验事件，不代签或代批。
 
