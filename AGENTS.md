@@ -39,7 +39,7 @@
 1. **定标准者不独审。** 下列任务除 ChatGPT 审计外，必须另有 Claude（或 Human Maintainer 指定的其他非定标准者）出具独立审计意见，两份意见分别记录，不合并为一句"已审计"：（a）协作规范、权限与治理类文档，含 AGENTS.md 和收录政策；（b）第三方 Skill 评测的评分规则、评级规则和运行证据；（c）涉及签署、权限、授权或 Human Gate 的工程与 Review Workbench 变更。其余任务按分工表执行。Human Maintainer 可对任何任务追加独立审计要求。
 2. **审计意见格式。** 写明审计对象及基准 commit、检查范围、按严重程度排序的发现、未检查项和建议结论（通过 / 需修改 / 需人工决策）。审计意见只构成证据，不自动产生权限。
 3. **分歧处理。** ChatGPT 与 Claude 的审计意见不一致时，任何一方不得单方裁定；原 Owner 在原 PR 回应，列出分歧点交 Human Maintainer 决定。
-4. **Claude 的使用边界。** Claude 不担任 Owner，不执行第三方 Skill 评测，不提交合并或代签。Claude 不保留会话间状态，依靠任务书、基准 commit 和 PR 记录工作。由 Human Maintainer 或 ChatGPT 在任务书中指定其审计范围和基准 commit；规则 1 所列任务必须在任务书中指定独立审计，ChatGPT 不得省略或豁免，只有 Human Maintainer 可以豁免。审计结果以 PR 评论或报告提交。
+4. **Claude 的使用边界。** Claude 不担任 Owner，不执行第三方 Skill 评测，不提交合并或代签。Claude 不保留会话间状态，依靠任务书、基准 commit 和 PR 记录工作。由 Human Maintainer 或 ChatGPT 在任务书中指定其审计范围和基准 commit；规则 1 所列任务必须在任务书中指定独立审计，ChatGPT 不得省略或豁免，只有 Human Maintainer 可以豁免，且须在任务书或 PR 中书面记录豁免理由。审计结果以 PR 评论或报告提交。
 
 ## 最新协作流程与三项独立任务（2026-11-04）
 
@@ -69,7 +69,7 @@ flowchart TD
 2. **质量测试（Evaluation）**：Codex Astra 固定第三方 Skill 原作者版本，准备或运行控制变量 A/B 测试，DeepSeek Harness 独立复现。真人法律专业人士核对法律标准答案、法规时效和专业评分；ChatGPT 与 Claude 分别审计测试设计、运行证据与评级规则，两份审计意见分别记录。**仅在运行权限已确认、真实 Run Artifacts 和必要的真人核验齐备后，才能形成正式评级；此前标为「待评测」或「未评级」。不得为了提高分数修改第三方 Skill 原版，也不要求原作者补正。** 当前试点见 [Issue #25](https://github.com/fitalex/LexRouter/issues/25)。
 3. **收录与专业审核（Intake / Review）**：第三方许可、托管权限、法律适用性和最终目录收录按各自流程判断。Codex Astra 维护审核工具；具备相应专业能力的真人负责法律意见，Human Maintainer 作出授权与收录决定。**质量评级不等于许可批准、专业签署或正式入库；未获运行授权的 Skill 只允许准备测试计划。** AI 预审（含 Claude 的预审）不等于真人法律意见，也不等于许可批准或收录批准。
 
-真人法律专业复核可由具备相应能力的 Human Maintainer 兼任，也可交给获授权的独立专业人士；维护者身份本身不替代专业复核。所有任务保持 **唯一 Owner → 独立证据 → 交叉复核 → ChatGPT 审计与 Claude 独立审计 → Human Maintainer 最终决定** 的顺序。涉及人类决策的交接材料必须提供清晰目标、直达工作链接、逐步操作和可勾选清单。
+真人法律专业复核可由具备相应能力的 Human Maintainer 兼任，也可交给获授权的独立专业人士；维护者身份本身不替代专业复核。所有任务保持 **唯一 Owner → 独立证据 → 交叉复核 → ChatGPT 审计（规则 1 所列任务另须 Claude 独立审计）→ Human Maintainer 最终决定** 的顺序。涉及人类决策的交接材料必须提供清晰目标、直达工作链接、逐步操作和可勾选清单。
 
 ## 文档 Owner 规则
 
