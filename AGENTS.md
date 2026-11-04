@@ -36,10 +36,10 @@
 
 ### 独立审计规则
 
-1. **定标准者不独审。** 凡由 ChatGPT 拆任务并制定验收标准的任务，除 ChatGPT 审计外，须另有 Claude（或 Human Maintainer 指定的其他非定标准者）出具独立审计意见。两份意见分别记录，不合并为一句"已审计"。
+1. **定标准者不独审。** 下列任务除 ChatGPT 审计外，必须另有 Claude（或 Human Maintainer 指定的其他非定标准者）出具独立审计意见，两份意见分别记录，不合并为一句"已审计"：（a）协作规范、权限与治理类文档，含 AGENTS.md 和收录政策；（b）第三方 Skill 评测的评分规则、评级规则和运行证据；（c）涉及签署、权限、授权或 Human Gate 的工程与 Review Workbench 变更。其余任务按分工表执行。Human Maintainer 可对任何任务追加独立审计要求。
 2. **审计意见格式。** 写明审计对象及基准 commit、检查范围、按严重程度排序的发现、未检查项和建议结论（通过 / 需修改 / 需人工决策）。审计意见只构成证据，不自动产生权限。
 3. **分歧处理。** ChatGPT 与 Claude 的审计意见不一致时，任何一方不得单方裁定；原 Owner 在原 PR 回应，列出分歧点交 Human Maintainer 决定。
-4. **Claude 的使用边界。** Claude 不担任 Owner，不执行第三方 Skill 评测，不提交合并或代签。Claude 不保留会话间状态，依靠任务书、基准 commit 和 PR 记录工作。由 Human Maintainer 或 ChatGPT 在任务书中指定其审计范围，审计结果以 PR 评论或报告提交。
+4. **Claude 的使用边界。** Claude 不担任 Owner，不执行第三方 Skill 评测，不提交合并或代签。Claude 不保留会话间状态，依靠任务书、基准 commit 和 PR 记录工作。由 Human Maintainer 或 ChatGPT 在任务书中指定其审计范围和基准 commit；规则 1 所列任务必须在任务书中指定独立审计，ChatGPT 不得省略或豁免，只有 Human Maintainer 可以豁免。审计结果以 PR 评论或报告提交。
 
 ## 最新协作流程与三项独立任务（2026-11-04）
 
@@ -56,7 +56,7 @@ flowchart TD
     A --> R
     G --> R
     R --> C2["ChatGPT GPT-6：证据审计"]
-    R --> L["Claude：独立审计"]
+    R -. 按独立审计规则触发 .-> L["Claude：独立审计"]
     R -. 涉及法律判断 .-> P["真人法律专业人士：法律标准与专业复核"]
     C2 --> H
     L --> H
@@ -110,7 +110,7 @@ Antigravity 负责高质量、中文可读的文档及索引维护。以已合�
 
 ## PR 与跨 Agent 质量控制
 
-统一执行 **任务书 → 独立分支 → 实现与自测 → PR 和实际证据 → 交叉复核 → ChatGPT 审计 → Human Maintainer 决定合并**。审核不通过由原 Owner 在原 PR 修复；不可通过新 PR 掩盖历史问题。PR 必须记录真实命令、测试结果、CI 链接、差异、未解决问题和 DoD。文档 PR 需核对链接、版本和事实一致性；不能把未运行测试报告为通过。
+统一执行 **任务书 → 独立分支 → 实现与自测 → PR 和实际证据 → 交叉复核 → ChatGPT 审计（规则 1 所列任务另须 Claude 独立审计）→ Human Maintainer 决定合并**。审核不通过由原 Owner 在原 PR 修复；不可通过新 PR 掩盖历史问题。PR 必须记录真实命令、测试结果、CI 链接、差异、未解决问题和 DoD。文档 PR 需核对链接、版本和事实一致性；不能把未运行测试报告为通过。
 
 Review Workbench v1/v2 保留各自已接受的审核契约。v2 中真实专业决定与最终入库决定必须由授权真人提交两个独立事件；Codex、DeepSeek、Antigravity 或自动化只可准备、测试、校验和同步已核验事件，不代签或代批。
 
