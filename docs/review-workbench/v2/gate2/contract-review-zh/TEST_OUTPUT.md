@@ -1,0 +1,324 @@
+# Gate 2 实际验证输出
+
+**本地执行；合成反例只在内存测试副本中，不产生真实Review或签署。**
+
+- 原PR head：`ed445c825a6f7d9ee6396b1a77a820a5a000ba58`。
+- 已接受main：`d1c7ebabd5c33d2e92c6916804adc4018c89e5a0`。
+- 新增材料：60行矩阵，空ledger，bundle原字节117297 B。
+- 附加测试脚本SHA256：`ae21d45f863d1f1e6ab23bde31f19f398e89ebae7c79637b3ebea7157b7d3afc`；源码见[ADAPTATION_TESTS.md](../ADAPTATION_TESTS.md)。
+- GitHub Actions的实际运行URL、最终commit与结论见本PR验收描述；不把本地测试冒称远端执行。
+
+## python scripts/validate_skills.py skills
+
+````text
+PASS: 0 metadata file(s); directory is empty. Run fixture tests to verify the validator.
+
+exit_code=0
+````
+
+## python scripts/validate_skills.py tests/fixtures/valid
+
+````text
+PASS: 1 metadata file(s) validated.
+
+exit_code=0
+````
+
+## python scripts/validate_candidates.py data/discovery/candidates.json
+
+````text
+PASS: 10 candidate record(s); structure only (no network or legal/license verification).
+
+exit_code=0
+````
+
+## python scripts/validate_candidates.py data/discovery/p1-batch-01.json
+
+````text
+PASS: 10 candidate record(s); structure only (no network or legal/license verification).
+
+exit_code=0
+````
+
+## python scripts/validate_candidates.py tests/fixtures/candidates/valid.json
+
+````text
+PASS: 1 candidate record(s); structure only (no network or legal/license verification).
+
+exit_code=0
+````
+
+## python scripts/validate_discovery_batches.py data/discovery/candidates.json data/discovery/p1-batch-01.json
+
+````text
+PASS: 20 records across 2 manifest(s); unique IDs/source entries.
+{"authorization": {"pending-verification": 8, "restricted": 4, "verified": 8}, "business_categories": {"civil-commercial-litigation": 4, "contract-review": 5, "corporate-compliance": 5, "corporate-ma": 3, "criminal-administrative": 6, "legal-research": 4}, "candidate_status": {"candidate": 8, "needs-evidence": 12}, "records": 20}
+Offline structure/source checks only; forks, mirrors and semantic capability duplicates require manual review. No legal/license approval or formal admission.
+
+exit_code=0
+````
+
+## python scripts/validate_p1_readiness.py
+
+````text
+PASS: 10 readiness record(s); offline structure and candidate linkage only. No legal/license verification or intake approval; professional review remains required.
+
+exit_code=0
+````
+
+## python scripts/validate_p1_readiness.py tests/fixtures/p1-readiness/valid.json --candidates tests/fixtures/p1-readiness/candidates.json
+
+````text
+PASS: 1 readiness record(s); offline structure and candidate linkage only. No legal/license verification or intake approval; professional review remains required.
+
+exit_code=0
+````
+
+## python scripts/validate_intake_plan.py
+
+````text
+PASS: 10 candidate proposal(s); offline structure/linkage only. No hosting, legal, catalog, execution or redistribution approval.
+
+exit_code=0
+````
+
+## python scripts/validate_intake_plan.py tests/fixtures/intake/valid.json --candidates tests/fixtures/p1-readiness/candidates.json --readiness tests/fixtures/p1-readiness/valid.json
+
+````text
+PASS: 1 candidate proposal(s); offline structure/linkage only. No hosting, legal, catalog, execution or redistribution approval.
+
+exit_code=0
+````
+
+## python scripts/validate_p1_handoff.py
+
+````text
+PASS: 3 handoff record(s); offline scope/linkage only. No hosting approval or professional review; regulatory currency remains unverified.
+
+exit_code=0
+````
+
+## python scripts/review_workbench.py validate --online --base-ref origin/main
+
+````text
+PASS: 3 reviews; 0 human event(s) verified online; no legal approval inferred.
+
+exit_code=0
+````
+
+## python scripts/review_workbench_v2.py validate --online --base-ref origin/main
+
+````text
+V2 validation passed: 1 bundles; structural checks alone never authenticate a human.
+
+exit_code=0
+````
+
+## git diff --check
+
+````text
+
+
+exit_code=0
+````
+
+## python /workspace/LexRouter/work/g2/adaptation_checks.py
+
+````text
+
+test_actual_unverified_evidence_cannot_approve (__main__.Gate2AdaptationTests.test_actual_unverified_evidence_cannot_approve) ... ok
+test_fake_signature_or_identity_authorization_is_rejected (__main__.Gate2AdaptationTests.test_fake_signature_or_identity_authorization_is_rejected) ... ok
+test_missing_authority_fact_or_time_blocks_each_candidate (__main__.Gate2AdaptationTests.test_missing_authority_fact_or_time_blocks_each_candidate) ... ok
+test_missing_per_item_not_applicable_reason_blocks (__main__.Gate2AdaptationTests.test_missing_per_item_not_applicable_reason_blocks) ... ok
+test_policy_and_production_ledger_are_not_synthetic_signatures (__main__.Gate2AdaptationTests.test_policy_and_production_ledger_are_not_synthetic_signatures) ... ok
+test_real_bundle_full_matrix_and_empty_ledger (__main__.Gate2AdaptationTests.test_real_bundle_full_matrix_and_empty_ledger) ... ok
+test_source_manifest_or_scope_changes_are_rejected (__main__.Gate2AdaptationTests.test_source_manifest_or_scope_changes_are_rejected) ... ok
+test_v1_captured_bytes_and_history_are_preserved (__main__.Gate2AdaptationTests.test_v1_captured_bytes_and_history_are_preserved) ... ok
+test_v1_original_deletion_or_rewrite_is_detected (__main__.Gate2AdaptationTests.test_v1_original_deletion_or_rewrite_is_detected) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.222s
+
+OK
+exit_code=0
+````
+
+## python -m unittest discover -s tests -v
+
+````text
+
+test_T01_arbitrary_new_skill_without_core_code (test_review_workbench.WorkbenchTests.test_T01_arbitrary_new_skill_without_core_code) ... ok
+test_T02_new_version_preserves_signed_history (test_review_workbench.WorkbenchTests.test_T02_new_version_preserves_signed_history) ... ok
+test_T03_regulatory_change_lists_affected_checks (test_review_workbench.WorkbenchTests.test_T03_regulatory_change_lists_affected_checks) ... ok
+test_T04_major_errors_and_missing_authority_block_approval (test_review_workbench.WorkbenchTests.test_T04_major_errors_and_missing_authority_block_approval) ... ok
+test_T05_rights_pending_blocks_admission (test_review_workbench.WorkbenchTests.test_T05_rights_pending_blocks_admission) ... ok
+test_T06_prepare_preserves_human_opinion_and_no_signature (test_review_workbench.WorkbenchTests.test_T06_prepare_preserves_human_opinion_and_no_signature) ... ok
+test_T07_expanded_scope_has_no_inherited_approval (test_review_workbench.WorkbenchTests.test_T07_expanded_scope_has_no_inherited_approval) ... ok
+test_T08_privacy_no_private_import_or_log_echo (test_review_workbench.WorkbenchTests.test_T08_privacy_no_private_import_or_log_echo) ... ok
+test_admitted_dimension_cannot_be_silently_downgraded (test_review_workbench.WorkbenchTests.test_admitted_dimension_cannot_be_silently_downgraded) ... ok
+test_all_track_specific_rights_gates (test_review_workbench.WorkbenchTests.test_all_track_specific_rights_gates) ... ok
+test_due_review_todos_and_scheduled_trigger (test_review_workbench.WorkbenchTests.test_due_review_todos_and_scheduled_trigger) ... ok
+test_full_human_cycle_independent_dimensions_archive_online (test_review_workbench.WorkbenchTests.test_full_human_cycle_independent_dimensions_archive_online) ... ok
+test_interrupted_write_and_duplicate_json_keys_fail_closed (test_review_workbench.WorkbenchTests.test_interrupted_write_and_duplicate_json_keys_fail_closed) ... ok
+test_needs_changes_requires_human_resubmission (test_review_workbench.WorkbenchTests.test_needs_changes_requires_human_resubmission) ... ok
+test_non_github_source_and_encoded_file_path_without_core_changes (test_review_workbench.WorkbenchTests.test_non_github_source_and_encoded_file_path_without_core_changes) ... ok
+test_rejected_signed_opinion_is_also_immutable (test_review_workbench.WorkbenchTests.test_rejected_signed_opinion_is_also_immutable) ... ok
+test_signature_requires_user_policy_permission_and_exact_binding (test_review_workbench.WorkbenchTests.test_signature_requires_user_policy_permission_and_exact_binding) ... ok
+test_signed_history_protected_against_git_baseline (test_review_workbench.WorkbenchTests.test_signed_history_protected_against_git_baseline) ... ok
+test_signed_legal_fields_frozen_independent_roles_can_fill_forms (test_review_workbench.WorkbenchTests.test_signed_legal_fields_frozen_independent_roles_can_fill_forms) ... ok
+test_snapshot_tampering_and_forged_plain_json_are_rejected (test_review_workbench.WorkbenchTests.test_snapshot_tampering_and_forged_plain_json_are_rejected) ... ok
+test_stale_or_dismissed_event_is_rejected (test_review_workbench.WorkbenchTests.test_stale_or_dismissed_event_is_rejected) ... ok
+test_suspension_preserves_evidence_and_blocks_admission (test_review_workbench.WorkbenchTests.test_suspension_preserves_evidence_and_blocks_admission) ... ok
+test_three_real_subjects_create_unsigned_exact_scope (test_review_workbench.WorkbenchTests.test_three_real_subjects_create_unsigned_exact_scope) ... ok
+test_unique_ids_parent_cycles_and_template_conflicts (test_review_workbench.WorkbenchTests.test_unique_ids_parent_cycles_and_template_conflicts) ... ok
+test_admission_terminal_worksheet_tamper_cannot_be_archived (test_review_workbench_r1.ReviewControlTests.test_admission_terminal_worksheet_tamper_cannot_be_archived) ... ok
+test_archive_staging_failure_has_no_side_effects (test_review_workbench_r1.ReviewControlTests.test_archive_staging_failure_has_no_side_effects) ... ok
+test_archive_write_failure_preserves_original_and_removes_partial_bundle (test_review_workbench_r1.ReviewControlTests.test_archive_write_failure_preserves_original_and_removes_partial_bundle) ... ok
+test_complete_independent_decisions_allow_archive (test_review_workbench_r1.ReviewControlTests.test_complete_independent_decisions_allow_archive) ... ok
+test_cross_role_signing_preserves_existing_signatures (test_review_workbench_r1.ReviewControlTests.test_cross_role_signing_preserves_existing_signatures) ... ok
+test_each_incomplete_independent_decision_blocks_archive (test_review_workbench_r1.ReviewControlTests.test_each_incomplete_independent_decision_blocks_archive) ... ok
+test_engineering_terminal_worksheet_tamper_is_rejected (test_review_workbench_r1.ReviewControlTests.test_engineering_terminal_worksheet_tamper_is_rejected) ... ok
+test_idempotent_archive_also_checks_signed_workbook (test_review_workbench_r1.ReviewControlTests.test_idempotent_archive_also_checks_signed_workbook) ... ok
+test_needs_changes_can_be_corrected_and_resigned (test_review_workbench_r1.ReviewControlTests.test_needs_changes_can_be_corrected_and_resigned) ... ok
+test_new_event_cannot_launder_another_roles_changed_evidence (test_review_workbench_r1.ReviewControlTests.test_new_event_cannot_launder_another_roles_changed_evidence) ... ok
+test_professional_approval_alone_cannot_archive (test_review_workbench_r1.ReviewControlTests.test_professional_approval_alone_cannot_archive) ... ok
+test_professional_maintenance_is_frozen_not_the_next_signers_identity (test_review_workbench_r1.ReviewControlTests.test_professional_maintenance_is_frozen_not_the_next_signers_identity) ... ok
+test_professional_rejection_can_archive_with_other_dimensions_pending (test_review_workbench_r1.ReviewControlTests.test_professional_rejection_can_archive_with_other_dimensions_pending) ... ok
+test_replayed_event_cannot_bypass_terminal_consistency (test_review_workbench_r1.ReviewControlTests.test_replayed_event_cannot_bypass_terminal_consistency) ... ok
+test_rights_terminal_worksheet_tamper_is_rejected (test_review_workbench_r1.ReviewControlTests.test_rights_terminal_worksheet_tamper_is_rejected) ... ok
+test_suspended_scope_and_reason_are_signed_evidence (test_review_workbench_r1.ReviewControlTests.test_suspended_scope_and_reason_are_signed_evidence) ... ok
+test_terminal_rejections_and_decline_protect_their_sections (test_review_workbench_r1.ReviewControlTests.test_terminal_rejections_and_decline_protect_their_sections) ... ok
+test_unverified_same_role_event_cannot_unfreeze_terminal_evidence (test_review_workbench_r1.ReviewControlTests.test_unverified_same_role_event_cannot_unfreeze_terminal_evidence) ... ok
+test_verified_same_role_rereview_can_update_its_own_evidence (test_review_workbench_r1.ReviewControlTests.test_verified_same_role_rereview_can_update_its_own_evidence) ... ok
+test_actual_date_is_not_future_or_stale (test_review_workbench_v2.ContractTests.test_actual_date_is_not_future_or_stale) ... ok
+test_duplicate_json_and_invalid_schema (test_review_workbench_v2.ContractTests.test_duplicate_json_and_invalid_schema) ... ok
+test_form_has_no_digest_or_url_and_complete_coverage (test_review_workbench_v2.ContractTests.test_form_has_no_digest_or_url_and_complete_coverage) ... ok
+test_full_matrix_and_nonhuman_automation (test_review_workbench_v2.ContractTests.test_full_matrix_and_nonhuman_automation) ... ok
+test_ci_execution_closure_rejects_import_hooks_workflows_and_executables (test_review_workbench_v2.SecurityRegressionTests.test_ci_execution_closure_rejects_import_hooks_workflows_and_executables) ... ok
+test_closed_original_pr_history_remains_auditable (test_review_workbench_v2.SecurityRegressionTests.test_closed_original_pr_history_remains_auditable) ... ok
+test_deleted_unmerged_ledger_and_force_push_block (test_review_workbench_v2.SecurityRegressionTests.test_deleted_unmerged_ledger_and_force_push_block) ... ok
+test_edit_after_initial_read_is_rechecked_before_writing (test_review_workbench_v2.SecurityRegressionTests.test_edit_after_initial_read_is_rechecked_before_writing) ... ok
+test_edit_before_first_import_is_rejected_without_writes (test_review_workbench_v2.SecurityRegressionTests.test_edit_before_first_import_is_rejected_without_writes) ... ok
+test_fake_admitted_ledger_must_replay_missing_professional_gate (test_review_workbench_v2.SecurityRegressionTests.test_fake_admitted_ledger_must_replay_missing_professional_gate) ... ok
+test_graphql_adapter_only_allows_the_fixed_read_query (test_review_workbench_v2.SecurityRegressionTests.test_graphql_adapter_only_allows_the_fixed_read_query) ... ok
+test_graphql_identity_missing_fields_and_partial_errors_fail_closed (test_review_workbench_v2.SecurityRegressionTests.test_graphql_identity_missing_fields_and_partial_errors_fail_closed) ... ok
+test_historical_expiry_is_not_renewal_and_does_not_deadlock_new_reviews (test_review_workbench_v2.SecurityRegressionTests.test_historical_expiry_is_not_renewal_and_does_not_deadlock_new_reviews) ... ok
+test_local_baseline_rejects_deleted_signed_history (test_review_workbench_v2.SecurityRegressionTests.test_local_baseline_rejects_deleted_signed_history) ... ok
+test_local_empty_and_unsigned_data_need_no_online_identity (test_review_workbench_v2.SecurityRegressionTests.test_local_empty_and_unsigned_data_need_no_online_identity) ... ok
+test_main_subject_template_and_full_source_inventory_anchors (test_review_workbench_v2.SecurityRegressionTests.test_main_subject_template_and_full_source_inventory_anchors) ... ok
+test_no_legal_evidence_or_unverified_applicability_blocks_approval (test_review_workbench_v2.SecurityRegressionTests.test_no_legal_evidence_or_unverified_applicability_blocks_approval) ... ok
+test_public_tripwire_rejects_obvious_private_material (test_review_workbench_v2.SecurityRegressionTests.test_public_tripwire_rejects_obvious_private_material) ... ok
+test_replayed_history_rechecks_ci_and_mirrored_event_metadata (test_review_workbench_v2.SecurityRegressionTests.test_replayed_history_rechecks_ci_and_mirrored_event_metadata) ... ok
+test_terminal_events_cannot_be_replayed_or_replaced (test_review_workbench_v2.SecurityRegressionTests.test_terminal_events_cannot_be_replayed_or_replaced) ... ok
+test_unverified_date_allowed_only_for_nonapproval (test_review_workbench_v2.SecurityRegressionTests.test_unverified_date_allowed_only_for_nonapproval) ... ok
+test_all_three_tracks_require_every_verified_rights_gate (test_review_workbench_v2.SyncTests.test_all_three_tracks_require_every_verified_rights_gate) ... ok
+test_authentic_synthetic_comment_produces_bound_append_only_entry (test_review_workbench_v2.SyncTests.test_authentic_synthetic_comment_produces_bound_append_only_entry) ... ok
+test_cas_changes_only_ledger_and_never_force_pushes (test_review_workbench_v2.SyncTests.test_cas_changes_only_ledger_and_never_force_pushes) ... ok
+test_ci_missing_failed_stale_wrong_app_and_latest_rerun_block (test_review_workbench_v2.SyncTests.test_ci_missing_failed_stale_wrong_app_and_latest_rerun_block) ... ok
+test_edited_dismissed_and_concurrent_events_make_no_writes (test_review_workbench_v2.SyncTests.test_edited_dismissed_and_concurrent_events_make_no_writes) ... ok
+test_expired_review_and_unresolved_group_block (test_review_workbench_v2.SyncTests.test_expired_review_and_unresolved_group_block) ... ok
+test_historical_event_edit_revoke_and_bundle_change_are_blocked (test_review_workbench_v2.SyncTests.test_historical_event_edit_revoke_and_bundle_change_are_blocked) ... ok
+test_independent_maintainer_event_required (test_review_workbench_v2.SyncTests.test_independent_maintainer_event_required) ... ok
+test_needs_changes_can_be_recorded_without_claiming_passed_gates (test_review_workbench_v2.SyncTests.test_needs_changes_can_be_recorded_without_claiming_passed_gates) ... ok
+test_role_permission_qualification_state_and_sender_fail_closed (test_review_workbench_v2.SyncTests.test_role_permission_qualification_state_and_sender_fail_closed) ... ok
+test_two_events_preserve_history_and_allow_same_dual_role_human (test_review_workbench_v2.SyncTests.test_two_events_preserve_history_and_allow_same_dual_role_human) ... ok
+test_admission_cannot_use_not_applicable_to_avoid_row_basis (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_admission_cannot_use_not_applicable_to_avoid_row_basis) ... ok
+test_all_groups_not_applicable_without_authorities_or_evidence_blocked (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_all_groups_not_applicable_without_authorities_or_evidence_blocked) ... ok
+test_handcrafted_old_bypass_ledger_is_rejected_by_history_replay (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_handcrafted_old_bypass_ledger_is_rejected_by_history_replay) ... ok
+test_missing_or_unresolved_per_check_inapplicability_basis_blocked (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_missing_or_unresolved_per_check_inapplicability_basis_blocked) ... ok
+test_needs_changes_can_still_record_unresolved_inapplicability (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_needs_changes_can_still_record_unresolved_inapplicability) ... ok
+test_partial_not_applicable_missing_any_file_check_evidence_blocked (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_partial_not_applicable_missing_any_file_check_evidence_blocked) ... ok
+test_structured_basis_permits_all_or_partial_inapplicability_and_independent_admission (test_review_workbench_v2_not_applicable.InapplicabilityTests.test_structured_basis_permits_all_or_partial_inapplicability_and_independent_admission) ... ok
+test_concurrent_reviews_rejected_without_reordering (test_review_workbench_v2_sync_run.SignalTests.test_concurrent_reviews_rejected_without_reordering) ... ok
+test_dismissed_current_review_and_truncated_tree_rejected (test_review_workbench_v2_sync_run.SignalTests.test_dismissed_current_review_and_truncated_tree_rejected) ... ok
+test_edited_or_dismissed_history_failure_prevents_new_import (test_review_workbench_v2_sync_run.SignalTests.test_edited_or_dismissed_history_failure_prevents_new_import) ... ok
+test_entire_unmerged_review_directory_deletion_is_detected (test_review_workbench_v2_sync_run.SignalTests.test_entire_unmerged_review_directory_deletion_is_detected) ... ok
+test_fork_or_non_main_pr_rejected (test_review_workbench_v2_sync_run.SignalTests.test_fork_or_non_main_pr_rejected) ... ok
+test_privileged_workflow_uses_only_trusted_code (test_review_workbench_v2_sync_run.SignalTests.test_privileged_workflow_uses_only_trusted_code) ... ok
+test_signal_cannot_self_authorize_wrong_event_path_repo_or_pr (test_review_workbench_v2_sync_run.SignalTests.test_signal_cannot_self_authorize_wrong_event_path_repo_or_pr) ... ok
+test_stale_signal_audits_history_and_retries_ci_without_importing (test_review_workbench_v2_sync_run.SignalTests.test_stale_signal_audits_history_and_retries_ci_without_importing) ... ok
+test_truncated_commit_listing_cannot_hide_history (test_review_workbench_v2_sync_run.SignalTests.test_truncated_commit_listing_cannot_hide_history) ... ok
+test_unassigned_public_comments_cannot_block_human_signature (test_review_workbench_v2_sync_run.SignalTests.test_unassigned_public_comments_cannot_block_human_signature) ... ok
+test_valid_signal_rechecks_history_then_imports_current_event (test_review_workbench_v2_sync_run.SignalTests.test_valid_signal_rechecks_history_then_imports_current_event) ... ok
+test_actual_manifest_and_default_path (test_validate_candidates.CandidateCLITests.test_actual_manifest_and_default_path) ... ok
+test_all_fields_are_required_including_nested_fields (test_validate_candidates.CandidateCLITests.test_all_fields_are_required_including_nested_fields) ... ok
+test_candidate_and_formal_contracts_remain_separate (test_validate_candidates.CandidateCLITests.test_candidate_and_formal_contracts_remain_separate) ... ok
+test_candidate_requires_source_license_and_jurisdiction_evidence (test_validate_candidates.CandidateCLITests.test_candidate_requires_source_license_and_jurisdiction_evidence) ... ok
+test_empty_manifest_reports_zero (test_validate_candidates.CandidateCLITests.test_empty_manifest_reports_zero) ... ok
+test_fixed_negative_fixtures (test_validate_candidates.CandidateCLITests.test_fixed_negative_fixtures) ... ok
+test_fixed_valid_fixture (test_validate_candidates.CandidateCLITests.test_fixed_valid_fixture) ... ok
+test_invalid_urls_types_enums_and_dates (test_validate_candidates.CandidateCLITests.test_invalid_urls_types_enums_and_dates) ... ok
+test_missing_unreadable_paths_and_invalid_utf8 (test_validate_candidates.CandidateCLITests.test_missing_unreadable_paths_and_invalid_utf8) ... ok
+test_not_permitted_requires_rejection (test_validate_candidates.CandidateCLITests.test_not_permitted_requires_rejection) ... ok
+test_rejects_malformed_duplicate_keys_and_non_json_constants (test_validate_candidates.CandidateCLITests.test_rejects_malformed_duplicate_keys_and_non_json_constants) ... ok
+test_rejects_nonobjects_and_extra_fields (test_validate_candidates.CandidateCLITests.test_rejects_nonobjects_and_extra_fields) ... ok
+test_verified_currency_requires_date_and_evidence (test_validate_candidates.CandidateCLITests.test_verified_currency_requires_date_and_evidence) ... ok
+test_bad_manifest_reuses_contract_and_excludes_records (test_validate_discovery_batches.DiscoveryBatchTests.test_bad_manifest_reuses_contract_and_excludes_records) ... ok
+test_cli_success_failure_and_argument_exit_codes (test_validate_discovery_batches.DiscoveryBatchTests.test_cli_success_failure_and_argument_exit_codes) ... ok
+test_duplicate_id_with_different_source (test_validate_discovery_batches.DiscoveryBatchTests.test_duplicate_id_with_different_source) ... ok
+test_independent_entries_same_suite_and_offline_counts (test_validate_discovery_batches.DiscoveryBatchTests.test_independent_entries_same_suite_and_offline_counts) ... ok
+test_path_case_and_different_files_are_distinct (test_validate_discovery_batches.DiscoveryBatchTests.test_path_case_and_different_files_are_distinct) ... ok
+test_pin_and_evidence_errors (test_validate_discovery_batches.DiscoveryBatchTests.test_pin_and_evidence_errors) ... ok
+test_repeated_file_does_not_inflate_count (test_validate_discovery_batches.DiscoveryBatchTests.test_repeated_file_does_not_inflate_count) ... ok
+test_same_source_across_commits_hosts_and_runtimes (test_validate_discovery_batches.DiscoveryBatchTests.test_same_source_across_commits_hosts_and_runtimes) ... ok
+test_unreadable_and_malformed_json (test_validate_discovery_batches.DiscoveryBatchTests.test_unreadable_and_malformed_json) ... ok
+test_actual_and_synthetic_cli (test_validate_intake_plan.IntakeTests.test_actual_and_synthetic_cli) ... ok
+test_audit_changes_require_proposal_review_and_reuse_existing_checks (test_validate_intake_plan.IntakeTests.test_audit_changes_require_proposal_review_and_reuse_existing_checks) ... ok
+test_blocked_candidate_cannot_upgrade_or_receive_hosting_proposal (test_validate_intake_plan.IntakeTests.test_blocked_candidate_cannot_upgrade_or_receive_hosting_proposal) ... ok
+test_copy_and_redistribution_fail_closed_for_all_tracks (test_validate_intake_plan.IntakeTests.test_copy_and_redistribution_fail_closed_for_all_tracks) ... ok
+test_every_approval_axis_rejects_claimed_completion (test_validate_intake_plan.IntakeTests.test_every_approval_axis_rejects_claimed_completion) ... ok
+test_malformed_json_missing_files_utf8_and_cli_errors (test_validate_intake_plan.IntakeTests.test_malformed_json_missing_files_utf8_and_cli_errors) ... ok
+test_original_ids_permissions_and_completion_are_independent (test_validate_intake_plan.IntakeTests.test_original_ids_permissions_and_completion_are_independent) ... ok
+test_proposal_modes_and_required_gates (test_validate_intake_plan.IntakeTests.test_proposal_modes_and_required_gates) ... ok
+test_required_fields_types_nonblank_and_no_extra_evidence (test_validate_intake_plan.IntakeTests.test_required_fields_types_nonblank_and_no_extra_evidence) ... ok
+test_synthetic_positive_tracks_and_no_inheritance (test_validate_intake_plan.IntakeTests.test_synthetic_positive_tracks_and_no_inheritance) ... ok
+test_unknown_duplicate_and_missing_candidate_links (test_validate_intake_plan.IntakeTests.test_unknown_duplicate_and_missing_candidate_links) ... ok
+test_validation_needs_no_network (test_validate_intake_plan.IntakeTests.test_validation_needs_no_network) ... ok
+test_all_approval_states_and_currency_fail_closed (test_validate_p1_handoff.HandoffTests.test_all_approval_states_and_currency_fail_closed) ... ok
+test_bad_json_encoding_missing_files_and_duplicate_keys (test_validate_p1_handoff.HandoffTests.test_bad_json_encoding_missing_files_and_duplicate_keys) ... ok
+test_inventory_digest_count_identity_and_core_files (test_validate_p1_handoff.HandoffTests.test_inventory_digest_count_identity_and_core_files) ... ok
+test_missing_professional_checks_and_responsibilities (test_validate_p1_handoff.HandoffTests.test_missing_professional_checks_and_responsibilities) ... ok
+test_no_network (test_validate_p1_handoff.HandoffTests.test_no_network) ... ok
+test_original_blockers_cannot_be_upgraded (test_validate_p1_handoff.HandoffTests.test_original_blockers_cannot_be_upgraded) ... ok
+test_path_blob_mode_changes_cannot_hide_behind_new_digest (test_validate_p1_handoff.HandoffTests.test_path_blob_mode_changes_cannot_hide_behind_new_digest) ... ok
+test_prior_audit_proposal_and_revision_drift (test_validate_p1_handoff.HandoffTests.test_prior_audit_proposal_and_revision_drift) ... ok
+test_production_and_synthetic_cli (test_validate_p1_handoff.HandoffTests.test_production_and_synthetic_cli) ... ok
+test_required_fields_and_invalid_shapes (test_validate_p1_handoff.HandoffTests.test_required_fields_and_invalid_shapes) ... ok
+test_scope_decisions_and_unread_eligibility (test_validate_p1_handoff.HandoffTests.test_scope_decisions_and_unread_eligibility) ... ok
+test_synthetic_positive_and_schema (test_validate_p1_handoff.HandoffTests.test_synthetic_positive_and_schema) ... ok
+test_unknown_duplicate_missing_or_external_candidate (test_validate_p1_handoff.HandoffTests.test_unknown_duplicate_missing_or_external_candidate) ... ok
+test_unsafe_paths_wildcards_and_symlinks (test_validate_p1_handoff.HandoffTests.test_unsafe_paths_wildcards_and_symlinks) ... ok
+test_bad_status_types_dates_urls_and_owners (test_validate_p1_readiness.ReadinessTests.test_bad_status_types_dates_urls_and_owners) ... ok
+test_blocked_and_rejected_require_actionable_reason (test_validate_p1_readiness.ReadinessTests.test_blocked_and_rejected_require_actionable_reason) ... ok
+test_candidate_fields_and_snapshot_drift_force_reaudit (test_validate_p1_readiness.ReadinessTests.test_candidate_fields_and_snapshot_drift_force_reaudit) ... ok
+test_cli_actual_default_and_explicit_synthetic_pair (test_validate_p1_readiness.ReadinessTests.test_cli_actual_default_and_explicit_synthetic_pair) ... ok
+test_currency_never_accepts_source_dates_or_claimed_review (test_validate_p1_readiness.ReadinessTests.test_currency_never_accepts_source_dates_or_claimed_review) ... ok
+test_empty_or_malformed_manifest_cannot_claim_coverage (test_validate_p1_readiness.ReadinessTests.test_empty_or_malformed_manifest_cannot_claim_coverage) ... ok
+test_evidence_requires_pinned_observed_files_and_consistent_blob_claims (test_validate_p1_readiness.ReadinessTests.test_evidence_requires_pinned_observed_files_and_consistent_blob_claims) ... ok
+test_invalid_source_json_and_cli_errors_fail_closed (test_validate_p1_readiness.ReadinessTests.test_invalid_source_json_and_cli_errors_fail_closed) ... ok
+test_no_network_is_needed_for_validation (test_validate_p1_readiness.ReadinessTests.test_no_network_is_needed_for_validation) ... ok
+test_pending_authorization_cannot_be_laundered_as_clear (test_validate_p1_readiness.ReadinessTests.test_pending_authorization_cannot_be_laundered_as_clear) ... ok
+test_positive_ready_blocked_rejected_and_pending_currency (test_validate_p1_readiness.ReadinessTests.test_positive_ready_blocked_rejected_and_pending_currency) ... ok
+test_ready_cannot_hide_unresolved_authorization_or_entry (test_validate_p1_readiness.ReadinessTests.test_ready_cannot_hide_unresolved_authorization_or_entry) ... ok
+test_rejection_cannot_be_reopened_as_merely_blocked (test_validate_p1_readiness.ReadinessTests.test_rejection_cannot_be_reopened_as_merely_blocked) ... ok
+test_required_fields_and_nested_fields_are_enforced (test_validate_p1_readiness.ReadinessTests.test_required_fields_and_nested_fields_are_enforced) ... ok
+test_unknown_duplicate_and_omitted_candidates (test_validate_p1_readiness.ReadinessTests.test_unknown_duplicate_and_omitted_candidates) ... ok
+test_duplicate_ids_across_nested_files (test_validate_skills.MetadataCLITests.test_duplicate_ids_across_nested_files) ... ok
+test_empty_directory_is_explicit (test_validate_skills.MetadataCLITests.test_empty_directory_is_explicit) ... ok
+test_fixed_missing_required_fields (test_validate_skills.MetadataCLITests.test_fixed_missing_required_fields) ... ok
+test_fixed_valid_file_and_directory (test_validate_skills.MetadataCLITests.test_fixed_valid_file_and_directory) ... ok
+test_fixed_wrong_type (test_validate_skills.MetadataCLITests.test_fixed_wrong_type) ... ok
+test_invalid_directory_reports_each_file (test_validate_skills.MetadataCLITests.test_invalid_directory_reports_each_file) ... ok
+test_missing_path_non_json_malformed_and_invalid_encoding (test_validate_skills.MetadataCLITests.test_missing_path_non_json_malformed_and_invalid_encoding) ... ok
+test_multiple_distinct_files_and_uppercase_extension (test_validate_skills.MetadataCLITests.test_multiple_distinct_files_and_uppercase_extension) ... ok
+test_overlapping_input_paths_are_deduplicated (test_validate_skills.MetadataCLITests.test_overlapping_input_paths_are_deduplicated) ... ok
+test_rejects_extra_fields_and_non_object (test_validate_skills.MetadataCLITests.test_rejects_extra_fields_and_non_object) ... ok
+test_rejects_invalid_dates_enums_and_shapes (test_validate_skills.MetadataCLITests.test_rejects_invalid_dates_enums_and_shapes) ... ok
+test_valid_leap_day (test_validate_skills.MetadataCLITests.test_valid_leap_day) ... ok
+
+----------------------------------------------------------------------
+Ran 168 tests in 33.937s
+
+OK
+exit_code=0
+````
